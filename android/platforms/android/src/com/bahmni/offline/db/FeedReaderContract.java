@@ -1,14 +1,12 @@
-package com.ionicframework.bahmni;
+package com.bahmni.offline.db;
 
 import android.provider.BaseColumns;
 
-/**
- * Created by TWI on 02/11/15.
- */
 public final class FeedReaderContract {
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
-    public FeedReaderContract() {}
+    public FeedReaderContract() {
+    }
 
     /* Inner class that defines the table contents */
     public static abstract class FeedEntry implements BaseColumns {
