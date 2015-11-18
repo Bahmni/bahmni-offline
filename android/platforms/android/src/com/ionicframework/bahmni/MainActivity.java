@@ -21,6 +21,8 @@ package com.ionicframework.bahmni;
 
 import android.os.Bundle;
 
+import com.ionicframework.android203199.R;
+
 import org.apache.cordova.CordovaActivity;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
@@ -37,7 +39,7 @@ public class MainActivity extends CordovaActivity
         setContentView(R.layout.activity_main);
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.addJavascriptInterface(new WebAppInterface(MainActivity.this), "Android");
-        xWalkWebView.load("https://10.136.20.45:8082/home", null);
+        xWalkWebView.load("https://10.136.20.45:8082/bahmni/home/", null);
         // turn on debugging
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);
     }
