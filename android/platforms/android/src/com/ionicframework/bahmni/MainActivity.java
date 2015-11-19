@@ -21,8 +21,6 @@ package com.ionicframework.bahmni;
 
 import android.os.Bundle;
 
-import com.ionicframework.android203199.R;
-
 import org.apache.cordova.CordovaActivity;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
