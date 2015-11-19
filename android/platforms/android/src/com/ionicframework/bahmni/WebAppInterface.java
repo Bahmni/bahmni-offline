@@ -20,9 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Authenticator;
-import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 
 
 /**
@@ -48,16 +55,25 @@ public class WebAppInterface {
 
 
     @JavascriptInterface
-    public void populateData() throws IOException, JSONException {
+    public void populateData() throws IOException, JSONException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("admin", "test".toCharArray());
             }
         });
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        URL obj = new URL("https://10.136.20.45:8082/openmrs/ws/rest/v1/patientprofile/all");
 
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        URL obj = new URL("https://10.4.22.129:8082/openmrs/ws/rest/v1/patientprofile/all");
+
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+        con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
         int responseCode = con.getResponseCode();
         InputStream inputStream = con.getInputStream();
         JSONArray patients = new JSONArray(convertStreamToString(inputStream));
@@ -88,7 +104,7 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String getData(String uuid){
+    public String getPatient(String uuid){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from " + DBContract.Entry.TABLE_NAME +
                                " WHERE " + DBContract.Entry.COLUMN_PATIENT_UUID + " = '" + uuid + "' limit 1 ", new String[]{});
