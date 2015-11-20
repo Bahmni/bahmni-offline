@@ -113,15 +113,26 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String search(String searchTerm, int offset) throws JSONException {
+    public String search(String params) throws JSONException {
+        JSONObject paramsJson = new JSONObject(params);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from " + DBContract.Entry.TABLE_NAME +
-                               " WHERE " + DBContract.Entry.COLUMN_PATIENT_FIRST_NAME + " LIKE '%" + searchTerm +
-                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_MIDDLE_NAME + " LIKE '%" + searchTerm +
-                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_FIRST_NAME + " LIKE '%" + searchTerm +
-                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_LAST_NAME + " LIKE '%" + searchTerm +
-                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_ID + " LIKE '%" + searchTerm +
+        String name = paramsJson.getJSONObject("params").getString("q");
+        String identifier = paramsJson.getJSONObject("params").getString("identifier");
+        String offset = paramsJson.getJSONObject("params").getString("startIndex");
+        Cursor c;
+        if(!identifier.equals("null")){
+             c = db.rawQuery("SELECT * from " + DBContract.Entry.TABLE_NAME +
+                    " WHERE " + DBContract.Entry.COLUMN_PATIENT_ID + " = '" + identifier +
+                    "' LIMIT 50 OFFSET " + offset, new String[]{});
+        }
+        else{
+            c = db.rawQuery("SELECT * from " + DBContract.Entry.TABLE_NAME +
+                               " WHERE " + DBContract.Entry.COLUMN_PATIENT_FIRST_NAME + " LIKE '%" + name +
+                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_MIDDLE_NAME + " LIKE '%" + name +
+                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_FIRST_NAME + " LIKE '%" + name +
+                               "%' OR " + DBContract.Entry.COLUMN_PATIENT_LAST_NAME + " LIKE '%" + name +
                                "%' LIMIT 50 OFFSET " + offset, new String[]{});
+        }
         c.moveToFirst();
         JSONArray json = new JSONArray();
         do {
@@ -135,7 +146,6 @@ public class WebAppInterface {
         }while(c.moveToNext());
 
         return String.valueOf(new JSONObject().put("pageOfResults", json));
-
     }
 
     private static String convertStreamToString(InputStream is) {
