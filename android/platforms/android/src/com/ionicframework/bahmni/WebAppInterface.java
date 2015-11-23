@@ -70,7 +70,7 @@ public class WebAppInterface {
         };
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        URL obj = new URL("https://10.4.22.129:8082/openmrs/ws/rest/v1/patientprofile/all");
+        URL obj = new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/patientprofile/all");
 
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
         con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
