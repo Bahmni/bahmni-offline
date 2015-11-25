@@ -18,5 +18,6 @@ To run android app
 9. ionic platform remove android
 10. ionic platform add android
 11. git checkout .
-12. In Android studio File -> New -> Import project (bahmni-offline/android/platforms/android)
-13. to deploy the app shift + f10
+12. ionic build android
+13. In Android studio File -> New -> Import project (bahmni-offline/android/platforms/android)
+14. to deploy the app shift + f10
