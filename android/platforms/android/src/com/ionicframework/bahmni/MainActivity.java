@@ -33,7 +33,6 @@ public class MainActivity extends CordovaActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        // Set by <content src="index.html" /> in config.xml
         setContentView(R.layout.activity_main);
         xWalkWebView=(XWalkView)findViewById(R.id.xwalkWebView);
         xWalkWebView.addJavascriptInterface(new WebAppInterface(MainActivity.this), "Android");
