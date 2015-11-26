@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +31,9 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -46,6 +49,8 @@ public class WebAppInterface {
     SharedPreferences sharedPref;
 
 
+
+
     /** Instantiate the interface and set the context */
     WebAppInterface(Context c) {
         mContext = c;
@@ -53,11 +58,20 @@ public class WebAppInterface {
         sharedPref =  mContext.getSharedPreferences("SQL Select Statement", Context.MODE_PRIVATE);
     }
 
+    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    };
+
     /** Show a toast from the web page */
     @JavascriptInterface
     public void showToast(String toast) {
         Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
     }
+
+
 
 
     @JavascriptInterface
@@ -68,107 +82,28 @@ public class WebAppInterface {
             }
         });
 
-        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         mDbHelper.createTable(db, DBContract.PATIENT.TABLE_NAME, patientColumnNames);
-        URL patientsURL = new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/patientprofile/all");
 
-        HttpsURLConnection con = (HttpsURLConnection) patientsURL.openConnection();
-        con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
-        int responseCode = con.getResponseCode();
-        InputStream inputStream = con.getInputStream();
-        JSONArray patients = new JSONArray(convertStreamToString(inputStream));
-
-        URL patientAttributesURL = new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)");
-        con = (HttpsURLConnection) patientAttributesURL.openConnection();
-        con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
-        responseCode = con.getResponseCode();
-        inputStream = con.getInputStream();
-        JSONArray personAttributesList = new JSONObject(convertStreamToString(inputStream)).getJSONArray("results");
+        JSONArray patients = new JSONArray(getData(new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/patientprofile/all")));
+        JSONArray personAttributesList = new JSONObject(getData(new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
 
         attributeColumnNames = new String[personAttributesList.length()];
-        int i;
 
-        String selectStatement = "SELECT ";
-        String appender = "p.";
-
-        for (String patientColumnName : patientColumnNames) {
-            selectStatement +=  appender + patientColumnName ;
-            appender = " , p.";
-        }
-
-        appender = " , pa.";
-        for(i = 0; i < personAttributesList.length(); i++){
-            attributeColumnNames[i] = personAttributesList.getJSONObject(i).getString("name");
-            selectStatement += appender + attributeColumnNames[i];
-        }
+        String selectStatement = constructSelectStatement(personAttributesList);
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("patientSearchSelectStatement", selectStatement);
         editor.commit();
+
         String[] columnNames = new String[personAttributesList.length() + 1];
         System.arraycopy(attributeColumnNames, 0, columnNames, 0, attributeColumnNames.length);
-        columnNames[i] = DBContract.PATIENT_ATTRIBUTES.COLUMN_PATIENT_ID;
+        columnNames[personAttributesList.length()] = DBContract.PATIENT_ATTRIBUTES.COLUMN_PATIENT_ID;
         mDbHelper.createTable(db, DBContract.PATIENT_ATTRIBUTES.TABLE_NAME, columnNames);
 
-        for (i = 0; i < patients.length(); i++) {
-
-            ContentValues values = new ContentValues();
-            JSONObject patient = new JSONObject(patients.getJSONObject(i).getString("patient"));
-            JSONObject person = new JSONObject(patient.getString("person"));
-            JSONObject personName = new JSONObject(person.getString("preferredName"));
-            String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
-
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_ID, patientIdentifier);
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_UUID, patient.getString("uuid"));
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_FIRST_NAME, personName.getString("givenName"));
-            if(!personName.isNull("middleName"))
-                values.put(DBContract.PATIENT.COLUMN_PATIENT_MIDDLE_NAME, personName.getString("middleName"));
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_LAST_NAME, personName.getString("familyName"));
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_GENDER, person.getString("gender"));
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_AGE, person.getString("age"));
-            values.put(DBContract.PATIENT.COLUMN_DATE_CREATED, patient.getJSONObject("auditInfo").getString("dateCreated"));
-            values.put(DBContract.PATIENT.COLUMN_RURAL_WARD, person.getJSONObject("preferredAddress").getString("address2"));
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_JSON, String.valueOf(patients.getJSONObject(i)));
-            db.insert(DBContract.PATIENT.TABLE_NAME, null, values);
-
-            values = new ContentValues();
-
-            JSONArray attributes = person.getJSONArray("attributes");
-            if(attributes != null && attributes.length() > 0) {
-                for (int j = 0; j < attributes.length(); j++) {
-                    JSONObject personAttribute = attributes.getJSONObject(j);
-                    Object object = personAttribute.get("value");
-                    String value;
-                    if(object instanceof JSONObject){
-                        value = ((JSONObject) object).getString("display");
-                    }
-                    else
-                        value = String.valueOf(object);
-                    values.put(personAttribute.getJSONObject("attributeType").getString("display"), value);
-                }
-                values.put(DBContract.PATIENT_ATTRIBUTES.COLUMN_PATIENT_ID, patientIdentifier);
-                db.insert(DBContract.PATIENT_ATTRIBUTES.TABLE_NAME, null, values);
-            }
-        }
+        insertPatientData(db, patients);
     }
 
-    @JavascriptInterface
-    public void insertData()  {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        for(int i = 0 ; i < 100; i++){
-            ContentValues values = new ContentValues();
-            values.put(DBContract.PATIENT.COLUMN_PATIENT_JSON, "f" + i);
-            db.insert( DBContract.PATIENT.TABLE_NAME, null, values);
-        }
-    }
 
     @JavascriptInterface
     public String getPatient(String uuid){
@@ -185,6 +120,7 @@ public class WebAppInterface {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         JSONObject params = paramsJson.getJSONObject("params");
         String name = null;
+
         if(params.has("q")){
             name = params.getString("q");
         }
@@ -215,7 +151,6 @@ public class WebAppInterface {
 
         Cursor c;
 
-
         String sqlString = sharedPref.getString("patientSearchSelectStatement", "");
         sqlString += " FROM " +  DBContract.PATIENT.TABLE_NAME + " p left outer join " +  DBContract.PATIENT_ATTRIBUTES.TABLE_NAME + " pa on p.identifier = pa.identifier ";
 
@@ -244,6 +179,12 @@ public class WebAppInterface {
                                "%' OR " + DBContract.PATIENT.COLUMN_PATIENT_LAST_NAME + " LIKE '%" + name +
                                "%' LIMIT 50 OFFSET " + offset, new String[]{});
         }
+        JSONArray json = constructResponse(attributesToSearch, addressFieldName, c);
+
+        return String.valueOf(new JSONObject().put("pageOfResults", json));
+    }
+
+    private JSONArray constructResponse(JSONArray attributesToSearch, String addressFieldName, Cursor c) throws JSONException {
         c.moveToFirst();
         JSONArray json = new JSONArray();
         do {
@@ -269,8 +210,54 @@ public class WebAppInterface {
             obj.put("customAttribute",  String.valueOf(customAttributes));
             json.put(obj);
         }while(c.moveToNext());
+        return json;
+    }
 
-        return String.valueOf(new JSONObject().put("pageOfResults", json));
+    private void insertPatientData(SQLiteDatabase db, JSONArray patients) throws JSONException {
+        for (int i = 0; i < patients.length(); i++) {
+
+            ContentValues values = new ContentValues();
+            JSONObject patient = new JSONObject(patients.getJSONObject(i).getString("patient"));
+            JSONObject person = new JSONObject(patient.getString("person"));
+            JSONObject personName = new JSONObject(person.getString("preferredName"));
+            String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
+
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_ID, patientIdentifier);
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_UUID, patient.getString("uuid"));
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_FIRST_NAME, personName.getString("givenName"));
+            if(!personName.isNull("middleName"))
+                values.put(DBContract.PATIENT.COLUMN_PATIENT_MIDDLE_NAME, personName.getString("middleName"));
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_LAST_NAME, personName.getString("familyName"));
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_GENDER, person.getString("gender"));
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_AGE, person.getString("age"));
+            values.put(DBContract.PATIENT.COLUMN_DATE_CREATED, patient.getJSONObject("auditInfo").getString("dateCreated"));
+            values.put(DBContract.PATIENT.COLUMN_RURAL_WARD, person.getJSONObject("preferredAddress").getString("address2"));
+            values.put(DBContract.PATIENT.COLUMN_PATIENT_JSON, String.valueOf(patients.getJSONObject(i)));
+            db.insert(DBContract.PATIENT.TABLE_NAME, null, values);
+
+            values = new ContentValues();
+
+            JSONArray attributes = person.getJSONArray("attributes");
+            insertAttributes(db, values, patientIdentifier, attributes);
+        }
+    }
+
+    private void insertAttributes(SQLiteDatabase db, ContentValues values, String patientIdentifier, JSONArray attributes) throws JSONException {
+        if(attributes != null && attributes.length() > 0) {
+            for (int j = 0; j < attributes.length(); j++) {
+                JSONObject personAttribute = attributes.getJSONObject(j);
+                Object object = personAttribute.get("value");
+                String value;
+                if(object instanceof JSONObject){
+                    value = ((JSONObject) object).getString("display");
+                }
+                else
+                    value = String.valueOf(object);
+                values.put(personAttribute.getJSONObject("attributeType").getString("display"), value);
+            }
+            values.put(DBContract.PATIENT_ATTRIBUTES.COLUMN_PATIENT_ID, patientIdentifier);
+            db.insert(DBContract.PATIENT_ATTRIBUTES.TABLE_NAME, null, values);
+        }
     }
 
     private static String convertStreamToString(InputStream is) {
@@ -293,6 +280,30 @@ public class WebAppInterface {
             }
         }
         return sb.toString();
+    }
+
+    private String constructSelectStatement(JSONArray personAttributesList) throws JSONException {
+        String selectStatement = "SELECT ";
+        String appender = "p.";
+        for (String patientColumnName : patientColumnNames) {
+            selectStatement +=  appender + patientColumnName ;
+            appender = " , p.";
+        }
+        appender = " , pa.";
+
+        for(int i = 0; i < personAttributesList.length(); i++){
+            attributeColumnNames[i] = personAttributesList.getJSONObject(i).getString("name");
+            selectStatement += appender + attributeColumnNames[i];
+        }
+        return selectStatement;
+    }
+
+    private String getData(URL url) throws IOException {
+        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
+        int responseCode = con.getResponseCode();
+        InputStream inputStream = con.getInputStream();
+        return convertStreamToString(inputStream);
     }
 
 
