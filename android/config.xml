@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.bahmni" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>android</name>
+<widget id="com.bahmni.offline" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Bahmni</name>
   <description>
-        An Ionic Framework and Cordova project.
+        Bahmni is an easy to use, open source hospital system for healthcare providers in low-resource settings. Brought to you by ThoughtWorks.
     </description>
-  <author email="hi@ionicframework" href="http://ionicframework.com/">
-      Ionic Framework Team
+  <author email="bahmni@thoughtworks.com" href="http://bahmni.org/">
+      Bahmni
     </author>
   <content src="https://10.4.20.224:8082/bahmni/home/"/>
   <access origin="*"/>
