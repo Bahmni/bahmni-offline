@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 
-public class DBHelper extends SQLiteOpenHelper {
+public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/UltraTest.db";
@@ -18,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_PATIENT_ATTRIBUTES =
             "DROP TABLE IF EXISTS " + PatientDBContract.PATIENT.TABLE_NAME;
 
-    public DBHelper(Context context) {
+    public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

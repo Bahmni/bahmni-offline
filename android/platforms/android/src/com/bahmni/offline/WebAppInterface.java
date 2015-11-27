@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import com.bahmni.offline.db.PatientDBContract;
-import com.bahmni.offline.db.DBHelper;
+import com.bahmni.offline.db.DbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +33,7 @@ import javax.net.ssl.SSLSession;
 
 public class WebAppInterface {
     Context mContext;
-    private DBHelper mDBHelper;
+    private DbHelper mDBHelper;
     String[] patientColumnNames = {
             PatientDBContract.PATIENT.COLUMN_PATIENT_ID,
             PatientDBContract.PATIENT.COLUMN_PATIENT_UUID,
@@ -50,7 +50,7 @@ public class WebAppInterface {
 
     WebAppInterface(Context c) {
         mContext = c;
-        mDBHelper = new DBHelper(c);
+        mDBHelper = new DbHelper(c);
         sharedPref = mContext.getSharedPreferences("SQL Select Statement", Context.MODE_PRIVATE);
     }
 
