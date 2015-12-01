@@ -17,7 +17,8 @@
     "permissions": [
         "unlimitedStorage",
         "notifications",
-        "webview"
+        "webview",
+        "storage"
     ],
     "minimum_chrome_version": "28"
 }
