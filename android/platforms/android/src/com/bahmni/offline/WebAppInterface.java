@@ -36,7 +36,6 @@ public class WebAppInterface {
             PatientDBContract.PATIENT.COLUMN_PATIENT_GENDER,
             PatientDBContract.PATIENT.COLUMN_PATIENT_AGE,
             PatientDBContract.PATIENT.COLUMN_DATE_CREATED,
-            PatientDBContract.PATIENT.COLUMN_RURAL_WARD,
             PatientDBContract.PATIENT.COLUMN_PATIENT_JSON};
     String[] attributeTypeColumnNames = {
             PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_TYPE_ID,
@@ -47,6 +46,7 @@ public class WebAppInterface {
             PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_ATTRIBUTE_VALUE,
             PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_PATIENT_ID
     };
+
     SharedPreferences sharedPref;
     String key = "key";
 
@@ -86,23 +86,34 @@ public class WebAppInterface {
         mDBHelper.createTable(db, PatientDBContract.PATIENT_ATTRIBUTES_TYPES.TABLE_NAME, attributeTypeColumnNames);
         mDBHelper.createTable(db, PatientDBContract.PATIENT.TABLE_NAME, patientColumnNames);
         mDBHelper.createTable(db, PatientDBContract.PATIENT_ATTRIBUTES.TABLE_NAME, attributeColumnNames);
+        String[] addressColumnNames = getAddressColumns();
+        mDBHelper.createTable(db, PatientDBContract.PATIENT_ADDRESS.TABLE_NAME, addressColumnNames);
 
-        JSONArray personAttributeTypeList = new JSONObject(getData(new URL("https://10.4.23.4:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
-
-        insertAttributeTypes(db, personAttributeTypeList);
+        insertAttributeTypes(db);
 
         JSONArray patients;
         int startIndex = 0;
         int pageSize = 1;
         do{
             patients = new JSONObject(getData(new URL("https://10.4.23.4:8082/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
-            insertPatientData(db, patients);
+            insertPatientData(db, patients, addressColumnNames);
             startIndex++;
         } while (patients.length() == pageSize);
 
     }
 
-    private void insertAttributeTypes(SQLiteDatabase db, JSONArray personAttributeTypeList) throws JSONException {
+    private String[] getAddressColumns() throws IOException, JSONException {
+        JSONArray addressHierarchyFields = new JSONArray(getData(new URL("https://10.4.23.4:8082/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
+        String[] addressColumnNames = new String[addressHierarchyFields.length() + 1];
+        for (int i = 0; i < addressHierarchyFields.length(); i++) {
+            addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
+        }
+        addressColumnNames[addressHierarchyFields.length()] = "patientId";
+        return addressColumnNames;
+    }
+
+    private void insertAttributeTypes(SQLiteDatabase db) throws JSONException, IOException {
+        JSONArray personAttributeTypeList = new JSONObject(getData(new URL("https://10.4.23.4:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
         for (int i = 0; i < personAttributeTypeList.length(); i++) {
             ContentValues values =new ContentValues();
             values.put(PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_TYPE_ID, String.valueOf(i));
@@ -177,6 +188,7 @@ public class WebAppInterface {
         String addressFieldName = null;
         if (params.has("address_field_name")) {
             addressFieldName = params.getString("address_field_name");
+            addressFieldName = addressFieldName.replaceAll("_", "");
         }
 
         String addressFieldValue = null;
@@ -198,8 +210,10 @@ public class WebAppInterface {
                             ", " + PatientDBContract.PATIENT.COLUMN_PATIENT_UUID +"" +
                             ", " + addressFieldName +" as addressFieldValue "  +
                             ", '{'" + " || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
-                            "  from " + PatientDBContract.PATIENT.TABLE_NAME + " p left outer join "
-                            + PatientDBContract.PATIENT_ATTRIBUTES.TABLE_NAME + " pa on p._id = pa.patientId" +
+                            "  from " + PatientDBContract.PATIENT.TABLE_NAME + " p " +
+                            " join " + PatientDBContract.PATIENT_ADDRESS.TABLE_NAME + " padd " +
+                            " on p._id = padd.patientId" +
+                            " left outer join " + PatientDBContract.PATIENT_ATTRIBUTES.TABLE_NAME + " pa on p._id = pa.patientId" +
                             " and pa." + PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_ATTRIBUTE_TYPE_ID + " in (" +
                             "select "+ PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_TYPE_ID + " from " + PatientDBContract.PATIENT_ATTRIBUTES_TYPES.TABLE_NAME +
                             " where " + PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_NAME + " in (" + attributeNames + "))" +
@@ -210,7 +224,7 @@ public class WebAppInterface {
         String appender = " WHERE ";
 
         if (addressFieldValue != null && !addressFieldValue.equals("")) {
-            sqlString += appender + "(p." + addressFieldName + " LIKE '%" + addressFieldValue + "%') ";
+            sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + addressFieldValue + "%') ";
             appender = " AND ";
         }
         if (!(customAttribute == null) && !customAttribute.equals("")) {
@@ -247,7 +261,7 @@ public class WebAppInterface {
             return json;
         }
 
-    private void insertPatientData(SQLiteDatabase db, JSONArray patients) throws JSONException {
+    private void insertPatientData(SQLiteDatabase db, JSONArray patients, String[] addressColumnNames) throws JSONException {
         for (int i = 0; i < patients.length(); i++) {
 
             ContentValues values = new ContentValues();
@@ -265,18 +279,34 @@ public class WebAppInterface {
             values.put(PatientDBContract.PATIENT.COLUMN_PATIENT_GENDER, person.getString("gender"));
             values.put(PatientDBContract.PATIENT.COLUMN_PATIENT_AGE, person.getString("age"));
             values.put(PatientDBContract.PATIENT.COLUMN_DATE_CREATED, patient.getJSONObject("auditInfo").getString("dateCreated"));
-            if(!person.getJSONObject("preferredAddress").isNull("address2"))
-                values.put(PatientDBContract.PATIENT.COLUMN_RURAL_WARD, person.getJSONObject("preferredAddress").getString("address2"));
             values.put(PatientDBContract.PATIENT.COLUMN_PATIENT_JSON, String.valueOf(patients.getJSONObject(i)));
             db.insert(PatientDBContract.PATIENT.TABLE_NAME, null, values);
 
+            Cursor d = db.rawQuery("SELECT " + PatientDBContract.PATIENT._ID + " FROM " + PatientDBContract.PATIENT.TABLE_NAME
+                    + " WHERE " + PatientDBContract.PATIENT.COLUMN_PATIENT_IDENTIFIER + " = '" + patientIdentifier + "' LIMIT 1", new String[]{});
+            d.moveToFirst();
+            int patientId = d.getInt(d.getColumnIndex(PatientDBContract.PATIENT._ID));
+            d.close();
 
             JSONArray attributes = person.getJSONArray("attributes");
-            insertAttributes(db, patientIdentifier, attributes);
+            insertAttributes(db, patientId, attributes);
+
+            JSONObject address = person.getJSONObject("preferredAddress");
+            insertAddress(db, address, addressColumnNames, patientId);
         }
     }
 
-    private void insertAttributes(SQLiteDatabase db, String patientIdentifier, JSONArray attributes) throws JSONException {
+    private void insertAddress(SQLiteDatabase db, JSONObject address, String[] addressColumnNames, int patientId) throws JSONException {
+        ContentValues values = new ContentValues();
+        for (String addressColumn : addressColumnNames) {
+            if(!address.isNull(addressColumn))
+                values.put(addressColumn, address.getString(addressColumn));
+        }
+        values.put(PatientDBContract.PATIENT_ADDRESS.COLUMN_PATIENT_ID, patientId);
+        db.insert(PatientDBContract.PATIENT_ADDRESS.TABLE_NAME, null, values);
+    }
+
+    private void insertAttributes(SQLiteDatabase db, int patientId, JSONArray attributes) throws JSONException {
         if (attributes != null && attributes.length() > 0) {
             for (int j = 0; j < attributes.length(); j++) {
                 ContentValues values = new ContentValues();
@@ -288,13 +318,11 @@ public class WebAppInterface {
                 } else
                     value = String.valueOf(object);
                 String attributeTypeName = personAttribute.getJSONObject("attributeType").getString("display");
+
                 Cursor c = db.rawQuery("SELECT " + PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_TYPE_ID + " FROM " + PatientDBContract.PATIENT_ATTRIBUTES_TYPES.TABLE_NAME
                                         + " WHERE " + PatientDBContract.PATIENT_ATTRIBUTES_TYPES.COLUMN_ATTRIBUTE_NAME + " = '" + attributeTypeName + "' LIMIT 1", new String[]{});
                 c.moveToFirst();
-                Cursor d = db.rawQuery("SELECT " + PatientDBContract.PATIENT._ID + " FROM " + PatientDBContract.PATIENT.TABLE_NAME
-                                        + " WHERE " + PatientDBContract.PATIENT.COLUMN_PATIENT_IDENTIFIER + " = '" + patientIdentifier + "' LIMIT 1", new String[]{});
-                d.moveToFirst();
-                int patientId = d.getInt(d.getColumnIndex(PatientDBContract.PATIENT._ID));
+
                 String attributeTypeId = c.getString(c.getColumnIndex(PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_ATTRIBUTE_TYPE_ID));
                 values.put(PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_ATTRIBUTE_TYPE_ID, attributeTypeId);
                 values.put(PatientDBContract.PATIENT_ATTRIBUTES.COLUMN_ATTRIBUTE_VALUE, value);

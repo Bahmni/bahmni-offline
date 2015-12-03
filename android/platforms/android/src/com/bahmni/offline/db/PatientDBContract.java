@@ -15,8 +15,7 @@ public final class PatientDBContract {
         public static final String COLUMN_PATIENT_GENDER = "gender";
         public static final String COLUMN_PATIENT_LAST_NAME = "familyName";
         public static final String COLUMN_DATE_CREATED = "dateCreated";
-        public static final String COLUMN_RURAL_WARD = "address2";
-        public static final String COLUMN_PATIENT_JSON = "patient_json";
+        public static final String COLUMN_PATIENT_JSON = "patientJson";
     }
 
     public static abstract class PATIENT_ATTRIBUTES_TYPES implements BaseColumns {
@@ -30,4 +29,10 @@ public final class PatientDBContract {
         public static final String COLUMN_ATTRIBUTE_VALUE = "attributeValue";
         public static final String COLUMN_PATIENT_ID = "patientId";
     }
-}
+
+    public static abstract class PATIENT_ADDRESS implements BaseColumns {
+        public static final String TABLE_NAME = "patient_address";
+        public static final String COLUMN_PATIENT_ID = "patientId";
+    }
+
+    }
