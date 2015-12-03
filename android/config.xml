@@ -7,7 +7,11 @@
   <author email="bahmni@thoughtworks.com" href="http://bahmni.org/">
       Bahmni
     </author>
+<<<<<<< HEAD
   <content src="..."/>
+=======
+  <content src="https://10.4.23.4:8082/bahmni/home/"/>
+>>>>>>> Abishek|Chetan | Registration search by attributes and implemented sqlcipher
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
