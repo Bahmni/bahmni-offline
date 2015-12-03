@@ -71,7 +71,7 @@ public class WebAppInterface {
 
 
     @JavascriptInterface
-    public void populateData() throws IOException, JSONException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public void populateData(String host) throws IOException, JSONException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("admin", "test".toCharArray());
@@ -81,8 +81,8 @@ public class WebAppInterface {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         mDBHelper.createTable(db, PatientDBContract.PATIENT.TABLE_NAME, patientColumnNames);
 
-        JSONArray patients = new JSONArray(getData(new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/patientprofile/all")));
-        JSONArray personAttributesList = new JSONObject(getData(new URL("https://10.4.20.224:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
+        JSONArray patients = new JSONArray(getData(new URL(host+"/openmrs/ws/rest/v1/patientprofile/all")));
+        JSONArray personAttributesList = new JSONObject(getData(new URL(host+"/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
 
         attributeColumnNames = new String[personAttributesList.length()];
 

@@ -7,7 +7,7 @@
   <author email="bahmni@thoughtworks.com" href="http://bahmni.org/">
       Bahmni
     </author>
-  <content src="https://10.4.20.224:8082/bahmni/home/"/>
+  <content src="..."/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
