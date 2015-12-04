@@ -82,16 +82,16 @@ public class WebAppInterface {
         mDBHelper.createTable(db, "patient_attribute_types", attributeTypeColumnNames);
         mDBHelper.createTable(db, "patient", patientColumnNames);
         mDBHelper.createTable(db, "patient_attributes", attributeColumnNames);
-        String[] addressColumnNames = getAddressColumns();
+        String[] addressColumnNames = getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
 
-        insertAttributeTypes(db);
+        insertAttributeTypes(host,db);
 
         JSONArray patients;
         int startIndex = 0;
         int pageSize = 1;
         do{
-            patients = new JSONObject(getData(new URL("https://10.4.23.4:8082/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
+            patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
             insertPatientData(db, patients, addressColumnNames);
             startIndex++;
         } while (patients.length() == pageSize);
@@ -106,8 +106,8 @@ public class WebAppInterface {
         db.execSQL("CREATE INDEX identifierIndex ON patient(identifier)");
     }
 
-    private String[] getAddressColumns() throws IOException, JSONException {
-        JSONArray addressHierarchyFields = new JSONArray(getData(new URL("https://10.4.23.4:8082/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
+    private String[] getAddressColumns(String host) throws IOException, JSONException {
+        JSONArray addressHierarchyFields = new JSONArray(getData(new URL(host + "/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
         String[] addressColumnNames = new String[addressHierarchyFields.length() + 1];
         for (int i = 0; i < addressHierarchyFields.length(); i++) {
             addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
@@ -116,8 +116,8 @@ public class WebAppInterface {
         return addressColumnNames;
     }
 
-    private void insertAttributeTypes(SQLiteDatabase db) throws JSONException, IOException {
-        JSONArray personAttributeTypeList = new JSONObject(getData(new URL("https://10.4.23.4:8082/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
+    private void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
+        JSONArray personAttributeTypeList = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
         for (int i = 0; i < personAttributeTypeList.length(); i++) {
             ContentValues values =new ContentValues();
             values.put("attributeTypeId", String.valueOf(i));
