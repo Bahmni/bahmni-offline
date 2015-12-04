@@ -1,9 +1,9 @@
 package com.bahmni.offline.db;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
@@ -13,10 +13,10 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_DELETE_PATIENTS =
-            "DROP TABLE IF EXISTS " + PatientDBContract.PATIENT.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + "patient";
 
     private static final String SQL_DELETE_PATIENT_ATTRIBUTES =
-            "DROP TABLE IF EXISTS " + PatientDBContract.PATIENT.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + "patient";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
