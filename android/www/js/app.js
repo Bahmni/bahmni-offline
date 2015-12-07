@@ -22,7 +22,7 @@ app.controller("hostController",function($scope){
   $scope.ipValue ='';
   $scope.submit = function(){
     console.log("coming",this.ipValue);
-        window.open('https://'+this.ipValue+':8082/bahmni/home/','_self')
+        window.open('https://'+this.ipValue+'/bahmni/home/','_self')
         localStorage.setItem('host', ipValue);
   };
 });

@@ -3,9 +3,9 @@ package com.bahmni.offline;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import com.bahmni.offline.db.DbHelper;
+import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,8 +56,8 @@ public class WebAppInterface {
             }
         });
 
-//        SQLiteDatabase.loadLibs(mContext);
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase(key);
 
         String[] patientColumnNames = {
                 "identifier",
@@ -129,7 +129,7 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public String getPatient(String uuid) {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
         Cursor c = db.rawQuery("SELECT * from patient" +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         c.moveToFirst();
@@ -156,87 +156,10 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String search(String request) throws JSONException, IOException {
-        JSONObject paramsJson = new JSONObject(request);
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        JSONObject params = paramsJson.getJSONObject("params");
-        String[] nameParts = new String[]{};
+    public String search(String sqlString) throws JSONException, IOException {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
 
-        if (params.has("q")) {
-            String name = params.getString("q");
-            nameParts = name.split(" ");
-        }
-        String identifier = null;
-        if (params.has("identifier")) {
-            identifier = params.getString("identifier");
-        }
-        String customAttribute = "";
-        if (params.has("custom_attribute")) {
-            customAttribute = params.getString("custom_attribute");
-        }
-        String offset = params.getString("startIndex");
-
-        String attributeNames = "";
-        if (params.has("patientAttributes")) {
-            JSONArray attributesToSearch = params.getJSONArray("patientAttributes");
-            for (int i = 0; i < attributesToSearch.length(); i++) {
-                if(i == 0) {
-                    attributeNames = "'" + attributesToSearch.getString(i) ;
-                }
-                else
-                    attributeNames += "','" + attributesToSearch.getString(i);
-            }
-            attributeNames += "'";
-        }
-
-        String addressFieldName = null;
-        if (params.has("address_field_name")) {
-            addressFieldName = params.getString("address_field_name");
-            addressFieldName = addressFieldName.replaceAll("_", "");
-        }
-
-        String addressFieldValue = null;
-        if (params.has("address_field_value")) {
-            addressFieldValue = params.getString("address_field_value");
-        }
-
-
-
-        Cursor c;
-
-        String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, age, gender, uuid, " + addressFieldName +" as addressFieldValue "  +
-                            ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
-                            "  from patient p " +
-                            " join patient_address padd " +
-                            " on p._id = padd.patientId" +
-                            " left outer join patient_attributes pa on p._id = pa.patientId" +
-                            " and pa.attributeTypeId in (" +
-                            "select "+ "attributeTypeId from patient_attribute_types" +
-                            " where attributeName in (" + attributeNames + "))" +
-                            " left outer join "+ "patient_attributes pa1 on " +
-                            " pa1.patientId = p._id" +
-                            " left outer join patient_attribute_types" +
-                            " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ")";
-        String appender = " WHERE ";
-
-        if (addressFieldValue != null && !addressFieldValue.equals("")) {
-            sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + addressFieldValue + "%') ";
-            appender = " AND ";
-        }
-        if (!(customAttribute == null) && !customAttribute.equals("")) {
-            sqlString += appender + "pa.attributeValue LIKE '%" + customAttribute + "%'";
-            appender = " AND ";
-
-        }
-        if (identifier != null) {
-            sqlString += appender + " ( p.identifier = '" + identifier + "')";
-            appender = " AND ";
-        }
-        if(nameParts.length >= 1){
-            sqlString += appender + getNameSearchCondition(nameParts);
-        }
-        sqlString += " GROUP BY identifier ORDER BY dateCreated LIMIT 50 OFFSET " + offset;
-        c = db.rawQuery(sqlString, new String[]{});
+        Cursor c = db.rawQuery(sqlString, new String[]{});
         JSONArray json = constructResponse(c);
 
         return String.valueOf(new JSONObject().put("pageOfResults", json));
