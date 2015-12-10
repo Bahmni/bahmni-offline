@@ -19,5 +19,5 @@ To run android app
 10. ionic platform add android
 11. git checkout .
 12. ionic build android
-13. In Android studio File -> New -> Project existing sources (bahmni-offline/android/platforms/android)
+13. In Intellij File -> New -> Project existing sources (bahmni-offline/android/platforms/android)
 14. to deploy the app shift + f10
