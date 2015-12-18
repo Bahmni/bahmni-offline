@@ -12,7 +12,7 @@ var handleImplementationURL = function(data) {
     else {
         enterButton.addEventListener('click', function () {
             hideImplementationInputs();
-            var source = "https://" +  document.getElementById('ipValue').value + "/bahmni/home/#/device/chrome-app";
+            var source = "https://" +  document.getElementById('ipValue').value + "/bahmni/#/device/chrome-app";
             document.querySelector('webview').setAttribute('src', source);
             setInDB({'implementationURL': source});
         });

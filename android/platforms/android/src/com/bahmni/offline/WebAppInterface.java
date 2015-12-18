@@ -1,8 +1,10 @@
 package com.bahmni.offline;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.widget.Toast;
 import com.bahmni.offline.db.DbHelper;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -21,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class WebAppInterface {
     Context mContext;
@@ -87,16 +90,13 @@ public class WebAppInterface {
 
         insertAttributeTypes(host,db);
 
-        JSONArray patients;
         int startIndex = 0;
-        int pageSize = 1;
-        do{
-            patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
-            insertPatientData(db, patients, addressColumnNames);
-            startIndex++;
-        } while (patients.length() == pageSize);
-
         createIndices(db);
+        try{
+            new DownloadPatientDataTask(db, host, addressColumnNames, startIndex).execute();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void createIndices(SQLiteDatabase db) {
@@ -156,12 +156,8 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String search(String sqlString) throws JSONException, IOException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
-
-        Cursor c = db.rawQuery(sqlString, new String[]{});
-        JSONArray json = constructResponse(c);
-
+    public String search(String sqlString) throws JSONException, IOException, ExecutionException, InterruptedException {
+        JSONArray json = new SearchTask().execute(sqlString).get();
         return String.valueOf(new JSONObject().put("pageOfResults", json));
     }
 
@@ -210,8 +206,10 @@ public class WebAppInterface {
             JSONArray attributes = person.getJSONArray("attributes");
             insertAttributes(db, patientId, attributes);
 
-            JSONObject address = person.getJSONObject("preferredAddress");
-            insertAddress(db, address, addressColumnNames, patientId);
+            if (!person.isNull("preferredAddress")){
+                JSONObject address = person.getJSONObject("preferredAddress");
+                insertAddress(db, address, addressColumnNames, patientId);
+            }
         }
     }
 
@@ -278,6 +276,71 @@ public class WebAppInterface {
         con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this
         InputStream inputStream = con.getInputStream();
         return convertStreamToString(inputStream);
+    }
+
+    private class DownloadPatientDataTask extends AsyncTask<String, Integer, Integer> {
+
+        private SQLiteDatabase db;
+        private String host;
+        private String[] addressColumnNames;
+        private int startIndex;
+        ProgressDialog progress;
+
+        public DownloadPatientDataTask(SQLiteDatabase db, String host, String[] addressColumnNames, int startIndex) {
+            this.db = db;
+            this.host = host;
+            this.addressColumnNames = addressColumnNames;
+            this.startIndex = startIndex;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = new ProgressDialog(mContext);
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setTitle("Syncing Data");
+            progress.show();
+        }
+
+        @Override
+        protected Integer doInBackground(String... params) {
+            JSONArray patients = null;
+            int pageSize = 1;
+            do {
+                try {
+                    patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
+                    insertPatientData(db, patients, addressColumnNames);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                startIndex++;
+            } while (patients.length() == pageSize);
+
+            return startIndex;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            progress.dismiss();
+        }
+    }
+    private class SearchTask extends AsyncTask<String, Integer, JSONArray> {
+
+        @Override
+        protected JSONArray doInBackground(String... params) {
+            JSONArray json = null;
+            SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+
+            Cursor c = db.rawQuery(params[0], new String[]{});
+            try {
+                 json = constructResponse(c);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return json;
+        }
+
     }
 
 
