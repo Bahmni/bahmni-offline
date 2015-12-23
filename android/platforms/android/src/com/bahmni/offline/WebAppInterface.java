@@ -193,7 +193,7 @@ public class WebAppInterface {
             values.put("familyName", personName.getString("familyName"));
             values.put("gender", person.getString("gender"));
             values.put("age", person.getString("age"));
-            values.put("dateCreated", patient.getJSONObject("auditInfo").getString("dateCreated"));
+            values.put("dateCreated", person.getJSONObject("auditInfo").getString("dateCreated"));
             values.put("patientJson", String.valueOf(patients.getJSONObject(i)));
             db.insert("patient", null, values);
 
