@@ -18,7 +18,8 @@
         "unlimitedStorage",
         "notifications",
         "webview",
-        "storage"
+        "storage",
+        "background"
     ],
     "minimum_chrome_version": "28"
 }
