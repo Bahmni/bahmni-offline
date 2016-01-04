@@ -11,6 +11,7 @@ To run android app
 6. Add the following sdk packages (http://developer.android.com/sdk/installing/adding-packages.html)
     latest sdk tools
     latest platform tools
+    latest build tools
     android 5.1.1(API 22) platform
     android 4.0.3(API 15) platform
 7. Checkout out repo
