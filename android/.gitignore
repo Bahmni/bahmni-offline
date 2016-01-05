@@ -15,6 +15,7 @@ platforms/android/*
 
 platforms/android/src/*
 !platforms/android/src/com/
+!platforms/android/src/org/
 
 platforms/android/res/*
 !platforms/android/res/layout

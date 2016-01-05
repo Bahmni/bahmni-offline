@@ -1,4 +1,4 @@
-package com.bahmni.offline;
+package org.bahmni.offline;
 
 import android.os.Bundle;
 

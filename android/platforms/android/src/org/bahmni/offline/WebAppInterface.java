@@ -1,4 +1,4 @@
-package com.bahmni.offline;
+package org.bahmni.offline;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -6,7 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.widget.Toast;
-import com.bahmni.offline.db.DbHelper;
+import org.bahmni.offline.db.DbHelper;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
