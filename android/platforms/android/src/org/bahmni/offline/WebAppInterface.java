@@ -6,8 +6,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.widget.Toast;
-import org.bahmni.offline.db.DbHelper;
+import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.db.DbHelper;
+import org.joda.time.DateTime;
+import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +26,7 @@ import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class WebAppInterface {
@@ -33,6 +37,7 @@ public class WebAppInterface {
     WebAppInterface(Context c) {
         mContext = c;
         mDBHelper = new DbHelper(c);
+        JodaTimeAndroid.init(c);
     }
 
     HostnameVerifier hostnameVerifier = new HostnameVerifier() {
@@ -69,12 +74,15 @@ public class WebAppInterface {
                 "middleName",
                 "familyName",
                 "gender",
-                "age",
+                "birthdate",
                 "dateCreated",
-                "patientJson"};
+                "patientJson",
+                "relationships"};
         String[] attributeTypeColumnNames = {
                 "attributeTypeId",
-                "attributeName"
+                "uuid",
+                "attributeName",
+                "format"
         };
         String[] attributeColumnNames = {
                 "attributeTypeId",
@@ -88,13 +96,12 @@ public class WebAppInterface {
         String[] addressColumnNames = getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
 
-        insertAttributeTypes(host,db);
+        insertAttributeTypes(host, db);
 
-        int startIndex = 0;
         createIndices(db);
-        try{
-            new DownloadPatientDataTask(db, host, addressColumnNames, startIndex).execute();
-        } catch (Exception e){
+        try {
+            new DownloadPatientDataTask(db, host, addressColumnNames, 0).execute();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -117,29 +124,38 @@ public class WebAppInterface {
     }
 
     private void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
-        JSONArray personAttributeTypeList = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name)"))).getJSONArray("results");
+        JSONArray personAttributeTypeList = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name,uuid,format)"))).getJSONArray("results");
         for (int i = 0; i < personAttributeTypeList.length(); i++) {
-            ContentValues values =new ContentValues();
+            ContentValues values = new ContentValues();
             values.put("attributeTypeId", String.valueOf(i));
+            values.put("uuid", personAttributeTypeList.getJSONObject(i).getString("uuid"));
             values.put("attributeName", personAttributeTypeList.getJSONObject(i).getString("name"));
+            values.put("format", personAttributeTypeList.getJSONObject(i).getString("format"));
             db.insert("patient_attribute_types", null, values);
         }
     }
 
 
     @JavascriptInterface
-    public String getPatient(String uuid) {
+    public String getPatient(String uuid) throws JSONException {
+        SQLiteDatabase.loadLibs(mContext);
         SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
         Cursor c = db.rawQuery("SELECT * from patient" +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         c.moveToFirst();
-        return c.getString(c.getColumnIndex("patientJson"));
+        JSONObject result = new JSONObject();
+        result.put("patient",new JSONObject(c.getString(c.getColumnIndex("patientJson"))));
+
+        String relationships = c.getString(c.getColumnIndex("relationships"));
+        if(relationships != null)
+            result.put("relationships",new JSONArray(relationships));
+        return String.valueOf(result);
     }
 
     private String getNameSearchCondition(String[] nameParts) {
         final String BY_NAME_PARTS = " (coalesce(givenName" +
-                                        ", '') || coalesce(middleName" +
-                                        ", '') || coalesce(familyName, '')) like ";
+                ", '') || coalesce(middleName" +
+                ", '') || coalesce(familyName, '')) like ";
         if (nameParts.length == 0)
             return "";
         else {
@@ -161,90 +177,201 @@ public class WebAppInterface {
         return String.valueOf(new JSONObject().put("pageOfResults", json));
     }
 
-        private JSONArray constructResponse(Cursor c) throws JSONException {
-            c.moveToFirst();
-            String[] columnNames = c.getColumnNames();
-            JSONArray json = new JSONArray();
-            while ((!c.isAfterLast())) {
-                JSONObject obj = new JSONObject();
-                for (int i = 0; i < columnNames.length; i++) {
+    @JavascriptInterface
+    public void deletePatientData(String patientIdentifier){
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+        Cursor c = db.rawQuery("SELECT _id from patient" +
+                " WHERE identifier = '" + patientIdentifier + "' limit 1 ", new String[]{});
+        c.moveToFirst();
+        int patientId = c.getInt(c.getColumnIndex("_id"));
+
+        db.beginTransaction();
+
+        db.rawExecSQL("DELETE FROM patient_attributes WHERE patientId = '" + patientId + "'");
+        db.rawExecSQL("DELETE FROM patient_address WHERE patientId = '" + patientId + "'");
+        db.rawExecSQL("DELETE FROM patient WHERE _id = '" + patientId + "'");
+
+        db.setTransactionSuccessful();
+
+        db.endTransaction();
+    }
+
+    @JavascriptInterface
+    public String getPatientByIdentifier(String identifier) throws JSONException {
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+        Cursor c = db.rawQuery("SELECT p.identifier, p.givenName, p.familyName, p.gender, p.birthdate, p.uuid from patient p where p.identifier LIKE '%" + identifier + "%' LIMIT 1", new String[]{});
+        c.moveToFirst();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("identifier", c.getString(c.getColumnIndex("identifier")));
+        jsonObject.put("givenName", c.getString(c.getColumnIndex("givenName")));
+        jsonObject.put("familyName", c.getString(c.getColumnIndex("familyName")));
+        jsonObject.put("gender", c.getString(c.getColumnIndex("gender")));
+        jsonObject.put("birthdate", c.getString(c.getColumnIndex("birthdate")));
+        jsonObject.put("uuid", c.getString(c.getColumnIndex("uuid")));
+        JSONObject result = new JSONObject();
+        result.put("data", new JSONObject().put("pageOfResults", new JSONArray().put(jsonObject)));
+        return String.valueOf(result);
+    }
+
+    private JSONArray constructResponse(Cursor c) throws JSONException {
+        c.moveToFirst();
+        String[] columnNames = c.getColumnNames();
+        JSONArray json = new JSONArray();
+        while ((!c.isAfterLast())) {
+            JSONObject obj = new JSONObject();
+            for (int i = 0; i < columnNames.length; i++) {
+                if(columnNames[i].equals("birthdate")){
+                    obj.put("age", Years.yearsBetween(DateTime.parse(c.getString(i)), new DateTime()).getYears());
+                }
+                else{
                     obj.put(columnNames[i], c.getString(i));
                 }
-                json.put(obj);
-                c.moveToNext();
             }
-            return json;
+            json.put(obj);
+            c.moveToNext();
+        }
+        return json;
+    }
+
+    private void parseAttributeValues(JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
+        for (int i = 0; i < attributes.length(); i++) {
+            JSONObject attribute = attributes.getJSONObject(i);
+            if(attribute.isNull("voided") || (!attribute.isNull("voided") && !attribute.getBoolean("voided"))){
+                String format = getFormat(attributeTypeMap, attribute);
+                if ("java.lang.Integer".equals(format)) {
+                    attribute.put("value", Integer.parseInt(attribute.getString("value")));
+                }
+                if ("java.lang.Float".equals(format)) {
+                    attribute.put("value", Float.parseFloat(attribute.getString("value")));
+                } else if ("java.lang.Boolean".equals(format)) {
+                    attribute.put("value", attribute.getString("value").equals("true"));
+
+                } else if ("org.openmrs.Concept".equals(format)) {
+                    String display = attribute.getString("value");
+                    JSONObject value = new JSONObject();
+                    value.put("display", display);
+                    value.put("uuid", attribute.getString("hydratedObject"));
+                    attribute.put("value", value);
+                }
+            }
+        }
+    }
+
+    private String getFormat(ArrayList<JSONObject> attributeTypeMap, JSONObject attribute) throws JSONException {
+        for (JSONObject attributeEntry : attributeTypeMap) {
+            if(attributeEntry.getString("uuid").equals(attribute.getJSONObject("attributeType").getString("uuid"))){
+                return attributeEntry.getString("format");
+            }
+        }
+        return null;
+    }
+
+    private void insertPatientData(SQLiteDatabase db, String patientObject, String[] addressColumnNames, String requestType) throws JSONException {
+        JSONObject patientData = new JSONObject(patientObject);
+        ContentValues values = new ContentValues();
+        JSONObject patient = patientData.getJSONObject("patient");
+        JSONObject person = patient.getJSONObject("person");
+        JSONObject personName = person.getJSONObject("preferredName");
+        String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
+        JSONArray attributes = person.getJSONArray("attributes");
+
+        JSONArray relationships = patientData.getJSONArray("relationships");
+        if(relationships.length() > 0){
+            for (int i = 0; i < relationships.length(); i++) {
+                JSONObject relationship = relationships.getJSONObject(i);
+                JSONObject value = new JSONObject();
+                value.put("display", personName.getString("givenName") + personName.getString("familyName"));
+                value.put("uuid", patient.getString("uuid"));
+                relationship.put("personA", value);
+            }
         }
 
-    private void insertPatientData(SQLiteDatabase db, JSONArray patients, String[] addressColumnNames) throws JSONException {
-        for (int i = 0; i < patients.length(); i++) {
 
-            ContentValues values = new ContentValues();
-            JSONObject patient = new JSONObject(patients.getJSONObject(i).getString("patient"));
-            JSONObject person = new JSONObject(patient.getString("person"));
-            JSONObject personName = new JSONObject(person.getString("preferredName"));
-            String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
+        Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
+        d.moveToFirst();
+        ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
+        while(!d.isAfterLast()){
+            JSONObject attributeEntry = new JSONObject();
+            attributeEntry.put("attributeTypeId", d.getInt(d.getColumnIndex("attributeTypeId")));
+            attributeEntry.put("uuid", d.getString(d.getColumnIndex("uuid")));
+            attributeEntry.put("attributeName", d.getString(d.getColumnIndex("attributeName")));
+            attributeEntry.put("format", d.getString(d.getColumnIndex("format")));
+            attributeTypeMap.add(attributeEntry);
+            d.moveToNext();
+        }
+        d.close();
 
-            values.put("identifier", patientIdentifier);
-            values.put("uuid", patient.getString("uuid"));
-            values.put("givenName", personName.getString("givenName"));
-            if (!personName.isNull("middleName"))
-                values.put("middleName", personName.getString("middleName"));
-            values.put("familyName", personName.getString("familyName"));
-            values.put("gender", person.getString("gender"));
-            values.put("age", person.getString("age"));
-            values.put("dateCreated", person.getJSONObject("auditInfo").getString("dateCreated"));
-            values.put("patientJson", String.valueOf(patients.getJSONObject(i)));
-            db.insert("patient", null, values);
+        if(requestType.equals("POST")){
+            parseAttributeValues(attributes, attributeTypeMap);
+        }
 
-            Cursor d = db.rawQuery("SELECT _id FROM patient"
-                    + " WHERE identifier = '" + patientIdentifier + "' LIMIT 1", new String[]{});
-            d.moveToFirst();
-            int patientId = d.getInt(d.getColumnIndex("_id"));
-            d.close();
+        values.put("identifier", patientIdentifier);
+        values.put("uuid", patient.getString("uuid"));
+        values.put("givenName", personName.getString("givenName"));
+        if (!personName.isNull("middleName"))
+            values.put("middleName", personName.getString("middleName"));
+        values.put("familyName", personName.getString("familyName"));
+        values.put("gender", person.getString("gender"));
+        values.put("birthdate", person.getString("birthdate"));
+        values.put("dateCreated", person.getJSONObject("auditInfo").getString("dateCreated"));
+        values.put("patientJson", String.valueOf(patient));
+        if(!patientData.isNull("relationships"))
+            values.put("relationships", String.valueOf(patientData.getJSONArray("relationships")));
+        db.insert("patient", null, values);
 
-            JSONArray attributes = person.getJSONArray("attributes");
-            insertAttributes(db, patientId, attributes);
+        d = db.rawQuery("SELECT _id FROM patient"
+                + " WHERE identifier = '" + patientIdentifier + "' LIMIT 1", new String[]{});
+        d.moveToFirst();
+        int patientId = d.getInt(d.getColumnIndex("_id"));
+        d.close();
 
-            if (!person.isNull("preferredAddress")){
-                JSONObject address = person.getJSONObject("preferredAddress");
+
+        insertAttributes(db, patientId, attributes, attributeTypeMap);
+
+        if (!person.isNull("preferredAddress")) {
+            JSONObject address = person.getJSONObject("preferredAddress");
                 insertAddress(db, address, addressColumnNames, patientId);
-            }
         }
     }
 
     private void insertAddress(SQLiteDatabase db, JSONObject address, String[] addressColumnNames, int patientId) throws JSONException {
         ContentValues values = new ContentValues();
         for (String addressColumn : addressColumnNames) {
-            if(!address.isNull(addressColumn))
+            if (!address.isNull(addressColumn))
                 values.put(addressColumn, address.getString(addressColumn));
         }
         values.put("patientId", patientId);
         db.insert("patient_address", null, values);
     }
 
-    private void insertAttributes(SQLiteDatabase db, int patientId, JSONArray attributes) throws JSONException {
+    private void insertAttributes(SQLiteDatabase db, int patientId, JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
         if (attributes != null && attributes.length() > 0) {
             for (int j = 0; j < attributes.length(); j++) {
                 ContentValues values = new ContentValues();
                 JSONObject personAttribute = attributes.getJSONObject(j);
-                Object object = personAttribute.get("value");
-                String value;
-                if (object instanceof JSONObject) {
-                    value = ((JSONObject) object).getString("display");
-                } else
-                    value = String.valueOf(object);
-                String attributeTypeName = personAttribute.getJSONObject("attributeType").getString("display");
+                if (personAttribute.isNull("voided") || (!personAttribute.isNull("voided") && !personAttribute.getBoolean("voided"))) {
+                    Object object = personAttribute.get("value");
+                    String value;
+                    if (object instanceof JSONObject) {
+                        value = ((JSONObject) object).getString("display");
+                    } else
+                        value = String.valueOf(object);
 
-                Cursor c = db.rawQuery("SELECT attributeTypeId FROM patient_attribute_types"
-                                        + " WHERE attributeName = '" + attributeTypeName + "' LIMIT 1", new String[]{});
-                c.moveToFirst();
+                    String attributeTypeId = null;
 
-                String attributeTypeId = c.getString(c.getColumnIndex("attributeTypeId"));
-                values.put("attributeTypeId", attributeTypeId);
-                values.put("attributeValue", value);
-                values.put("patientId", patientId);
-                db.insert("patient_attributes", null, values);
+                    for (JSONObject attributeEntry : attributeTypeMap) {
+                        if(attributeEntry.getString("uuid").equals(personAttribute.getJSONObject("attributeType").getString("uuid"))){
+                            attributeTypeId = attributeEntry.getString("attributeTypeId");
+                        }
+                    }
+
+                    values.put("attributeTypeId", attributeTypeId);
+                    values.put("attributeValue", value);
+                    values.put("patientId", patientId);
+                    db.insert("patient_attributes", null, values);
+                }
             }
         }
     }
@@ -278,6 +405,19 @@ public class WebAppInterface {
         return convertStreamToString(inputStream);
     }
 
+    @JavascriptInterface
+    public String createPatient(String request, String host) throws JSONException, IOException, ExecutionException, InterruptedException {
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+
+
+        insertPatientData(db, request, getAddressColumns(host), "POST");
+
+        String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
+        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatient(uuid))));
+    }
+
+
     private class DownloadPatientDataTask extends AsyncTask<String, Integer, Integer> {
 
         private SQLiteDatabase db;
@@ -309,7 +449,7 @@ public class WebAppInterface {
             do {
                 try {
                     patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
-                    insertPatientData(db, patients, addressColumnNames);
+                    insertPatientData(db, String.valueOf(patients.get(0)), addressColumnNames, "GET");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -325,16 +465,19 @@ public class WebAppInterface {
             progress.dismiss();
         }
     }
+
     private class SearchTask extends AsyncTask<String, Integer, JSONArray> {
 
         @Override
         protected JSONArray doInBackground(String... params) {
             JSONArray json = null;
+
+            SQLiteDatabase.loadLibs(mContext);
             SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
 
             Cursor c = db.rawQuery(params[0], new String[]{});
             try {
-                 json = constructResponse(c);
+                json = constructResponse(c);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
