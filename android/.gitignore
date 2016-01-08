@@ -8,6 +8,9 @@ platforms/*
 
 platforms/android/*
 !platforms/android/src/
+!platforms/android/assets/
+platforms/android/assets/www/*
+platforms/android/assets/_where-is-www.txt
 !platforms/android/res/
 !platforms/android/libs/
 !platforms/android/build.gradle
