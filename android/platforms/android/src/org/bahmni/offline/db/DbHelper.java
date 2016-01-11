@@ -8,6 +8,7 @@ public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
     private static final String TEXT_TYPE = " TEXT";
+    private static final String TEXT_INTEGER = " INTEGER";
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_DELETE_PATIENTS =
@@ -38,6 +39,13 @@ public class DbHelper extends SQLiteOpenHelper {
         for (String columnName : columnNames) {
             createTableSql += COMMA_SEP + columnName + TEXT_TYPE;
         }
+        createTableSql += ")";
+        db.execSQL(createTableSql);
+    }
+
+    public void createIdgenTable(SQLiteDatabase db, String tableName, String columnName) {
+        String createTableSql = "CREATE TABLE " + tableName + " (" + "_id" + " INTEGER PRIMARY KEY";
+        createTableSql += COMMA_SEP + columnName + TEXT_INTEGER;
         createTableSql += ")";
         db.execSQL(createTableSql);
     }

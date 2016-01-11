@@ -56,7 +56,6 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-
     public void populateData(String host) throws IOException, JSONException {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -95,46 +94,16 @@ public class WebAppInterface {
         mDBHelper.createTable(db, "patient_attributes", attributeColumnNames);
         String[] addressColumnNames = getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
-
-        insertAttributeTypes(host, db);
+        mDBHelper.createIdgenTable(db, "idgen", "identifier");
 
         createIndices(db);
+
         try {
             new DownloadPatientDataTask(db, host, addressColumnNames, 0).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void createIndices(SQLiteDatabase db) {
-        db.execSQL("CREATE INDEX givenNameIndex ON patient(givenName)");
-        db.execSQL("CREATE INDEX middleNameIndex ON patient(middleName)");
-        db.execSQL("CREATE INDEX familyNameIndex ON patient(familyName)");
-        db.execSQL("CREATE INDEX identifierIndex ON patient(identifier)");
-    }
-
-    private String[] getAddressColumns(String host) throws IOException, JSONException {
-        JSONArray addressHierarchyFields = new JSONArray(getData(new URL(host + "/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
-        String[] addressColumnNames = new String[addressHierarchyFields.length() + 1];
-        for (int i = 0; i < addressHierarchyFields.length(); i++) {
-            addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
-        }
-        addressColumnNames[addressHierarchyFields.length()] = "patientId";
-        return addressColumnNames;
-    }
-
-    private void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
-        JSONArray personAttributeTypeList = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name,uuid,format)"))).getJSONArray("results");
-        for (int i = 0; i < personAttributeTypeList.length(); i++) {
-            ContentValues values = new ContentValues();
-            values.put("attributeTypeId", String.valueOf(i));
-            values.put("uuid", personAttributeTypeList.getJSONObject(i).getString("uuid"));
-            values.put("attributeName", personAttributeTypeList.getJSONObject(i).getString("name"));
-            values.put("format", personAttributeTypeList.getJSONObject(i).getString("format"));
-            db.insert("patient_attribute_types", null, values);
-        }
-    }
-
 
     @JavascriptInterface
     public String getPatient(String uuid) throws JSONException {
@@ -144,41 +113,22 @@ public class WebAppInterface {
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         c.moveToFirst();
         JSONObject result = new JSONObject();
-        result.put("patient",new JSONObject(c.getString(c.getColumnIndex("patientJson"))));
+        result.put("patient", new JSONObject(c.getString(c.getColumnIndex("patientJson"))));
 
         String relationships = c.getString(c.getColumnIndex("relationships"));
-        if(relationships != null)
-            result.put("relationships",new JSONArray(relationships));
+        if (relationships != null)
+            result.put("relationships", new JSONArray(relationships));
         return String.valueOf(result);
-    }
-
-    private String getNameSearchCondition(String[] nameParts) {
-        final String BY_NAME_PARTS = " (coalesce(givenName" +
-                ", '') || coalesce(middleName" +
-                ", '') || coalesce(familyName, '')) like ";
-        if (nameParts.length == 0)
-            return "";
-        else {
-            String queryByNameParts = "";
-            for (String part : nameParts) {
-                if (!queryByNameParts.equals("")) {
-                    queryByNameParts += " and " + BY_NAME_PARTS + " '%" + part + "%'";
-                } else {
-                    queryByNameParts += BY_NAME_PARTS + " '%" + part + "%'";
-                }
-            }
-            return queryByNameParts;
-        }
     }
 
     @JavascriptInterface
     public String search(String sqlString) throws JSONException, IOException, ExecutionException, InterruptedException {
-        JSONArray json = new SearchTask().execute(sqlString).get();
+        JSONArray json = new SearchTask().execute(generateQuery(sqlString)).get();
         return String.valueOf(new JSONObject().put("pageOfResults", json));
     }
 
     @JavascriptInterface
-    public void deletePatientData(String patientIdentifier){
+    public void deletePatientData(String patientIdentifier) {
         SQLiteDatabase.loadLibs(mContext);
         SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
         Cursor c = db.rawQuery("SELECT _id from patient" +
@@ -215,6 +165,71 @@ public class WebAppInterface {
         return String.valueOf(result);
     }
 
+    @JavascriptInterface
+    public String createPatient(String request, String host) throws JSONException, IOException, ExecutionException, InterruptedException {
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+
+        insertPatientData(db, request, getAddressColumns(host), "POST");
+
+        String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
+        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatient(uuid))));
+    }
+
+    @JavascriptInterface
+    public String generateOfflineIdentifier() throws JSONException {
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+
+        Cursor c = db.rawQuery("SELECT * from idgen limit 1 ", new String[]{});
+        c.moveToFirst();
+        JSONObject result = new JSONObject();
+        int _id = 1;
+        int identifier = 1;
+
+        if (c.getCount() > 0) {
+            _id = c.getInt(c.getColumnIndex("_id"));
+            identifier = c.getInt(c.getColumnIndex("identifier"));
+        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("_id", _id);
+        contentValues.put("identifier", ++identifier);
+        db.insertWithOnConflict("idgen", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+
+        result.put("data", "TMP-" + identifier);
+        return String.valueOf(result);
+    }
+
+
+    private void createIndices(SQLiteDatabase db) {
+        db.execSQL("CREATE INDEX givenNameIndex ON patient(givenName)");
+        db.execSQL("CREATE INDEX middleNameIndex ON patient(middleName)");
+        db.execSQL("CREATE INDEX familyNameIndex ON patient(familyName)");
+        db.execSQL("CREATE INDEX identifierIndex ON patient(identifier)");
+    }
+
+    private String[] getAddressColumns(String host) throws IOException, JSONException {
+        JSONArray addressHierarchyFields = new JSONArray(getData(new URL(host + "/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
+        String[] addressColumnNames = new String[addressHierarchyFields.length() + 1];
+        for (int i = 0; i < addressHierarchyFields.length(); i++) {
+            addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
+        }
+        addressColumnNames[addressHierarchyFields.length()] = "patientId";
+        return addressColumnNames;
+    }
+
+    private void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
+        JSONArray personAttributeTypeList = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name,uuid,format)"))).getJSONArray("results");
+        for (int i = 0; i < personAttributeTypeList.length(); i++) {
+            ContentValues values = new ContentValues();
+            values.put("attributeTypeId", String.valueOf(i));
+            values.put("uuid", personAttributeTypeList.getJSONObject(i).getString("uuid"));
+            values.put("attributeName", personAttributeTypeList.getJSONObject(i).getString("name"));
+            values.put("format", personAttributeTypeList.getJSONObject(i).getString("format"));
+            db.insert("patient_attribute_types", null, values);
+        }
+    }
+
     private JSONArray constructResponse(Cursor c) throws JSONException {
         c.moveToFirst();
         String[] columnNames = c.getColumnNames();
@@ -222,10 +237,9 @@ public class WebAppInterface {
         while ((!c.isAfterLast())) {
             JSONObject obj = new JSONObject();
             for (int i = 0; i < columnNames.length; i++) {
-                if(columnNames[i].equals("birthdate")){
+                if (columnNames[i].equals("birthdate")) {
                     obj.put("age", Years.yearsBetween(DateTime.parse(c.getString(i)), new DateTime()).getYears());
-                }
-                else{
+                } else {
                     obj.put(columnNames[i], c.getString(i));
                 }
             }
@@ -238,7 +252,7 @@ public class WebAppInterface {
     private void parseAttributeValues(JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
         for (int i = 0; i < attributes.length(); i++) {
             JSONObject attribute = attributes.getJSONObject(i);
-            if(attribute.isNull("voided") || (!attribute.isNull("voided") && !attribute.getBoolean("voided"))){
+            if (attribute.isNull("voided") || (!attribute.isNull("voided") && !attribute.getBoolean("voided"))) {
                 String format = getFormat(attributeTypeMap, attribute);
                 if ("java.lang.Integer".equals(format)) {
                     attribute.put("value", Integer.parseInt(attribute.getString("value")));
@@ -261,7 +275,7 @@ public class WebAppInterface {
 
     private String getFormat(ArrayList<JSONObject> attributeTypeMap, JSONObject attribute) throws JSONException {
         for (JSONObject attributeEntry : attributeTypeMap) {
-            if(attributeEntry.getString("uuid").equals(attribute.getJSONObject("attributeType").getString("uuid"))){
+            if (attributeEntry.getString("uuid").equals(attribute.getJSONObject("attributeType").getString("uuid"))) {
                 return attributeEntry.getString("format");
             }
         }
@@ -278,7 +292,7 @@ public class WebAppInterface {
         JSONArray attributes = person.getJSONArray("attributes");
 
         JSONArray relationships = patientData.getJSONArray("relationships");
-        if(relationships.length() > 0){
+        if (relationships.length() > 0) {
             for (int i = 0; i < relationships.length(); i++) {
                 JSONObject relationship = relationships.getJSONObject(i);
                 JSONObject value = new JSONObject();
@@ -292,7 +306,7 @@ public class WebAppInterface {
         Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
         d.moveToFirst();
         ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
-        while(!d.isAfterLast()){
+        while (!d.isAfterLast()) {
             JSONObject attributeEntry = new JSONObject();
             attributeEntry.put("attributeTypeId", d.getInt(d.getColumnIndex("attributeTypeId")));
             attributeEntry.put("uuid", d.getString(d.getColumnIndex("uuid")));
@@ -303,7 +317,7 @@ public class WebAppInterface {
         }
         d.close();
 
-        if(requestType.equals("POST")){
+        if (requestType.equals("POST")) {
             parseAttributeValues(attributes, attributeTypeMap);
         }
 
@@ -317,7 +331,7 @@ public class WebAppInterface {
         values.put("birthdate", person.getString("birthdate"));
         values.put("dateCreated", person.getJSONObject("auditInfo").getString("dateCreated"));
         values.put("patientJson", String.valueOf(patient));
-        if(!patientData.isNull("relationships"))
+        if (!patientData.isNull("relationships"))
             values.put("relationships", String.valueOf(patientData.getJSONArray("relationships")));
         db.insert("patient", null, values);
 
@@ -332,7 +346,7 @@ public class WebAppInterface {
 
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
-                insertAddress(db, address, addressColumnNames, patientId);
+            insertAddress(db, address, addressColumnNames, patientId);
         }
     }
 
@@ -362,7 +376,7 @@ public class WebAppInterface {
                     String attributeTypeId = null;
 
                     for (JSONObject attributeEntry : attributeTypeMap) {
-                        if(attributeEntry.getString("uuid").equals(personAttribute.getJSONObject("attributeType").getString("uuid"))){
+                        if (attributeEntry.getString("uuid").equals(personAttribute.getJSONObject("attributeType").getString("uuid"))) {
                             attributeTypeId = attributeEntry.getString("attributeTypeId");
                         }
                     }
@@ -405,18 +419,84 @@ public class WebAppInterface {
         return convertStreamToString(inputStream);
     }
 
-    @JavascriptInterface
-    public String createPatient(String request, String host) throws JSONException, IOException, ExecutionException, InterruptedException {
-        SQLiteDatabase.loadLibs(mContext);
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(key);
+    private String generateQuery(String params1) throws JSONException {
+        JSONObject params = new JSONObject(params1);
+        String nameParts[] = null;
+        if (params.has("q") && null != params.getString("q")) {
+            nameParts = params.getString("q").split(" ");
+        }
 
+        JSONArray attributesArray = null;
+        if (params.has("patientAttributes") && !params.getString("patientAttributes").equals("")) {
+            attributesArray = new JSONArray(params.getString("patientAttributes"));
+        }
+        String attributeNames = "";
+        if (null != attributesArray && attributesArray.length() > 0) {
+            for (int index = 0; index < attributesArray.length(); index++) {
+                attributeNames += "'" + attributesArray.get(index) + "',";
+            }
+            attributeNames = attributeNames.substring(0, attributeNames.length() - 1);
+        }
 
-        insertPatientData(db, request, getAddressColumns(host), "POST");
+        String addressFieldName = null;
+        if (params.has("address_field_name") && null != params.getString("address_field_name")) {
+            addressFieldName = params.getString("address_field_name").replace("_", "");
+        }
 
-        String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
-        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatient(uuid))));
+        String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, " + addressFieldName + " as addressFieldValue " +
+                ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
+                "  from patient p " +
+                " join patient_address padd " +
+                " on p._id = padd.patientId" +
+                " left outer join patient_attributes pa on p._id = pa.patientId" +
+                " and pa.attributeTypeId in (" +
+                "select " + "attributeTypeId from patient_attribute_types" +
+                " where attributeName in (" + attributeNames + "))" +
+                " left outer join " + "patient_attributes pa1 on " +
+                " pa1.patientId = p._id" +
+                " left outer join patient_attribute_types" +
+                " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ")";
+        String appender = " WHERE ";
+
+        if (params.has("address_field_value") && !params.getString("address_field_value").equals("")) {
+            sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + params.getString("address_field_value") + "%') ";
+            appender = " AND ";
+        }
+        if (params.has("custom_attribute") && !params.getString("custom_attribute").equals("")) {
+            sqlString += appender + "pa.attributeValue LIKE '%" + params.getString("custom_attribute") + "%'";
+            appender = " AND ";
+
+        }
+        if (params.has("identifier") && !params.getString("identifier").equals("")) {
+            sqlString += appender + " ( p.identifier = '" + params.getString("identifierPrefix") + params.getString("identifier") + "')";
+            appender = " AND ";
+        }
+        if (null != nameParts) {
+            sqlString += appender + getNameSearchCondition(nameParts);
+        }
+        sqlString += " GROUP BY identifier ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
+        return sqlString;
     }
 
+    private String getNameSearchCondition(String[] nameParts) {
+        String BY_NAME_PARTS = " (coalesce(givenName" +
+                ", '') || coalesce(middleName" +
+                ", '') || coalesce(familyName" +
+                ", '') || identifier ) like ";
+        if (nameParts.length == 0)
+            return "";
+        else {
+            String queryByNameParts = "";
+            for (int index = 0; index < nameParts.length; index++) {
+                if (!queryByNameParts.equals("")) {
+                    queryByNameParts += " and " + BY_NAME_PARTS + " '%" + nameParts[index] + "%'";
+                } else {
+                    queryByNameParts += BY_NAME_PARTS + " '%" + nameParts[index] + "%'";
+                }
+            }
+            return queryByNameParts;
+        }
+    }
 
     private class DownloadPatientDataTask extends AsyncTask<String, Integer, Integer> {
 
@@ -444,18 +524,18 @@ public class WebAppInterface {
 
         @Override
         protected Integer doInBackground(String... params) {
-            JSONArray patients = null;
+            JSONArray patients;
             int pageSize = 1;
-            do {
-                try {
+            try {
+                insertAttributeTypes(host, db);
+                do {
                     patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
                     insertPatientData(db, String.valueOf(patients.get(0)), addressColumnNames, "GET");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                startIndex++;
-            } while (patients.length() == pageSize);
-
+                    startIndex++;
+                } while (patients.length() == pageSize);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return startIndex;
         }
 
