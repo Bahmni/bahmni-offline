@@ -7,19 +7,14 @@
         "128": "bahmni-128.png"
     },
     "app": {
-        "background": {
-            "scripts": [
-                "background.js"
-            ],
-            "persistent": false
+        "urls": ["https://dev.bahmnidev.org/"],
+        "launch": {
+            "web_url": "https://dev.bahmnidev.org/bahmni/"
         }
     },
     "permissions": [
         "unlimitedStorage",
-        "notifications",
-        "webview",
-        "storage",
-        "background"
+        "notifications"
     ],
     "minimum_chrome_version": "28"
 }
