@@ -7,6 +7,5 @@ public class WebAppInterfaceTest {
     @Test
     public void resultTest() {
         System.out.println("Hello!!!");
-
     }
 }

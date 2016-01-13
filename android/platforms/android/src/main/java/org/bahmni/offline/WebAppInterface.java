@@ -1,4 +1,4 @@
-package org.bahmni.offline;
+package main.java.org.bahmni.offline;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
-import org.bahmni.offline.db.DbHelper;
+import main.java.org.bahmni.offline.db.DbHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.json.JSONArray;
