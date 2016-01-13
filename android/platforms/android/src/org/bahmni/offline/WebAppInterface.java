@@ -56,53 +56,8 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public void populateData(String host) throws IOException, JSONException {
-        Authenticator.setDefault(new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("admin", "test".toCharArray());
-            }
-        });
-
-        SQLiteDatabase.loadLibs(mContext);
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(key);
-
-        String[] patientColumnNames = {
-                "identifier",
-                "uuid",
-                "givenName",
-                "middleName",
-                "familyName",
-                "gender",
-                "birthdate",
-                "dateCreated",
-                "patientJson",
-                "relationships"};
-        String[] attributeTypeColumnNames = {
-                "attributeTypeId",
-                "uuid",
-                "attributeName",
-                "format"
-        };
-        String[] attributeColumnNames = {
-                "attributeTypeId",
-                "attributeValue",
-                "patientId"
-        };
-
-        mDBHelper.createTable(db, "patient_attribute_types", attributeTypeColumnNames);
-        mDBHelper.createTable(db, "patient", patientColumnNames);
-        mDBHelper.createTable(db, "patient_attributes", attributeColumnNames);
-        String[] addressColumnNames = getAddressColumns(host);
-        mDBHelper.createTable(db, "patient_address", addressColumnNames);
-        mDBHelper.createIdgenTable(db, "idgen", "identifier");
-
-        createIndices(db);
-
-        try {
-            new DownloadPatientDataTask(db, host, addressColumnNames, 0).execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void populateData(String host) {
+        new DownloadPatientDataTask(host, 0).execute();
     }
 
     @JavascriptInterface
@@ -206,6 +161,50 @@ public class WebAppInterface {
         db.execSQL("CREATE INDEX middleNameIndex ON patient(middleName)");
         db.execSQL("CREATE INDEX familyNameIndex ON patient(familyName)");
         db.execSQL("CREATE INDEX identifierIndex ON patient(identifier)");
+    }
+
+    private SQLiteDatabase initSchema(String host) throws IOException, JSONException {
+        Authenticator.setDefault(new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("admin", "test".toCharArray());
+            }
+        });
+
+        SQLiteDatabase.loadLibs(mContext);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase(key);
+
+        String[] patientColumnNames = {
+                "identifier",
+                "uuid",
+                "givenName",
+                "middleName",
+                "familyName",
+                "gender",
+                "birthdate",
+                "dateCreated",
+                "patientJson",
+                "relationships"};
+        String[] attributeTypeColumnNames = {
+                "attributeTypeId",
+                "uuid",
+                "attributeName",
+                "format"
+        };
+        String[] attributeColumnNames = {
+                "attributeTypeId",
+                "attributeValue",
+                "patientId"
+        };
+
+        mDBHelper.createTable(db, "patient_attribute_types", attributeTypeColumnNames);
+        mDBHelper.createTable(db, "patient", patientColumnNames);
+        mDBHelper.createTable(db, "patient_attributes", attributeColumnNames);
+        String[] addressColumnNames = getAddressColumns(host);
+        mDBHelper.createTable(db, "patient_address", addressColumnNames);
+        mDBHelper.createIdgenTable(db, "idgen", "identifier");
+        createIndices(db);
+
+        return db;
     }
 
     private String[] getAddressColumns(String host) throws IOException, JSONException {
@@ -502,14 +501,11 @@ public class WebAppInterface {
 
         private SQLiteDatabase db;
         private String host;
-        private String[] addressColumnNames;
         private int startIndex;
         ProgressDialog progress;
 
-        public DownloadPatientDataTask(SQLiteDatabase db, String host, String[] addressColumnNames, int startIndex) {
-            this.db = db;
+        public DownloadPatientDataTask(String host, int startIndex) {
             this.host = host;
-            this.addressColumnNames = addressColumnNames;
             this.startIndex = startIndex;
         }
 
@@ -527,6 +523,8 @@ public class WebAppInterface {
             JSONArray patients;
             int pageSize = 1;
             try {
+                String[] addressColumnNames = getAddressColumns(host);
+                db = initSchema(host);
                 insertAttributeTypes(host, db);
                 do {
                     patients = new JSONObject(getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");

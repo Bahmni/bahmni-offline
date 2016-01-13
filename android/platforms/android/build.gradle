@@ -256,6 +256,10 @@ dependencies {
     debugCompile project(path: ":CordovaLib", configuration: "debug")
     releaseCompile project(path: ":CordovaLib", configuration: "release")
     // SUB-PROJECT DEPENDENCIES END
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.hamcrest:hamcrest-library:1.1'
 }
 
 
@@ -317,4 +321,7 @@ for (def func : cdvPluginPostBuildExtras) {
 //     ext.postBuildExtras = { ... code here ... }
 if (hasProperty('postBuildExtras')) {
     postBuildExtras()
+}
+dependencies {
+    compile 'junit:junit:4.12'
 }

@@ -16,10 +16,6 @@ platforms/android/assets/_where-is-www.txt
 !platforms/android/build.gradle
 !platforms/android/AndroidManifest.xml
 
-platforms/android/src/*
-!platforms/android/src/com/
-!platforms/android/src/org/
-
 platforms/android/res/*
 !platforms/android/res/layout
 
