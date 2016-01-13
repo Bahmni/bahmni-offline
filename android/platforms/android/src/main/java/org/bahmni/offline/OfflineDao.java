@@ -21,14 +21,14 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-public class OfflinePatientService {
+public class OfflineDao {
     Context mContext;
     private DbHelper mDBHelper;
     private PatientDao patientDao;
     private AddressDao addressDao;
     private AttributeDao attributeDao;
 
-    OfflinePatientService(Context c) {
+    OfflineDao(Context c) {
         mContext = c;
         mDBHelper = new DbHelper(c);
         JodaTimeAndroid.init(c);
@@ -45,7 +45,7 @@ public class OfflinePatientService {
     }
 
     @JavascriptInterface
-    public String getPatient(String uuid) throws JSONException {
+    public String getPatientByUuid(String uuid) throws JSONException {
         return String.valueOf(patientDao.getPatientByUuid(uuid));
     }
 
@@ -88,7 +88,7 @@ public class OfflinePatientService {
         insertPatientData(db, request, Util.getAddressColumns(host), "POST");
 
         String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
-        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatient(uuid))));
+        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatientByUuid(uuid))));
     }
 
     @JavascriptInterface
