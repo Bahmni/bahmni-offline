@@ -1,8 +1,9 @@
 package org.bahmni.offline;
 
+import android.test.AndroidTestCase;
 import org.junit.Test;
 
-public class WebAppInterfaceTest {
+public class OfflinePatientServiceTest extends AndroidTestCase{
 
     @Test
     public void resultTest() {
