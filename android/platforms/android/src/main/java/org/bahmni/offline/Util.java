@@ -1,4 +1,4 @@
-package main.java.org.bahmni.offline;
+package org.bahmni.offline;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,10 +1,10 @@
-package main.java.org.bahmni.offline;
+package org.bahmni.offline;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import main.java.org.bahmni.offline.db.DbHelper;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.db.DbHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.json.JSONArray;

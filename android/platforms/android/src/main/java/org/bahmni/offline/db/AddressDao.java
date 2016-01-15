@@ -1,4 +1,4 @@
-package main.java.org.bahmni.offline.db;
+package org.bahmni.offline.db;
 
 import android.content.ContentValues;
 import net.sqlcipher.database.SQLiteDatabase;

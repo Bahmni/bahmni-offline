@@ -1,9 +1,9 @@
-package main.java.org.bahmni.offline.db;
+package org.bahmni.offline.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import main.java.org.bahmni.offline.Constants;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

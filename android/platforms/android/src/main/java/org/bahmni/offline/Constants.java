@@ -1,8 +1,5 @@
-package main.java.org.bahmni.offline;
+package org.bahmni.offline;
 
-/**
- * Created by abisheka on 1/13/16.
- */
 public class Constants {
     public static String[] PATIENT_COLUMN_NAMES = {
             "identifier",

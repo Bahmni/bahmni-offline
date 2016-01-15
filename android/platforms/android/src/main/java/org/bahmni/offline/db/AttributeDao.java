@@ -1,9 +1,9 @@
-package main.java.org.bahmni.offline.db;
+package org.bahmni.offline.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import main.java.org.bahmni.offline.Util;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.Util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by abisheka on 1/13/16.
- */
 public class AttributeDao {
     public void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
         JSONArray personAttributeTypeList = new JSONObject(Util.getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name,uuid,format)"))).getJSONArray("results");

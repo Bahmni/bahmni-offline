@@ -1,9 +1,8 @@
-package main.java.org.bahmni.offline;
+package org.bahmni.offline;
 
 import android.os.Bundle;
 
 import org.apache.cordova.CordovaActivity;
-import org.bahmni.offline.R;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
 

@@ -1,15 +1,15 @@
-package main.java.org.bahmni.offline;
+package org.bahmni.offline;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import main.java.org.bahmni.offline.db.AddressDao;
-import main.java.org.bahmni.offline.db.AttributeDao;
-import main.java.org.bahmni.offline.db.DbHelper;
-import main.java.org.bahmni.offline.db.PatientDao;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.db.AddressDao;
+import org.bahmni.offline.db.AttributeDao;
+import org.bahmni.offline.db.DbHelper;
+import org.bahmni.offline.db.PatientDao;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ public class OfflineDao {
 
     OfflineDao(Context c) {
         mContext = c;
-        mDBHelper = new DbHelper(c);
+        mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
         JodaTimeAndroid.init(c);
         SQLiteDatabase.loadLibs(mContext);
         patientDao = new PatientDao(mDBHelper);

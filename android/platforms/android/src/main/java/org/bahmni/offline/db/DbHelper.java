@@ -1,4 +1,4 @@
-package main.java.org.bahmni.offline.db;
+package org.bahmni.offline.db;
 
 import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -17,8 +17,8 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_PATIENT_ATTRIBUTES =
             "DROP TABLE IF EXISTS " + "patient";
 
-    public DbHelper(Context context) {
-        super(context, context.getExternalFilesDir(null) + "/Bahmni.db", null, DATABASE_VERSION);
+    public DbHelper(Context context, String dbPath) {
+        super(context, dbPath, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
