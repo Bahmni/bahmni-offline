@@ -4,11 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.bahmni.offline.db.AddressDao;
 import org.bahmni.offline.db.AttributeDao;
 import org.bahmni.offline.db.DbHelper;
+import org.bahmni.offline.db.MarkerDao;
 import org.bahmni.offline.db.PatientDao;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +30,7 @@ public class OfflineDao {
     private PatientDao patientDao;
     private AddressDao addressDao;
     private AttributeDao attributeDao;
+    private MarkerDao markerDao;
 
     OfflineDao(Context c) {
         mContext = c;
@@ -36,6 +40,7 @@ public class OfflineDao {
         patientDao = new PatientDao(mDBHelper);
         addressDao = new AddressDao();
         attributeDao = new AttributeDao();
+        markerDao = new MarkerDao(mDBHelper);
     }
 
 
@@ -98,6 +103,16 @@ public class OfflineDao {
         return String.valueOf(result);
     }
 
+    @JavascriptInterface
+    public String insertMarker(String eventUuid, String catchmentNumber) {
+        return markerDao.insertMarker(eventUuid, catchmentNumber);
+    }
+
+    @JavascriptInterface
+    public JSONObject getMarker() throws JSONException {
+        return markerDao.getMarker();
+    }
+
 
     private void createIndices(SQLiteDatabase db) {
         db.execSQL("CREATE INDEX givenNameIndex ON patient(givenName)");
@@ -118,6 +133,9 @@ public class OfflineDao {
         mDBHelper.createTable(db, "patient_attribute_types", Constants.ATTRIBUTE_TYPE_COLUMN_NAMES);
         mDBHelper.createTable(db, "patient", Constants.PATIENT_COLUMN_NAMES);
         mDBHelper.createTable(db, "patient_attributes", Constants.ATTRIBUTE_COLUMN_NAMES);
+        mDBHelper.createTable(db, "event_log_marker", Constants.EVENT_LOG_MARKER_COLUMN_NAMES);
+        mDBHelper.createTable(db, "address_hierarchy_entry", Constants.ADDRESS_HIERARCHY_ENTRY_COLUMN_NAMES);
+        mDBHelper.createTable(db, "address_hierarchy_level", Constants.ADDRESS_HIERARCHY_LEVEL_COLUMN_NAMES);
         String[] addressColumnNames = Util.getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
         mDBHelper.createIdgenTable(db, "idgen", "identifier");
