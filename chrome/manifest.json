@@ -9,7 +9,7 @@
     "app": {
         "urls": ["https://dev.bahmnidev.org/"],
         "launch": {
-            "web_url": "https://dev.bahmnidev.org/bahmni/"
+            "web_url": "https://dev.bahmnidev.org/bahmni/home/#/device/chrome-app"
         }
     },
     "permissions": [
