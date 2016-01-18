@@ -15,6 +15,9 @@ app.run(function($ionicPlatform) {
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
+    if(window.localStorage['host']){
+      window.open('https://'+ window.localStorage['host']+'/bahmni/#/device/android','_self')
+    }
   });
 });
 
@@ -22,7 +25,7 @@ app.controller("hostController",function($scope){
   $scope.ipValue ='';
   $scope.submit = function(){
     console.log("coming",this.ipValue);
-        window.open('https://'+this.ipValue+'/bahmni','_self')
-        localStorage.setItem('host', ipValue);
+    window.localStorage['host'] = this.ipValue;
+    window.open('https://'+this.ipValue+'/bahmni/#/device/android','_self')
   };
 });
