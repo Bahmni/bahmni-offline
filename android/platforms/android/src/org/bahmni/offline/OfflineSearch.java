@@ -82,13 +82,13 @@ public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
                 ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
                 "  from patient p " +
                 " join patient_address padd " +
-                " on p._id = padd.patientId" +
-                " left outer join patient_attributes pa on p._id = pa.patientId" +
+                " on p.uuid = padd.patientUuid" +
+                " left outer join patient_attributes pa on p.uuid = pa.patientUuid" +
                 " and pa.attributeTypeId in (" +
                 "select " + "attributeTypeId from patient_attribute_types" +
                 " where attributeName in (" + attributeNames + "))" +
                 " left outer join " + "patient_attributes pa1 on " +
-                " pa1.patientId = p._id" +
+                " pa1.patientUuid = p.uuid" +
                 " left outer join patient_attribute_types" +
                 " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ")";
         String appender = " WHERE ";

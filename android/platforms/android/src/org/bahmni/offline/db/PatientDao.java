@@ -44,7 +44,7 @@ public class PatientDao {
         return result;
     }
 
-    public int insertPatient(SQLiteDatabase db, String patientObject) throws JSONException {
+    public String insertPatient(SQLiteDatabase db, String patientObject) throws JSONException {
         JSONObject patientData = new JSONObject(patientObject);
         ContentValues values = new ContentValues();
         JSONObject patient = patientData.getJSONObject("patient");
@@ -75,12 +75,7 @@ public class PatientDao {
         if (!patientData.isNull("relationships"))
             values.put("relationships", String.valueOf(patientData.getJSONArray("relationships")));
         db.insert("patient", null, values);
-        Cursor d = db.rawQuery("SELECT _id FROM patient"
-                + " WHERE identifier = '" + patientIdentifier + "' LIMIT 1", new String[]{});
-        d.moveToFirst();
-        int patientId = d.getInt(d.getColumnIndex("_id"));
-        d.close();
-        return patientId;
+        return patient.getString("uuid");
     }
 
     public int generateIdentifier() throws JSONException {

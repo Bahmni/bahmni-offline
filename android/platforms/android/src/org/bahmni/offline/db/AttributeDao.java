@@ -25,7 +25,7 @@ public class AttributeDao {
         }
     }
 
-    public void insertAttributes(SQLiteDatabase db, int patientId, JSONArray attributes, String requestType) throws JSONException {
+    public void insertAttributes(SQLiteDatabase db, String patientUuid, JSONArray attributes, String requestType) throws JSONException {
         Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
         d.moveToFirst();
         ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
@@ -64,7 +64,7 @@ public class AttributeDao {
 
                     values.put("attributeTypeId", attributeTypeId);
                     values.put("attributeValue", value);
-                    values.put("patientId", patientId);
+                    values.put("patientUuid", patientUuid);
                     db.insert("patient_attributes", null, values);
                 }
             }

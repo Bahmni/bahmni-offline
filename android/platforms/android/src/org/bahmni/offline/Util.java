@@ -56,7 +56,7 @@ public class Util {
         for (int i = 0; i < addressHierarchyFields.length(); i++) {
             addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
         }
-        addressColumnNames[addressHierarchyFields.length()] = "patientId";
+        addressColumnNames[addressHierarchyFields.length()] = "patientUuid";
         return addressColumnNames;
     }
 }

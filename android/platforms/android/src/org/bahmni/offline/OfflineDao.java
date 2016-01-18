@@ -130,12 +130,12 @@ public class OfflineDao {
 
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
 
-        mDBHelper.createTable(db, "patient_attribute_types", Constants.ATTRIBUTE_TYPE_COLUMN_NAMES);
-        mDBHelper.createTable(db, "patient", Constants.PATIENT_COLUMN_NAMES);
-        mDBHelper.createTable(db, "patient_attributes", Constants.ATTRIBUTE_COLUMN_NAMES);
-        mDBHelper.createTable(db, "event_log_marker", Constants.EVENT_LOG_MARKER_COLUMN_NAMES);
-        mDBHelper.createTable(db, "address_hierarchy_entry", Constants.ADDRESS_HIERARCHY_ENTRY_COLUMN_NAMES);
-        mDBHelper.createTable(db, "address_hierarchy_level", Constants.ADDRESS_HIERARCHY_LEVEL_COLUMN_NAMES);
+        mDBHelper.createTableBy(db, Constants.CREATE_PATIENT_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_EVENT_LOG_MARKER_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
         String[] addressColumnNames = Util.getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
         mDBHelper.createIdgenTable(db, "idgen", "identifier");
@@ -146,16 +146,16 @@ public class OfflineDao {
 
     private void insertPatientData(SQLiteDatabase db, String patientObject, String[] addressColumnNames, String requestType) throws JSONException {
 
-        int patientId = patientDao.insertPatient(db, patientObject);
+        String patientUuid = patientDao.insertPatient(db, patientObject);
 
         JSONObject person = new JSONObject(patientObject).getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
-        attributeDao.insertAttributes(db, patientId, attributes, requestType);
+        attributeDao.insertAttributes(db, patientUuid, attributes, requestType);
 
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
-            addressDao.insertAddress(db, address, addressColumnNames, patientId);
+            addressDao.insertAddress(db, address, addressColumnNames, patientUuid);
         }
     }
 

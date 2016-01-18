@@ -1,6 +1,7 @@
 package org.bahmni.offline.db;
 
 import android.content.Context;
+
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
@@ -48,5 +49,9 @@ public class DbHelper extends SQLiteOpenHelper {
         createTableSql += COMMA_SEP + columnName + TEXT_INTEGER;
         createTableSql += ")";
         db.execSQL(createTableSql);
+    }
+
+    public void createTableBy(SQLiteDatabase db, String createEventLogMarkerTable) {
+        db.execSQL(createEventLogMarkerTable);
     }
 }
