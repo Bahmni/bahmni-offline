@@ -5,7 +5,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddressDao {
+public class AddressService {
     public void insertAddress(SQLiteDatabase db, JSONObject address, String[] addressColumnNames, String patientUuid) throws JSONException {
         ContentValues values = new ContentValues();
         for (String addressColumn : addressColumnNames) {

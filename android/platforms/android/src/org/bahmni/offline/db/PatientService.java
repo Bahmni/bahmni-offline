@@ -8,11 +8,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PatientDao {
+public class PatientService {
 
     private DbHelper mDBHelper;
 
-    public PatientDao(DbHelper mDBHelper) {
+    public PatientService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
     }
 

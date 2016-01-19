@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk=18)
 
-public class OfflineDaoTest extends AndroidTestCase{
+public class OfflineServiceTest extends AndroidTestCase{
 
     @Test
     public void shouldPrint() throws Exception {

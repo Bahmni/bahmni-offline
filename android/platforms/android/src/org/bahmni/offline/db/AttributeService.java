@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class AttributeDao {
+public class AttributeService {
     public void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
         JSONArray personAttributeTypeList = new JSONObject(Util.getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(name,uuid,format)"))).getJSONArray("results");
         for (int i = 0; i < personAttributeTypeList.length(); i++) {

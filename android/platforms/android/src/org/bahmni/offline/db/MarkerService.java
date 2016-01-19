@@ -11,11 +11,11 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class MarkerDao {
+public class MarkerService {
 
     private DbHelper mDBHelper;
 
-    public MarkerDao(DbHelper mDBHelper) {
+    public MarkerService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
     }
 

@@ -8,11 +8,11 @@ import android.os.AsyncTask;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.bahmni.offline.db.AddressDao;
-import org.bahmni.offline.db.AttributeDao;
+import org.bahmni.offline.db.AddressService;
+import org.bahmni.offline.db.AttributeService;
 import org.bahmni.offline.db.DbHelper;
-import org.bahmni.offline.db.MarkerDao;
-import org.bahmni.offline.db.PatientDao;
+import org.bahmni.offline.db.MarkerService;
+import org.bahmni.offline.db.PatientService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,23 +24,23 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-public class OfflineDao {
+public class OfflineService {
     Context mContext;
     private DbHelper mDBHelper;
-    private PatientDao patientDao;
-    private AddressDao addressDao;
-    private AttributeDao attributeDao;
-    private MarkerDao markerDao;
+    private PatientService patientService;
+    private AddressService addressService;
+    private AttributeService attributeService;
+    private MarkerService markerService;
 
-    OfflineDao(Context c) {
+    OfflineService(Context c) {
         mContext = c;
         mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
         JodaTimeAndroid.init(c);
         SQLiteDatabase.loadLibs(mContext);
-        patientDao = new PatientDao(mDBHelper);
-        addressDao = new AddressDao();
-        attributeDao = new AttributeDao();
-        markerDao = new MarkerDao(mDBHelper);
+        patientService = new PatientService(mDBHelper);
+        addressService = new AddressService();
+        attributeService = new AttributeService();
+        markerService = new MarkerService(mDBHelper);
     }
 
 
@@ -51,7 +51,7 @@ public class OfflineDao {
 
     @JavascriptInterface
     public String getPatientByUuid(String uuid) throws JSONException {
-        return String.valueOf(patientDao.getPatientByUuid(uuid));
+        return String.valueOf(patientService.getPatientByUuid(uuid));
     }
 
     @JavascriptInterface
@@ -82,7 +82,7 @@ public class OfflineDao {
     @JavascriptInterface
     public String getPatientByIdentifier(String identifier) throws JSONException {
         JSONObject result = new JSONObject();
-        result.put("data", new JSONObject().put("pageOfResults", new JSONArray().put(patientDao.getPatientByIdentifier(identifier))));
+        result.put("data", new JSONObject().put("pageOfResults", new JSONArray().put(patientService.getPatientByIdentifier(identifier))));
         return String.valueOf(result);
     }
 
@@ -99,18 +99,18 @@ public class OfflineDao {
     @JavascriptInterface
     public String generateOfflineIdentifier() throws JSONException {
         JSONObject result = new JSONObject();
-        result.put("data", "TMP-" + patientDao.generateIdentifier());
+        result.put("data", "TMP-" + patientService.generateIdentifier());
         return String.valueOf(result);
     }
 
     @JavascriptInterface
     public String insertMarker(String eventUuid, String catchmentNumber) {
-        return markerDao.insertMarker(eventUuid, catchmentNumber);
+        return markerService.insertMarker(eventUuid, catchmentNumber);
     }
 
     @JavascriptInterface
     public JSONObject getMarker() throws JSONException {
-        return markerDao.getMarker();
+        return markerService.getMarker();
     }
 
 
@@ -146,16 +146,16 @@ public class OfflineDao {
 
     private void insertPatientData(SQLiteDatabase db, String patientObject, String[] addressColumnNames, String requestType) throws JSONException {
 
-        String patientUuid = patientDao.insertPatient(db, patientObject);
+        String patientUuid = patientService.insertPatient(db, patientObject);
 
         JSONObject person = new JSONObject(patientObject).getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
-        attributeDao.insertAttributes(db, patientUuid, attributes, requestType);
+        attributeService.insertAttributes(db, patientUuid, attributes, requestType);
 
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
-            addressDao.insertAddress(db, address, addressColumnNames, patientUuid);
+            addressService.insertAddress(db, address, addressColumnNames, patientUuid);
         }
     }
 
@@ -187,7 +187,7 @@ public class OfflineDao {
             try {
                 String[] addressColumnNames = Util.getAddressColumns(host);
                 db = initSchema(host);
-                attributeDao.insertAttributeTypes(host, db);
+                attributeService.insertAttributeTypes(host, db);
                 do {
                     patients = new JSONObject(Util.getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
                     insertPatientData(db, String.valueOf(patients.get(0)), addressColumnNames, "GET");
