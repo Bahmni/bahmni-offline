@@ -136,9 +136,9 @@ public class OfflineDao {
         mDBHelper.createTableBy(db, Constants.CREATE_EVENT_LOG_MARKER_TABLE);
         mDBHelper.createTableBy(db, Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
         mDBHelper.createTableBy(db, Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
+        mDBHelper.createTableBy(db, Constants.CREATE_IDGEN_TABLE);
         String[] addressColumnNames = Util.getAddressColumns(host);
         mDBHelper.createTable(db, "patient_address", addressColumnNames);
-        mDBHelper.createIdgenTable(db, "idgen", "identifier");
         createIndices(db);
 
         return db;

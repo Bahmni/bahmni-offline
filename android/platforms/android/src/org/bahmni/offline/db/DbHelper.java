@@ -44,13 +44,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(createTableSql);
     }
 
-    public void createIdgenTable(SQLiteDatabase db, String tableName, String columnName) {
-        String createTableSql = "CREATE TABLE " + tableName + " (" + "_id" + " INTEGER PRIMARY KEY";
-        createTableSql += COMMA_SEP + columnName + TEXT_INTEGER;
-        createTableSql += ")";
-        db.execSQL(createTableSql);
-    }
-
     public void createTableBy(SQLiteDatabase db, String createEventLogMarkerTable) {
         db.execSQL(createEventLogMarkerTable);
     }
