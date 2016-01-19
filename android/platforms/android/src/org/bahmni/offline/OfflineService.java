@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.bahmni.offline.db.AddressHierarchyService;
 import org.bahmni.offline.db.AddressService;
 import org.bahmni.offline.db.AttributeService;
 import org.bahmni.offline.db.DbHelper;
@@ -31,6 +32,7 @@ public class OfflineService {
     private AddressService addressService;
     private AttributeService attributeService;
     private MarkerService markerService;
+    private AddressHierarchyService addressHierarchyService;
 
     OfflineService(Context c) {
         mContext = c;
@@ -41,6 +43,7 @@ public class OfflineService {
         addressService = new AddressService();
         attributeService = new AttributeService();
         markerService = new MarkerService(mDBHelper);
+        addressHierarchyService = new AddressHierarchyService(mDBHelper);
     }
 
 
@@ -111,6 +114,11 @@ public class OfflineService {
     @JavascriptInterface
     public JSONObject getMarker() throws JSONException {
         return markerService.getMarker();
+    }
+
+    @JavascriptInterface
+    public JSONObject insertAddressHierarchy(JSONObject addressHierarchy) throws JSONException {
+        return addressHierarchyService.insertAddressHierarchy(addressHierarchy);
     }
 
 
