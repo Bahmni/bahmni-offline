@@ -172,6 +172,9 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
+        test {
+            java.srcDirs = ['src/test/java/']
+        }
     }
 
     defaultConfig {
@@ -253,8 +256,6 @@ dependencies {
     compile 'org.xwalk:xwalk_core_library:14.43.343.25'
     compile 'net.danlew:android.joda:2.9.1'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile 'org.hamcrest:hamcrest-library:1.1'
     testCompile 'org.robolectric:robolectric:3.0'
     // SUB-PROJECT DEPENDENCIES START
@@ -324,7 +325,4 @@ for (def func : cdvPluginPostBuildExtras) {
 //     ext.postBuildExtras = { ... code here ... }
 if (hasProperty('postBuildExtras')) {
     postBuildExtras()
-}
-dependencies {
-    compile 'junit:junit:4.12'
 }
