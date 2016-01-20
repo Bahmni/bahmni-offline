@@ -9,6 +9,7 @@ import org.bahmni.offline.db.AddressHierarchyService;
 import org.bahmni.offline.db.AddressService;
 import org.bahmni.offline.db.AttributeService;
 import org.bahmni.offline.db.PatientService;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -33,6 +34,8 @@ public class OfflineService {
     private AttributeService attributeService;
     private MarkerService markerService;
     private AddressHierarchyService addressHierarchyService;
+    private SQLiteDatabase db;
+
 
     OfflineService(Context c) {
         mContext = c;
@@ -48,8 +51,10 @@ public class OfflineService {
 
 
     @JavascriptInterface
-    public void populateData(String host) {
-        new DownloadPatientDataTask(host, 0).execute();
+    public void populateData(String host) throws IOException, JSONException {
+        db = initSchema(host);
+        attributeService.insertAttributeTypes(host, db);
+
     }
 
     @JavascriptInterface
@@ -164,53 +169,6 @@ public class OfflineService {
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
             addressService.insertAddress(db, address, addressColumnNames, patientUuid);
-        }
-    }
-
-    private class DownloadPatientDataTask extends AsyncTask<String, Integer, Integer> {
-
-        private SQLiteDatabase db;
-        private String host;
-        private int startIndex;
-        ProgressDialog progress;
-
-        public DownloadPatientDataTask(String host, int startIndex) {
-            this.host = host;
-            this.startIndex = startIndex;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progress = new ProgressDialog(mContext);
-            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progress.setTitle("Syncing Data");
-            progress.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            JSONArray patients;
-            int pageSize = 1;
-            try {
-                String[] addressColumnNames = Util.getAddressColumns(host);
-                db = initSchema(host);
-                attributeService.insertAttributeTypes(host, db);
-                do {
-                    patients = new JSONObject(Util.getData(new URL(host + "/openmrs/ws/rest/v1/bahmnicore/patientData?startIndex=" + startIndex + "&limit=" + pageSize))).getJSONArray("pageOfResults");
-                    insertPatientData(db, String.valueOf(patients.get(0)), addressColumnNames, "GET");
-                    startIndex++;
-                } while (patients.length() == pageSize);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return startIndex;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-            progress.dismiss();
         }
     }
 }
