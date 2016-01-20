@@ -34,7 +34,6 @@ public class OfflineService {
     private AttributeService attributeService;
     private MarkerService markerService;
     private AddressHierarchyService addressHierarchyService;
-    private SQLiteDatabase db;
 
 
     OfflineService(Context c) {
@@ -52,7 +51,8 @@ public class OfflineService {
 
     @JavascriptInterface
     public void populateData(String host) throws IOException, JSONException {
-        db = initSchema(host);
+        initSchema(host);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         attributeService.insertAttributeTypes(host, db);
 
     }
