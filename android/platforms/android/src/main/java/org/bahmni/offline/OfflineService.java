@@ -5,15 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
-import net.danlew.android.joda.JodaTimeAndroid;
-import net.sqlcipher.database.SQLiteDatabase;
-
 import org.bahmni.offline.db.AddressHierarchyService;
 import org.bahmni.offline.db.AddressService;
 import org.bahmni.offline.db.AttributeService;
+import org.bahmni.offline.db.PatientService;
+import net.danlew.android.joda.JodaTimeAndroid;
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.bahmni.offline.db.DbHelper;
 import org.bahmni.offline.db.MarkerService;
-import org.bahmni.offline.db.PatientService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

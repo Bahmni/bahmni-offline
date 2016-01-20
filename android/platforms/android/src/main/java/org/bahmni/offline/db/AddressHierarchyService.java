@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.bahmni.offline.Constants;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
