@@ -1,3 +1,8 @@
+//This file exists to allow cordova to build the project correctly with this package structure which is not cordova default
+//After this issue is fixed this file can be deleted
+
+
+
 //package org.bahmni.offline;
 //
 //import android.os.Bundle;
