@@ -36,7 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void createTable(SQLiteDatabase db, String tableName, String[] columnNames) {
-        String createTableSql = "CREATE TABLE " + tableName + " (" + "_id" + " INTEGER PRIMARY KEY";
+        String createTableSql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + "_id" + " INTEGER PRIMARY KEY";
         for (String columnName : columnNames) {
             createTableSql += COMMA_SEP + columnName + TEXT_TYPE;
         }
