@@ -66,7 +66,7 @@ public class AttributeService {
                     values.put("attributeTypeId", attributeTypeId);
                     values.put("attributeValue", value);
                     values.put("patientUuid", patientUuid);
-                    db.insertWithOnConflict("patient_attributes", null, values, CONFLICT_REPLACE);
+                    db.insertWithOnConflict("patient_attributes", null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 }
             }
         }
