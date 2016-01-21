@@ -38,7 +38,7 @@ public class MarkerService {
         values.put("catchmentNumber", catchmentNumber);
         values.put("lastReadTime", new Date().toString());
 
-        db.insert("patient", null, values);
+        db.insertWithOnConflict("patient", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         return eventUuid;
     }

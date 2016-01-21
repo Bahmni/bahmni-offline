@@ -74,7 +74,7 @@ public class PatientService {
         values.put("patientJson", String.valueOf(patient));
         if (!patientData.isNull("relationships"))
             values.put("relationships", String.valueOf(patientData.getJSONArray("relationships")));
-        db.insert("patient", null, values);
+        db.insertWithOnConflict("patient", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         return patient.getString("uuid");
     }
 

@@ -13,6 +13,6 @@ public class AddressService {
                 values.put(addressColumn, address.getString(addressColumn));
         }
         values.put("patientUuid", patientUuid);
-        db.insert("patient_address", null, values);
+        db.insertWithOnConflict("patient_address", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 }

@@ -30,7 +30,7 @@ public class AddressHierarchyService {
         values.put("user_generated_id", addressHierarchy.getString("userGeneratedId"));
         values.put("uuid", addressHierarchy.getString("uuid"));
 
-        db.insert("address_hierarchy_entry", null, values);
+        db.insertWithOnConflict("address_hierarchy_entry", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         return addressHierarchy;
     }
@@ -46,7 +46,7 @@ public class AddressHierarchyService {
         values.put("required", addressHierarchyLevel.getInt("required"));
         values.put("uuid", addressHierarchyLevel.getString("uuid"));
 
-        db.insert("address_hierarchy_level", null, values);
+        db.insertWithOnConflict("address_hierarchy_level", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         return addressHierarchyLevel;
     }

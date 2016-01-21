@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import net.sqlcipher.database.SQLiteDatabase;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class AttributeService {
             values.put("uuid", personAttributeTypeList.getJSONObject(i).getString("uuid"));
             values.put("attributeName", personAttributeTypeList.getJSONObject(i).getString("name"));
             values.put("format", personAttributeTypeList.getJSONObject(i).getString("format"));
-            db.insert("patient_attribute_types", null, values);
+            db.insertWithOnConflict("patient_attribute_types", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
 
@@ -65,7 +66,7 @@ public class AttributeService {
                     values.put("attributeTypeId", attributeTypeId);
                     values.put("attributeValue", value);
                     values.put("patientUuid", patientUuid);
-                    db.insert("patient_attributes", null, values);
+                    db.insertWithOnConflict("patient_attributes", null, values, CONFLICT_REPLACE);
                 }
             }
         }
