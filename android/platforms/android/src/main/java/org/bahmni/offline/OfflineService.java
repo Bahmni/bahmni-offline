@@ -48,6 +48,10 @@ public class OfflineService {
         addressHierarchyService = new AddressHierarchyService(mDBHelper);
     }
 
+    @JavascriptInterface
+    public void init(JSONObject offlineDbObjectForLoveField){
+        // Hemanth: This method should exist.
+    }
 
     @JavascriptInterface
     public void populateData(String host) throws IOException, JSONException {
