@@ -89,6 +89,7 @@ public class OfflineService {
         db.setTransactionSuccessful();
 
         db.endTransaction();
+        c.close();
     }
 
     @JavascriptInterface

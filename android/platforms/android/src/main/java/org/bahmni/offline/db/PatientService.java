@@ -27,6 +27,7 @@ public class PatientService {
         jsonObject.put("gender", c.getString(c.getColumnIndex("gender")));
         jsonObject.put("birthdate", c.getString(c.getColumnIndex("birthdate")));
         jsonObject.put("uuid", c.getString(c.getColumnIndex("uuid")));
+        c.close();
         return jsonObject;
     }
 
@@ -41,6 +42,7 @@ public class PatientService {
         String relationships = c.getString(c.getColumnIndex("relationships"));
         if (relationships != null)
             result.put("relationships", new JSONArray(relationships));
+        c.close();
         return result;
     }
 
@@ -94,6 +96,7 @@ public class PatientService {
         contentValues.put("_id", _id);
         contentValues.put("identifier", ++identifier);
         db.insertWithOnConflict("idgen", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        c.close();
         return identifier;
     }
 }

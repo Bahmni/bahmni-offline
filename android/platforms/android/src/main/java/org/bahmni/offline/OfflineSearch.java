@@ -51,6 +51,7 @@ public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
             json.put(obj);
             c.moveToNext();
         }
+        c.close();
         return json;
     }
 

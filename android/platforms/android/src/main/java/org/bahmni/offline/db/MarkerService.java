@@ -27,7 +27,7 @@ public class MarkerService {
         jsonObject.put("lastReadEventUuid", c.getString(c.getColumnIndex("lastReadEventUuid")));
         jsonObject.put("catchmentNumber", c.getString(c.getColumnIndex("catchmentNumber")));
         jsonObject.put("lastReadTime", c.getString(c.getColumnIndex("lastReadTime")));
-
+        c.close();
         return jsonObject;
     }
 
