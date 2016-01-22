@@ -26,7 +26,7 @@ public class MarkerService {
 
         if(c.getCount() < 1){
             c.close();
-            return jsonObject;
+            return null;
         }
         c.moveToFirst();
         jsonObject.put("lastReadEventUuid", c.getString(c.getColumnIndex("lastReadEventUuid")));
