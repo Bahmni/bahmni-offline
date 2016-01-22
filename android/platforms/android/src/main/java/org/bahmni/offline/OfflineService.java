@@ -49,16 +49,16 @@ public class OfflineService {
     }
 
     @JavascriptInterface
-    public void init(JSONObject offlineDbObjectForLoveField){
+    public void init(JSONObject offlineDbObjectForLoveField) {
         // Hemanth: This method should exist.
     }
 
     @JavascriptInterface
     public void populateData(String host) throws IOException, JSONException {
-        initSchema(host);
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
-        attributeService.insertAttributeTypes(host, db);
+            initSchema(host);
+            SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
 
+            attributeService.insertAttributeTypes(host, db);
     }
 
     @JavascriptInterface
@@ -133,10 +133,10 @@ public class OfflineService {
 
 
     private void createIndices(SQLiteDatabase db) {
-        db.execSQL("CREATE INDEX givenNameIndex ON patient(givenName)");
-        db.execSQL("CREATE INDEX middleNameIndex ON patient(middleName)");
-        db.execSQL("CREATE INDEX familyNameIndex ON patient(familyName)");
-        db.execSQL("CREATE INDEX identifierIndex ON patient(identifier)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS givenNameIndex ON patient(givenName)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS middleNameIndex ON patient(middleName)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS familyNameIndex ON patient(familyName)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS identifierIndex ON patient(identifier)");
     }
 
     private SQLiteDatabase initSchema(String host) throws IOException, JSONException {

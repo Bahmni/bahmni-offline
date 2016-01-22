@@ -21,9 +21,14 @@ public class MarkerService {
 
     public JSONObject getMarker() throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
-        Cursor c = db.rawQuery("SELECT m.lastReadEventUuid, m.catchmentNumber, m.lastReadTime from marker m LIMIT 1", new String[]{});
-        c.moveToFirst();
+        Cursor c = db.rawQuery("SELECT m.lastReadEventUuid, m.catchmentNumber, m.lastReadTime from event_log_marker m LIMIT 1", new String[]{});
         JSONObject jsonObject = new JSONObject();
+
+        if(c.getCount() < 1){
+            c.close();
+            return jsonObject;
+        }
+        c.moveToFirst();
         jsonObject.put("lastReadEventUuid", c.getString(c.getColumnIndex("lastReadEventUuid")));
         jsonObject.put("catchmentNumber", c.getString(c.getColumnIndex("catchmentNumber")));
         jsonObject.put("lastReadTime", c.getString(c.getColumnIndex("lastReadTime")));
