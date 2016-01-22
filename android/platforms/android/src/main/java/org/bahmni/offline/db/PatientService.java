@@ -19,6 +19,10 @@ public class PatientService {
     public JSONObject getPatientByIdentifier(String identifier) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         Cursor c = db.rawQuery("SELECT p.identifier, p.givenName, p.familyName, p.gender, p.birthdate, p.uuid from patient p where p.identifier LIKE '%" + identifier + "%' LIMIT 1", new String[]{});
+        if(c.getCount() < 1){
+            c.close();
+            return null;
+        }
         c.moveToFirst();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("identifier", c.getString(c.getColumnIndex("identifier")));
@@ -35,6 +39,10 @@ public class PatientService {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         Cursor c = db.rawQuery("SELECT * from patient" +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
+        if(c.getCount() < 1){
+            c.close();
+            return null;
+        }
         c.moveToFirst();
         JSONObject result = new JSONObject();
         result.put("patient", new JSONObject(c.getString(c.getColumnIndex("patientJson"))));
@@ -80,20 +88,17 @@ public class PatientService {
         return patient.getString("uuid");
     }
 
-    public int generateIdentifier() throws JSONException {
+    public Integer generateIdentifier() throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
 
         Cursor c = db.rawQuery("SELECT * from idgen limit 1 ", new String[]{});
         c.moveToFirst();
-        int _id = 1;
-        int identifier = 1;
+        Integer identifier = 1;
 
         if (c.getCount() > 0) {
-            _id = c.getInt(c.getColumnIndex("_id"));
             identifier = c.getInt(c.getColumnIndex("identifier"));
         }
         ContentValues contentValues = new ContentValues();
-        contentValues.put("_id", _id);
         contentValues.put("identifier", ++identifier);
         db.insertWithOnConflict("idgen", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         c.close();
