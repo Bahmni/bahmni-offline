@@ -121,8 +121,10 @@ public class OfflineService {
     }
 
     @JavascriptInterface
-    public JSONObject insertAddressHierarchy(JSONObject addressHierarchy) throws JSONException {
-        return addressHierarchyService.insertAddressHierarchy(addressHierarchy);
+    public String insertAddressHierarchy(String addressHierarchy) throws JSONException {
+        JSONObject addressHierarcyRequest = new JSONObject(addressHierarchy);
+        JSONObject jsonObject = addressHierarchyService.insertAddressHierarchy(addressHierarcyRequest);
+        return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
 

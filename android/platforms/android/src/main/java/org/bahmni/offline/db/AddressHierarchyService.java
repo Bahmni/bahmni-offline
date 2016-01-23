@@ -24,10 +24,14 @@ public class AddressHierarchyService {
         SQLiteDatabase db = dbHelper.getWritableDatabase(Constants.KEY);
         ContentValues values = new ContentValues();
 
-        values.put("name", addressHierarchy.getInt("name"));
-        values.put("levelId", addressHierarchy.getInt("levelId"));
-        values.put("parentId", addressHierarchy.getInt("parent"));
-        values.put("userGeneratedId", addressHierarchy.getString("userGeneratedId"));
+        values.put("name", addressHierarchy.getString("name"));
+        values.put("levelId", addressHierarchy.getJSONObject("level").getInt("levelId"));
+        if (!addressHierarchy.isNull("parent")) {
+            values.put("parentId", addressHierarchy.getInt("parent"));
+        }
+        if (!addressHierarchy.isNull("userGeneratedId")) {
+            values.put("userGeneratedId", addressHierarchy.getString("userGeneratedId"));
+        }
         values.put("uuid", addressHierarchy.getString("uuid"));
 
         db.insertWithOnConflict("address_hierarchy_entry", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -39,11 +43,13 @@ public class AddressHierarchyService {
         SQLiteDatabase db = dbHelper.getWritableDatabase(Constants.KEY);
         ContentValues values = new ContentValues();
 
-        values.put("address_hierarchy_level_id", addressHierarchyLevel.getInt("levelId"));
+        values.put("addressHierarchyLevelId", addressHierarchyLevel.getInt("levelId"));
         values.put("name", addressHierarchyLevel.getString("name"));
-        values.put("parentLevelId", addressHierarchyLevel.getInt("parent"));
+        if (!addressHierarchyLevel.isNull("parent")) {
+            values.put("parentLevelId", addressHierarchyLevel.getInt("parent"));
+        }
         values.put("addressField", addressHierarchyLevel.getString("addressField"));
-        values.put("required", addressHierarchyLevel.getInt("required"));
+        values.put("required", addressHierarchyLevel.getBoolean("required"));
         values.put("uuid", addressHierarchyLevel.getString("uuid"));
 
         db.insertWithOnConflict("address_hierarchy_level", null, values, SQLiteDatabase.CONFLICT_REPLACE);

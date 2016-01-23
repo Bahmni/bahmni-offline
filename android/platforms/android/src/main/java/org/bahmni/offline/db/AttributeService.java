@@ -89,7 +89,7 @@ public class AttributeService {
                     String display = attribute.getString("value");
                     JSONObject value = new JSONObject();
                     value.put("display", display);
-                    value.put("uuid", attribute.getString("hydratedObject"));
+                    value.put("uuid", attribute.getJSONObject("value").getString("uuid"));
                     attribute.put("value", value);
                 }
             }

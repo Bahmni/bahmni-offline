@@ -62,14 +62,16 @@ public class PatientService {
         JSONObject personName = person.getJSONObject("preferredName");
         String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
 
-        JSONArray relationships = patientData.getJSONArray("relationships");
-        if (relationships.length() > 0) {
-            for (int i = 0; i < relationships.length(); i++) {
-                JSONObject relationship = relationships.getJSONObject(i);
-                JSONObject value = new JSONObject();
-                value.put("display", personName.getString("givenName") + personName.getString("familyName"));
-                value.put("uuid", patient.getString("uuid"));
-                relationship.put("personA", value);
+        if (patientData.has("relationships")){
+            JSONArray relationships = patientData.getJSONArray("relationships");
+            if (relationships.length() > 0) {
+                for (int i = 0; i < relationships.length(); i++) {
+                    JSONObject relationship = relationships.getJSONObject(i);
+                    JSONObject value = new JSONObject();
+                    value.put("display", personName.getString("givenName") + personName.getString("familyName"));
+                    value.put("uuid", patient.getString("uuid"));
+                    relationship.put("personA", value);
+                }
             }
         }
         values.put("identifier", patientIdentifier);
