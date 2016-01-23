@@ -25,9 +25,9 @@ public class AddressHierarchyService {
         ContentValues values = new ContentValues();
 
         values.put("name", addressHierarchy.getInt("name"));
-        values.put("level_id", addressHierarchy.getInt("levelId"));
-        values.put("parent_id", addressHierarchy.getInt("parent"));
-        values.put("user_generated_id", addressHierarchy.getString("userGeneratedId"));
+        values.put("levelId", addressHierarchy.getInt("levelId"));
+        values.put("parentId", addressHierarchy.getInt("parent"));
+        values.put("userGeneratedId", addressHierarchy.getString("userGeneratedId"));
         values.put("uuid", addressHierarchy.getString("uuid"));
 
         db.insertWithOnConflict("address_hierarchy_entry", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -41,8 +41,8 @@ public class AddressHierarchyService {
 
         values.put("address_hierarchy_level_id", addressHierarchyLevel.getInt("levelId"));
         values.put("name", addressHierarchyLevel.getString("name"));
-        values.put("parent_level_id", addressHierarchyLevel.getInt("parent"));
-        values.put("address_field", addressHierarchyLevel.getString("addressField"));
+        values.put("parentLevelId", addressHierarchyLevel.getInt("parent"));
+        values.put("addressField", addressHierarchyLevel.getString("addressField"));
         values.put("required", addressHierarchyLevel.getInt("required"));
         values.put("uuid", addressHierarchyLevel.getString("uuid"));
 

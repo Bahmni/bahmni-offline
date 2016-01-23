@@ -44,7 +44,7 @@ public class OfflineService {
         markerService = new MarkerService(mDBHelper);
         addressHierarchyService = new AddressHierarchyService(mDBHelper);
     }
-    
+
     @JavascriptInterface
     public void populateData(String host) throws IOException, JSONException {
 //        TODO: Hemanth/Abishek/Ranganathan - We don't need to take host as a parameter once we build event log for attributeTypes.
