@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class Util {
-
+//    TODO: Hemanth/Abishek/Ranganathan - this calss will be deleted once we build eventlog for person_attributes.
     static HostnameVerifier hostnameVerifier = new HostnameVerifier() {
         @Override
         public boolean verify(String hostname, SSLSession session) {
@@ -48,15 +48,5 @@ public class Util {
             }
         }
         return sb.toString();
-    }
-
-    public static String[] getAddressColumns(String host) throws IOException, JSONException {
-        JSONArray addressHierarchyFields = new JSONArray(Util.getData(new URL(host + "/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")));
-        String[] addressColumnNames = new String[addressHierarchyFields.length() + 1];
-        for (int i = 0; i < addressHierarchyFields.length(); i++) {
-            addressColumnNames[i] = addressHierarchyFields.getJSONObject(i).getString("addressField");
-        }
-        addressColumnNames[addressHierarchyFields.length()] = "patientUuid";
-        return addressColumnNames;
     }
 }

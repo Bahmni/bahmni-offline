@@ -6,12 +6,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AddressService {
-    public void insertAddress(SQLiteDatabase db, JSONObject address, String[] addressColumnNames, String patientUuid) throws JSONException {
+    public void insertAddress(SQLiteDatabase db, JSONObject address, String patientUuid) throws JSONException {
         ContentValues values = new ContentValues();
-        for (String addressColumn : addressColumnNames) {
-            if (!address.isNull(addressColumn))
-                values.put(addressColumn, address.getString(addressColumn));
-        }
+//        for (String addressColumn : addressColumnNames) {
+//            if (!address.isNull(addressColumn))
+//                values.put(addressColumn, address.getString(addressColumn));
+//        }
         values.put("patientUuid", patientUuid);
         db.insertWithOnConflict("patient_address", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }

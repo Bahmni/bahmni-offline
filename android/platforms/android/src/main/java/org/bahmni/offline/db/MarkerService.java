@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import org.bahmni.offline.Constants;
+
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONException;
@@ -21,17 +22,23 @@ public class MarkerService {
 
     public JSONObject getMarker() throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
-        Cursor c = db.rawQuery("SELECT m.lastReadEventUuid, m.catchmentNumber, m.lastReadTime from event_log_marker m LIMIT 1", new String[]{});
+        Cursor c = db.rawQuery("SELECT * from event_log_marker LIMIT 1", new String[]{});
         JSONObject jsonObject = new JSONObject();
 
-        if(c.getCount() < 1){
+        if (c.getCount() < 1) {
             c.close();
             return null;
         }
+
         c.moveToFirst();
-        jsonObject.put("lastReadEventUuid", c.getString(c.getColumnIndex("lastReadEventUuid")));
-        jsonObject.put("catchmentNumber", c.getString(c.getColumnIndex("catchmentNumber")));
-        jsonObject.put("lastReadTime", c.getString(c.getColumnIndex("lastReadTime")));
+        int totalColumn = c.getColumnCount();
+        System.out.println(totalColumn);
+        for (int i = 0; i < totalColumn; i++) {
+            if (c.getColumnName(i) != null) {
+                jsonObject.put(c.getColumnName(i),
+                        c.getString(i));
+            }
+        }
         c.close();
         return jsonObject;
     }
@@ -43,7 +50,7 @@ public class MarkerService {
         values.put("catchmentNumber", catchmentNumber);
         values.put("lastReadTime", new Date().toString());
 
-        db.insertWithOnConflict("patient", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.insertWithOnConflict("event_log_marker", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         return eventUuid;
     }

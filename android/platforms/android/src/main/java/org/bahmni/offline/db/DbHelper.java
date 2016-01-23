@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + "patient";
 
     private static final String SQL_DELETE_PATIENT_ATTRIBUTES =
-            "DROP TABLE IF EXISTS " + "patient";
+            "DROP TABLE IF EXISTS " + "patient_attributes";
 
     public DbHelper(Context context, String dbPath) {
         super(context, dbPath, null, DATABASE_VERSION);
@@ -26,8 +26,8 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_DELETE_PATIENTS);
-        db.execSQL(SQL_DELETE_PATIENT_ATTRIBUTES);
+        executeSql(db, SQL_DELETE_PATIENTS);
+        executeSql(db, SQL_DELETE_PATIENT_ATTRIBUTES);
         onCreate(db);
     }
 
@@ -35,16 +35,15 @@ public class DbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void createTable(SQLiteDatabase db, String tableName, String[] columnNames) {
-        String createTableSql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + "_id" + " INTEGER PRIMARY KEY";
-        for (String columnName : columnNames) {
-            createTableSql += COMMA_SEP + columnName + TEXT_TYPE;
-        }
-        createTableSql += ")";
-        db.execSQL(createTableSql);
+    public void createTable(SQLiteDatabase db, String sqlToCreateTable) {
+        executeSql(db, sqlToCreateTable);
     }
 
-    public void createTableBy(SQLiteDatabase db, String createEventLogMarkerTable) {
-        db.execSQL(createEventLogMarkerTable);
+    private void executeSql(SQLiteDatabase db, String sqlToCreateTable) {
+        db.execSQL(sqlToCreateTable);
+    }
+
+    public void createIndex(SQLiteDatabase db, String sqlToCreateIndex) {
+        executeSql(db, sqlToCreateIndex);
     }
 }
