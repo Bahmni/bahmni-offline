@@ -110,7 +110,7 @@ public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
         if (null != nameParts) {
             sqlString += appender + getNameSearchCondition(nameParts);
         }
-        sqlString += " GROUP BY identifier ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
+        sqlString += " GROUP BY p.uuid ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
         return sqlString;
     }
 
@@ -118,7 +118,7 @@ public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
         String BY_NAME_PARTS = " (coalesce(givenName" +
                 ", '') || coalesce(middleName" +
                 ", '') || coalesce(familyName" +
-                ", '') || identifier ) like ";
+                ", '') || coalesce(identifier, '')) like ";
         if (nameParts.length == 0)
             return "";
         else {

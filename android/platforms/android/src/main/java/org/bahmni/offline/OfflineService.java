@@ -21,6 +21,7 @@ import org.xwalk.core.JavascriptInterface;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class OfflineService {
@@ -66,37 +67,25 @@ public class OfflineService {
     }
 
     @JavascriptInterface
-    public void deletePatientData(String patientIdentifier) {
+    public void deletePatientData(String uuid) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
-        Cursor c = db.rawQuery("SELECT _id from patient" +
-                " WHERE identifier = '" + patientIdentifier + "' limit 1 ", new String[]{});
-        c.moveToFirst();
-        int patientId = c.getInt(c.getColumnIndex("_id"));
 
         db.beginTransaction();
 
-        db.rawExecSQL("DELETE FROM patient_attributes WHERE patientId = '" + patientId + "'");
-        db.rawExecSQL("DELETE FROM patient_address WHERE patientId = '" + patientId + "'");
-        db.rawExecSQL("DELETE FROM patient WHERE _id = '" + patientId + "'");
+        db.rawExecSQL("DELETE FROM patient_attributes WHERE patientUuid = '" + uuid + "'");
+        db.rawExecSQL("DELETE FROM patient_address WHERE patientUuid = '" + uuid + "'");
+        db.rawExecSQL("DELETE FROM patient WHERE uuid = '" + uuid + "'");
 
         db.setTransactionSuccessful();
 
         db.endTransaction();
-        c.close();
     }
 
     @JavascriptInterface
-    public String getPatientByIdentifier(String identifier) throws JSONException {
-        JSONObject result = new JSONObject();
-        result.put("data", new JSONObject().put("pageOfResults", new JSONArray().put(patientService.getPatientByIdentifier(identifier))));
-        return String.valueOf(result);
-    }
-
-    @JavascriptInterface
-    public String createPatient(String request) throws JSONException, IOException, ExecutionException, InterruptedException {
+    public String createPatient(String request, String requestType) throws JSONException, IOException, ExecutionException, InterruptedException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
 
-        insertPatientData(db, request, "POST");
+        insertPatientData(db, new JSONObject(request), requestType);
 
         String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
         return String.valueOf(new JSONObject().put("data", new JSONObject(getPatientByUuid(uuid))));
@@ -154,18 +143,69 @@ public class OfflineService {
         return db;
     }
 
-    private void insertPatientData(SQLiteDatabase db, String patientObject, String requestType) throws JSONException {
+    private void insertPatientData(SQLiteDatabase db, JSONObject patientData, String requestType) throws JSONException {
 
-        String patientUuid = patientService.insertPatient(db, patientObject);
-
-        JSONObject person = new JSONObject(patientObject).getJSONObject("patient").getJSONObject("person");
+        JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
-        attributeService.insertAttributes(db, patientUuid, attributes, requestType);
+        Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
+        d.moveToFirst();
+        ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
+        while (!d.isAfterLast()) {
+            JSONObject attributeEntry = new JSONObject();
+            attributeEntry.put("attributeTypeId", d.getInt(d.getColumnIndex("attributeTypeId")));
+            attributeEntry.put("uuid", d.getString(d.getColumnIndex("uuid")));
+            attributeEntry.put("attributeName", d.getString(d.getColumnIndex("attributeName")));
+            attributeEntry.put("format", d.getString(d.getColumnIndex("format")));
+            attributeTypeMap.add(attributeEntry);
+            d.moveToNext();
+        }
+        d.close();
+        if (requestType.equals("POST")) {
+            parseAttributeValues(attributes, attributeTypeMap);
+        }
+        String patientUuid = patientService.insertPatient(db, patientData);
+
+
+        attributeService.insertAttributes(db, patientUuid, attributes, attributeTypeMap);
 
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
             addressService.insertAddress(db, address, patientUuid);
         }
     }
+
+    private void parseAttributeValues(JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
+        for (int i = 0; i < attributes.length(); i++) {
+            JSONObject attribute = attributes.getJSONObject(i);
+            if (attribute.isNull("voided") || (!attribute.isNull("voided") && !attribute.getBoolean("voided"))) {
+                String format = getFormat(attributeTypeMap, attribute);
+                if ("java.lang.Integer".equals(format)) {
+                    attribute.put("value", Integer.parseInt(attribute.getString("value")));
+                }
+                if ("java.lang.Float".equals(format)) {
+                    attribute.put("value", Float.parseFloat(attribute.getString("value")));
+                } else if ("java.lang.Boolean".equals(format)) {
+                    attribute.put("value", attribute.getString("value").equals("true"));
+
+                } else if ("org.openmrs.Concept".equals(format)) {
+                    String display = attribute.getString("value");
+                    JSONObject value = new JSONObject();
+                    value.put("display", display);
+                    value.put("uuid", attribute.getString("hydratedObject"));
+                    attribute.put("value", value);
+                }
+            }
+        }
+    }
+
+    private String getFormat(ArrayList<JSONObject> attributeTypeMap, JSONObject attribute) throws JSONException {
+        for (JSONObject attributeEntry : attributeTypeMap) {
+            if (attributeEntry.getString("uuid").equals(attribute.getJSONObject("attributeType").getString("uuid"))) {
+                return attributeEntry.getString("format");
+            }
+        }
+        return null;
+    }
+
 }

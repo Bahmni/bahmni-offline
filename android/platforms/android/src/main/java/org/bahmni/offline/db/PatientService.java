@@ -54,13 +54,16 @@ public class PatientService {
         return result;
     }
 
-    public String insertPatient(SQLiteDatabase db, String patientObject) throws JSONException {
-        JSONObject patientData = new JSONObject(patientObject);
+    public String insertPatient(SQLiteDatabase db, JSONObject patientData) throws JSONException {
         ContentValues values = new ContentValues();
         JSONObject patient = patientData.getJSONObject("patient");
         JSONObject person = patient.getJSONObject("person");
         JSONObject personName = person.getJSONObject("preferredName");
-        String patientIdentifier = new JSONArray(patient.getString("identifiers")).getJSONObject(0).getString("identifier");
+        JSONArray identifiers = new JSONArray(patient.getString("identifiers"));
+        String patientIdentifier = null;
+        if(!identifiers.getJSONObject(0).isNull("identifier")){
+            patientIdentifier = identifiers.getJSONObject(0).getString("identifier");
+        }
 
         if (patientData.has("relationships")){
             JSONArray relationships = patientData.getJSONArray("relationships");
