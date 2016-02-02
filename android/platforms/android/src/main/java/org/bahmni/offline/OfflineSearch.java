@@ -104,7 +104,7 @@ public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
 
         }
         if (params.has("identifier") && !params.getString("identifier").equals("")) {
-            sqlString += appender + " ( p.identifier = '" + params.getString("identifierPrefix") + params.getString("identifier") + "')";
+            sqlString += appender + " ( p.identifier LIKE '" + params.getString("identifierPrefix") + "%" + params.getString("identifier") + "%')";
             appender = " AND ";
         }
         if (null != nameParts) {
