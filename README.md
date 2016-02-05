@@ -11,8 +11,10 @@ To run android app
     latest sdk tools
     latest platform tools
     latest build tools
-    android 5.1.1(API 22) platform
-    android 4.0.3(API 15) platform
+    Android 5.1.1(API 22) platform
+    Android 4.0.3(API 15) platform
+    latest Android Support Repository
+    latest Android Support Library
 6. Checkout out repo
 7. cd bahmni-offline/android
 8. ionic platform remove android
