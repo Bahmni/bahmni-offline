@@ -22,14 +22,14 @@ public class Util {
         }
     };
 
-    public static String getData(URL url) throws IOException {
+    public String getData(URL url) throws IOException {
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
         con.setHostnameVerifier(hostnameVerifier);              //TODO : Have to fix this       RE: Hemanth - Don't have to. This method will go away.
         InputStream inputStream = con.getInputStream();
         return convertStreamToString(inputStream);
     }
 
-    private static String convertStreamToString(InputStream is) {
+    private String convertStreamToString(InputStream is) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

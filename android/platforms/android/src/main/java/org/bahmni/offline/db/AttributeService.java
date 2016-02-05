@@ -9,15 +9,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.sqlcipher.database.SQLiteDatabase;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class AttributeService {
+
+    private Util util;
+
+    public AttributeService(Util util) {
+        this.util = util;
+    }
+
     public void insertAttributeTypes(String host, SQLiteDatabase db) throws JSONException, IOException {
         try {
-
-            JSONArray personAttributeTypeList = new JSONObject(Util.getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(uuid,name,sortWeight,description,format,concept)"))).getJSONArray("results");
+            JSONArray personAttributeTypeList = new JSONObject(util.getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(uuid,name,format)"))).getJSONArray("results");
             for (int i = 0; i < personAttributeTypeList.length(); i++) {
                 ContentValues values = new ContentValues();
                 values.put("attributeTypeId", String.valueOf(i));
@@ -62,8 +69,6 @@ public class AttributeService {
             }
         }
     }
-
-
 
 
 }

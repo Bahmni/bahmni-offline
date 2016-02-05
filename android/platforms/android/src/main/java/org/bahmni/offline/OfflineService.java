@@ -41,7 +41,19 @@ public class OfflineService {
         SQLiteDatabase.loadLibs(mContext);
         patientService = new PatientService(mDBHelper);
         addressService = new AddressService();
-        attributeService = new AttributeService();
+        attributeService = new AttributeService(new Util());
+        markerService = new MarkerService(mDBHelper);
+        addressHierarchyService = new AddressHierarchyService(mDBHelper);
+    }
+
+    OfflineService(Context c, AttributeService attributeServiceInjected) {
+        mContext = c;
+        mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
+        JodaTimeAndroid.init(c);
+        SQLiteDatabase.loadLibs(mContext);
+        patientService = new PatientService(mDBHelper);
+        addressService = new AddressService();
+        attributeService = attributeServiceInjected;
         markerService = new MarkerService(mDBHelper);
         addressHierarchyService = new AddressHierarchyService(mDBHelper);
     }
