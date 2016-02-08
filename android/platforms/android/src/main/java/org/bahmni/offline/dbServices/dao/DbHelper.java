@@ -1,16 +1,14 @@
-package org.bahmni.offline.db;
+package org.bahmni.offline.dbServices.dao;
 
 import android.content.Context;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
+import org.bahmni.offline.Constants;
 
 public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String TEXT_INTEGER = " INTEGER";
-    private static final String COMMA_SEP = ",";
 
     private static final String SQL_DELETE_PATIENTS =
             "DROP TABLE IF EXISTS " + "patient";
@@ -26,8 +24,8 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        executeSql(db, SQL_DELETE_PATIENTS);
-        executeSql(db, SQL_DELETE_PATIENT_ATTRIBUTES);
+        executeSql(SQL_DELETE_PATIENTS);
+        executeSql(SQL_DELETE_PATIENT_ATTRIBUTES);
         onCreate(db);
     }
 
@@ -35,15 +33,15 @@ public class DbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public void createTable(SQLiteDatabase db, String sqlToCreateTable) {
-        executeSql(db, sqlToCreateTable);
+    public void createTable(String sqlToCreateTable) {
+        executeSql(sqlToCreateTable);
     }
 
-    private void executeSql(SQLiteDatabase db, String sqlToCreateTable) {
-        db.execSQL(sqlToCreateTable);
+    private void executeSql(String sqlToCreateTable) {
+        getWritableDatabase(Constants.KEY).execSQL(sqlToCreateTable);
     }
 
-    public void createIndex(SQLiteDatabase db, String sqlToCreateIndex) {
-        executeSql(db, sqlToCreateIndex);
+    public void createIndex(String sqlToCreateIndex) {
+        executeSql(sqlToCreateIndex);
     }
 }

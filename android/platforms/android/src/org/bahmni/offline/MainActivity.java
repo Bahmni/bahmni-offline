@@ -19,7 +19,7 @@
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
 //        XWalkView xWalkWebView = (XWalkView) findViewById(R.id.xwalkWebView);
-//        xWalkWebView.addJavascriptInterface(new OfflineService(MainActivity.this), "AndroidOfflineService");
+//        xWalkWebView.addJavascriptInterface(new DbService(MainActivity.this), "AndroidOfflineService");
 //        xWalkWebView.load("file:///android_asset/www/index.html", null);
 //        // turn on debugging
 //        XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);

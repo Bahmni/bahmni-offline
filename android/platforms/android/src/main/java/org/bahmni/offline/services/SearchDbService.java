@@ -1,22 +1,23 @@
-package org.bahmni.offline;
+package org.bahmni.offline.services;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import net.sqlcipher.database.SQLiteDatabase;
-import org.bahmni.offline.db.DbHelper;
+import org.bahmni.offline.Constants;
+import org.bahmni.offline.dbServices.dao.DbHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class OfflineSearch extends AsyncTask<String, Integer, JSONArray> {
+public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
     private Context mContext;
     private DbHelper mDBHelper;
 
-    public OfflineSearch(Context mContext, DbHelper mDBHelper) {
+    public SearchDbService(Context mContext, DbHelper mDBHelper) {
         this.mContext = mContext;
         this.mDBHelper = mDBHelper;
     }

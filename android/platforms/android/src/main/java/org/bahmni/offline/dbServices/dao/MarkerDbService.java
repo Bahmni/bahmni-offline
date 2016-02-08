@@ -1,4 +1,4 @@
-package org.bahmni.offline.db;
+package org.bahmni.offline.dbServices.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -12,11 +12,11 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class MarkerService {
+public class MarkerDbService {
 
     private DbHelper mDBHelper;
 
-    public MarkerService(DbHelper mDBHelper) {
+    public MarkerDbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
     }
 

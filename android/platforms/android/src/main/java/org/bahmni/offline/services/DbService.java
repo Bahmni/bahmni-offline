@@ -1,18 +1,20 @@
-package org.bahmni.offline;
+package org.bahmni.offline.services;
 
 import android.content.Context;
 import android.database.Cursor;
 
-import org.bahmni.offline.db.AddressHierarchyService;
-import org.bahmni.offline.db.AddressService;
-import org.bahmni.offline.db.AttributeService;
-import org.bahmni.offline.db.PatientService;
+import org.bahmni.offline.Constants;
+import org.bahmni.offline.Util;
+import org.bahmni.offline.dbServices.dao.AddressHierarchyDbService;
+import org.bahmni.offline.dbServices.dao.PatientAddressDbService;
+import org.bahmni.offline.dbServices.dao.PatientAttributeDbService;
+import org.bahmni.offline.dbServices.dao.PatientDbService;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.bahmni.offline.db.DbHelper;
-import org.bahmni.offline.db.MarkerService;
+import org.bahmni.offline.dbServices.dao.DbHelper;
+import org.bahmni.offline.dbServices.dao.MarkerDbService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,38 +26,26 @@ import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class OfflineService {
+public class DbService {
     Context mContext;
     private DbHelper mDBHelper;
-    private PatientService patientService;
-    private AddressService addressService;
-    private AttributeService attributeService;
-    private MarkerService markerService;
-    private AddressHierarchyService addressHierarchyService;
+    private PatientDbService patientDbService;
+    private PatientAddressDbService patientAddressDbService;
+    private PatientAttributeDbService patientAttributeDbService;
+    private MarkerDbService markerDbService;
+    private AddressHierarchyDbService addressHierarchyDbService;
 
 
-    OfflineService(Context c) {
+    public DbService(Context c) {
         mContext = c;
         mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
         JodaTimeAndroid.init(c);
         SQLiteDatabase.loadLibs(mContext);
-        patientService = new PatientService(mDBHelper);
-        addressService = new AddressService();
-        attributeService = new AttributeService(new Util());
-        markerService = new MarkerService(mDBHelper);
-        addressHierarchyService = new AddressHierarchyService(mDBHelper);
-    }
-
-    OfflineService(Context c, AttributeService attributeServiceInjected) {
-        mContext = c;
-        mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
-        JodaTimeAndroid.init(c);
-        SQLiteDatabase.loadLibs(mContext);
-        patientService = new PatientService(mDBHelper);
-        addressService = new AddressService();
-        attributeService = attributeServiceInjected;
-        markerService = new MarkerService(mDBHelper);
-        addressHierarchyService = new AddressHierarchyService(mDBHelper);
+        patientDbService = new PatientDbService(mDBHelper);
+        patientAddressDbService = new PatientAddressDbService(mDBHelper);
+        patientAttributeDbService = new PatientAttributeDbService(mDBHelper, new Util());
+        markerDbService = new MarkerDbService(mDBHelper);
+        addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
     }
 
     @JavascriptInterface
@@ -64,17 +54,17 @@ public class OfflineService {
         initSchema();
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
 //        TODO: Hemanth/Abishek/Ranganathan - Next line will go away once we build event log for attributeTypes
-        attributeService.insertAttributeTypes(host, db);
+        patientAttributeDbService.insertAttributeTypes(host);
     }
 
     @JavascriptInterface
     public String getPatientByUuid(String uuid) throws JSONException {
-        return String.valueOf(patientService.getPatientByUuid(uuid));
+        return String.valueOf(patientDbService.getPatientByUuid(uuid));
     }
 
     @JavascriptInterface
     public String search(String sqlString) throws JSONException, IOException, ExecutionException, InterruptedException {
-        JSONArray json = new OfflineSearch(mContext, mDBHelper).execute(sqlString).get();
+        JSONArray json = new SearchDbService(mContext, mDBHelper).execute(sqlString).get();
         return String.valueOf(new JSONObject().put("pageOfResults", json));
     }
 
@@ -95,36 +85,28 @@ public class OfflineService {
 
     @JavascriptInterface
     public String createPatient(String request, String requestType) throws JSONException, IOException, ExecutionException, InterruptedException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
 
-        insertPatientData(db, new JSONObject(request), requestType);
+        insertPatientData(new JSONObject(request), requestType);
 
         String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
         return String.valueOf(new JSONObject().put("data", new JSONObject(getPatientByUuid(uuid))));
     }
 
     @JavascriptInterface
-    public String generateOfflineIdentifier() throws JSONException {
-        JSONObject result = new JSONObject();
-        result.put("data", "TMP-" + patientService.generateIdentifier());
-        return String.valueOf(result);
-    }
-
-    @JavascriptInterface
     public String insertMarker(String eventUuid, String catchmentNumber) {
-        return markerService.insertMarker(eventUuid, catchmentNumber);
+        return markerDbService.insertMarker(eventUuid, catchmentNumber);
     }
 
     @JavascriptInterface
     public String getMarker() throws JSONException {
-        JSONObject marker = markerService.getMarker();
+        JSONObject marker = markerDbService.getMarker();
         return marker == null ? null : String.valueOf(marker);
     }
 
     @JavascriptInterface
     public String insertAddressHierarchy(String addressHierarchy) throws JSONException {
         JSONObject addressHierarcyRequest = new JSONObject(addressHierarchy);
-        JSONObject jsonObject = addressHierarchyService.insertAddressHierarchy(addressHierarcyRequest);
+        JSONObject jsonObject = addressHierarchyDbService.insertAddressHierarchy(addressHierarcyRequest);
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
@@ -138,25 +120,25 @@ public class OfflineService {
 
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
 
-        mDBHelper.createTable(db, Constants.CREATE_PATIENT_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_EVENT_LOG_MARKER_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_IDGEN_TABLE);
-        mDBHelper.createTable(db, Constants.CREATE_PATIENT_ADDRESS_TABLE);
+        mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
+        mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
+        mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
+        mDBHelper.createTable(Constants.CREATE_EVENT_LOG_MARKER_TABLE);
+        mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
+        mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
+        mDBHelper.createTable(Constants.CREATE_IDGEN_TABLE);
+        mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
 
-        mDBHelper.createIndex(db, Constants.CREATE_GIVEN_NAME_INDEX);
-        mDBHelper.createIndex(db, Constants.CREATE_MIDDLE_NAME_INDEX);
-        mDBHelper.createIndex(db, Constants.CREATE_FAMILY_NAME_INDEX);
-        mDBHelper.createIndex(db, Constants.CREATE_IDENTIFIER_INDEX);
+        mDBHelper.createIndex(Constants.CREATE_GIVEN_NAME_INDEX);
+        mDBHelper.createIndex(Constants.CREATE_MIDDLE_NAME_INDEX);
+        mDBHelper.createIndex(Constants.CREATE_FAMILY_NAME_INDEX);
+        mDBHelper.createIndex(Constants.CREATE_IDENTIFIER_INDEX);
 
         return db;
     }
 
-    private void insertPatientData(SQLiteDatabase db, JSONObject patientData, String requestType) throws JSONException {
-
+    private void insertPatientData(JSONObject patientData, String requestType) throws JSONException {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
@@ -176,14 +158,14 @@ public class OfflineService {
         if (requestType.equals("POST")) {
             parseAttributeValues(attributes, attributeTypeMap);
         }
-        String patientUuid = patientService.insertPatient(db, patientData);
+        String patientUuid = patientDbService.insertPatient(patientData);
 
 
-        attributeService.insertAttributes(db, patientUuid, attributes, attributeTypeMap);
+        patientAttributeDbService.insertAttributes(patientUuid, attributes, attributeTypeMap);
 
         if (!person.isNull("preferredAddress")) {
             JSONObject address = person.getJSONObject("preferredAddress");
-            addressService.insertAddress(db, address, patientUuid);
+            patientAddressDbService.insertAddress(address, patientUuid);
         }
     }
 

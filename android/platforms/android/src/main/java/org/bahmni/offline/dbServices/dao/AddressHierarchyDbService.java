@@ -1,4 +1,4 @@
-package org.bahmni.offline.db;
+package org.bahmni.offline.dbServices.dao;
 
 import android.content.ContentValues;
 
@@ -8,10 +8,10 @@ import org.bahmni.offline.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddressHierarchyService {
+public class AddressHierarchyDbService {
     DbHelper dbHelper;
 
-    public AddressHierarchyService(DbHelper dbHelper) {
+    public AddressHierarchyDbService(DbHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 

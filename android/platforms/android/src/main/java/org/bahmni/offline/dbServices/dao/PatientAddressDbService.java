@@ -1,12 +1,21 @@
-package org.bahmni.offline.db;
+package org.bahmni.offline.dbServices.dao;
 
 import android.content.ContentValues;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.bahmni.offline.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AddressService {
-    public void insertAddress(SQLiteDatabase db, JSONObject address, String patientUuid) throws JSONException {
+public class PatientAddressDbService {
+
+    private DbHelper mDBHelper;
+
+    public PatientAddressDbService(DbHelper mDBHelper) {
+        this.mDBHelper = mDBHelper;
+    }
+
+    public void insertAddress(JSONObject address, String patientUuid) throws JSONException {
+        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         ContentValues values = new ContentValues();
 
         String[] addressFields = new String[]{"address1", "address2", "address3", "address4", "address5", "address6",
