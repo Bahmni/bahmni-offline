@@ -1,11 +1,10 @@
-package org.bahmni.offline.services;
+package org.bahmni.offline.dbServices.dao;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
-import org.bahmni.offline.dbServices.dao.DbHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.json.JSONArray;
@@ -14,11 +13,9 @@ import org.json.JSONObject;
 
 public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
-    private Context mContext;
     private DbHelper mDBHelper;
 
-    public SearchDbService(Context mContext, DbHelper mDBHelper) {
-        this.mContext = mContext;
+    public SearchDbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
     }
 
@@ -26,7 +23,6 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
     protected JSONArray doInBackground(String... params) {
         JSONArray json = null;
 
-        SQLiteDatabase.loadLibs(mContext);
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         try {
             json = constructResponse(db.rawQuery(generateQuery(params[0]), new String[]{}));
@@ -56,8 +52,8 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         return json;
     }
 
-    private String generateQuery(String params1) throws JSONException {
-        JSONObject params = new JSONObject(params1);
+    private String generateQuery(String parameters) throws JSONException {
+        JSONObject params = new JSONObject(parameters);
         String nameParts[] = null;
         if (params.has("q") && null != params.getString("q")) {
             nameParts = params.getString("q").split(" ");

@@ -5,16 +5,11 @@ import android.database.Cursor;
 
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.Util;
-import org.bahmni.offline.dbServices.dao.AddressHierarchyDbService;
-import org.bahmni.offline.dbServices.dao.PatientAddressDbService;
-import org.bahmni.offline.dbServices.dao.PatientAttributeDbService;
-import org.bahmni.offline.dbServices.dao.PatientDbService;
+import org.bahmni.offline.dbServices.dao.*;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.bahmni.offline.dbServices.dao.DbHelper;
-import org.bahmni.offline.dbServices.dao.MarkerDbService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,8 +58,8 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String search(String sqlString) throws JSONException, IOException, ExecutionException, InterruptedException {
-        JSONArray json = new SearchDbService(mContext, mDBHelper).execute(sqlString).get();
+    public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
+        JSONArray json = new SearchDbService(mDBHelper).execute(params).get();
         return String.valueOf(new JSONObject().put("pageOfResults", json));
     }
 

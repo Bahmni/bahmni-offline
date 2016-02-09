@@ -176,7 +176,6 @@ android {
         if (cdvMinSdkVersion != null) {
             minSdkVersion cdvMinSdkVersion
         }
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     compileSdkVersion cdvCompileSdkVersion

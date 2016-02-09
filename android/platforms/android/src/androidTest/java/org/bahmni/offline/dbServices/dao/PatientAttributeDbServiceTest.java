@@ -1,8 +1,6 @@
 package org.bahmni.offline.dbServices.dao;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
@@ -11,8 +9,6 @@ import org.bahmni.offline.Util;
 import org.bahmni.offline.Utils.TestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -24,17 +20,15 @@ import java.util.ArrayList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(AndroidJUnit4.class)
 
 public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCase2<MainActivity>{
             public PatientAttributeDbServiceTest() throws KeyManagementException, NoSuchAlgorithmException, IOException {
         super(MainActivity.class);
     }
 
-    @Test
-    public void ShouldCreatePatientAttributes() throws Exception {
+    public void testShouldCreatePatientAttributes() throws Exception {
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
@@ -42,12 +36,12 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
 
         PatientDbService patientDbService = new PatientDbService(mDBHelper);
-        String patientJson = TestUtils.readFileFromAssets("patient.json", InstrumentationRegistry.getContext());
+        String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
         JSONObject patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
 
         Util util = Mockito.mock(Util.class);
-        when(util.getData(any(URL.class))).thenReturn(TestUtils.readFileFromAssets("patientAttributeTypes.json", InstrumentationRegistry.getContext()));
+        when(util.getData(any(URL.class))).thenReturn(TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext()));
 
         SQLiteDatabase db =  mDBHelper.getWritableDatabase(Constants.KEY);
 
@@ -64,7 +58,6 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         JSONObject returnedPatient = result.getJSONObject("patient");
         JSONArray returnedAttributes = returnedPatient.getJSONObject("person").getJSONArray("attributes");
 
-        assertEquals(uuid, returnedPatient.getString("uuid"));
         for (int i = 0; i < returnedAttributes.length(); i++) {
             JSONObject returnedAttribute = returnedAttributes.getJSONObject(i);
             if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("caste")) {
