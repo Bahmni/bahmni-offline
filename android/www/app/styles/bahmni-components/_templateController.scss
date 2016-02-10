@@ -1,0 +1,94 @@
+.template-control-header {
+	width: 100%;
+	height: 50px;
+	position: fixed;
+	bottom: 0;
+	left: 0; right: 0;
+	text-align: center;
+	z-index: 3;
+	padding: 5px;
+  	box-sizing: border-box;
+	button {
+		@include button($success, darken($success, 8%), $white);
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		padding: 0;
+		font-size: 14px;
+		border-color: darken($success, 12%);
+		box-shadow: 0 0 0 2px $white;
+;		i {
+			font-size: 1em;
+			lone-height: 1;
+		}
+	}
+	.patient-details {
+		color: #000;
+		text-shadow: 1px 1px 1px rgba($lightGray, 0.9);
+	}
+}
+
+.template-control-panel {
+	background: $white;
+	border: 1px solid $lightGray;
+	@include clearfix();
+	position: fixed;
+	bottom: 52px;
+	left: 50%;
+	z-index: 4;
+	padding: 5px;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: $max-page-width;
+    @media screen and (max-width: 1200px) {
+      width: 96%;
+    }
+	ul.template-icons {
+      max-height: 334px;
+      width: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      li {
+        padding: 2px;
+        float: left;
+        width: 25%;
+        box-sizing: border-box;
+
+         button {
+          width: 100%;
+          display: inline-block;
+          float: left;
+          margin: 1px 3px;
+          font-size: 12px;
+          border: 1px solid $lightGray;
+          padding: 5px;
+          color: $darkGray;
+          text-align: left;
+          line-height: .9;
+          box-sizing: border-box;
+          min-height: 50px;
+          i {
+            font-size: 1.5em;
+            margin: 0 auto;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+}
+
+ul.template-icons::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+ul.template-icons::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 7px;
+}
+ 
+ul.template-icons::-webkit-scrollbar-thumb {
+  background-color: $mediumGray;
+  border-radius: 7px;
+}

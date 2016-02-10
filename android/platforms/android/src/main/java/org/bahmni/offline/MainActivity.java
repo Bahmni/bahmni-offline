@@ -16,7 +16,8 @@ public class MainActivity extends CordovaActivity
         setContentView(R.layout.activity_main);
         XWalkView xWalkWebView = (XWalkView) findViewById(R.id.xwalkWebView);
         xWalkWebView.addJavascriptInterface(new DbService(MainActivity.this), "AndroidOfflineService");
-        xWalkWebView.load("file:///android_asset/www/index.html", null);
+//        xWalkWebView.load("file:///android_asset/www/app/home/index.html", null);
+        xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);
         // turn on debugging
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);
     }

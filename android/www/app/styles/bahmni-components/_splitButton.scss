@@ -1,0 +1,144 @@
+.split-button {
+    overflow:hidden;
+    margin: 2px;
+    border-radius: 3px;
+    position: relative;
+    ul {
+        border-radius: 3px 0 0 3px;
+        border-right:none;
+        float:left;
+        position: relative;
+        margin-bottom: 5px;
+        &.hidden-options{
+            width: 250px;
+            margin-top: 1px;
+            box-shadow:1px 2px 2px #6B6969;
+            float: none;
+            z-index: 9999;
+            background: #8eb82a;
+            border-bottom: none;
+            color: #fff;
+            clear: both;
+            border-right: 0;
+        }
+        li {
+            font-size:.9em;
+            &.primaryOption{
+                width: 250px;
+                button{
+                    text-align: left;
+                }
+            }
+            &.secondaryOption {
+                display: none;
+                border-bottom: 1px solid #699007;
+                background: none;
+                &:last-child {
+                    border-bottom: 1px solid $lightGray;
+                    border-radius: 0 0 3px 3px;
+                }
+                button {
+                    //background: $white;
+                    //color: $black;
+                    //position:relative;
+                    //z-index:99;
+                    border-radius: 0;
+                    text-align: left;
+                    border: 0;
+                    margin: 2px 0;
+                    background: none;
+                    color: #fff;
+                    &:hover {
+                        background: #A1D030;
+                    }
+                }                    
+                &:hover {
+                    background: #A1D030;
+                }
+            }
+            button{
+                margin: 0;
+                font-size: 14px;
+                width: 100%;
+                margin-right: 0 !important;
+                &:focus {
+                    outline: 2px solid $clinicalFormFocus;
+                }
+            }
+           /* button {
+
+                margin: 0px;
+                font-size: 14px;
+                border-radius: 3px 0 0 3px;
+
+            }*/
+        }
+    }
+    .toggle-button {
+        margin-top: 0;
+        margin-right: 0 !important;
+        &:focus{
+            outline: 2px solid $clinicalFormFocus;
+        }
+    }
+}
+
+.split-button {
+    .primaryOption button, .toggle-button {
+        @extend .confirm;
+    }
+}
+
+
+/*.reg-search-wrapper .split-button li{
+    width:auto;
+}
+.reg-body-wrapper .split-button{
+    ul{
+        li{
+            &.primaryOption{
+                width: 300px;
+                .buttonClass{
+                    text-align: left;
+                }
+            }
+        }
+        
+    }
+    .toggle-button {
+        margin-right: 0 !important;
+    }
+}*/
+
+/*.edit-col {
+    .split-button {
+        position: relative;
+        ul {
+            width: 100px;
+            float:none;
+            margin: 0 auto;
+            li.secondaryOption button {
+                border: 0;
+                border-radius: 0;
+            }
+            li button {
+                text-align: center;
+            }
+        }
+        .toggle-button {
+            position: absolute;
+            z-index: 1;
+            right: 3px;
+        }
+    }
+}*/
+
+.print-action-items {
+    position: absolute;
+    top: 8px;
+    right: 80px;
+    /*.secondaryOption {
+        position: relative;
+        z-index: 99;
+    }*/
+}

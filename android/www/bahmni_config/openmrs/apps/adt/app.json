@@ -1,0 +1,112 @@
+{
+        "id": "bahmni.adt.admission",
+        "extensionPoints": [
+            {
+                "id": "org.bahmni.adt.admit.action",
+                "description": "Bahmni Patient Admission Action"
+            },
+            {
+                "id": "org.bahmni.adt.transfer.action",
+                "description": "Bahmni Patient Transfer Action"
+            },
+            {
+                "id": "org.bahmni.adt.discharge.action",
+                "description": "Bahmni Patient Discharge Action"
+            },
+            {
+                "id": "org.bahmni.patient.search",
+                "description": "Bahmni patient search, lookup Page"
+            }
+        ],
+        "contextModel": [ 
+            "patientUuid",
+            "encounterUuid",
+            "visitUuid"
+        ],
+        "config" : {
+            "diagnosisStatus": "Inactive",
+            "onAdmissionForwardTo": "#/patient/{{patientUuid}}/visit/{{visitUuid}}/encounter/{{encounterUuid}}/bed",
+            "onTransferForwardTo": "#/patient/{{patientUuid}}/visit/{{visitUuid}}/encounter/{{encounterUuid}}/bed",
+            "onDischargeForwardTo": "#/patient/search",
+            "defaultVisitType": "IPD",
+            "maxPatientsPerBed" : 2,
+            "dashboard":{
+                "dashboardName": "General",
+                "conceptName": "Adt Notes",
+                "sections": {
+                "vitals":{
+                    "translationKey":"DASHBOARD_TITLE_VITALS_KEY",
+                    "name": "vitals",
+                    "displayOrder": 0,
+                    "isObservation": true,
+                    "dashboardParams": {
+                        "conceptNames": ["Vitals"],
+                        "numberOfVisits": 2
+                    }
+                },
+                "disposition":{
+                    "translationKey":"DASHBOARD_TITLE_DISPOSITION_KEY",
+                    "name": "disposition",
+                    "numberOfVisits": 1,
+                    "displayOrder": 1
+                },
+                "diagnosis":{
+                    "translationKey":"DASHBOARD_TITLE_DIAGNOSIS_KEY",
+                    "name": "diagnosis",
+                    "numberOfVisits": 1,
+                    "showDetailsButton":true,
+                    "displayOrder": 2
+                },
+                "patientInformation":{
+                    "title": "Patient Information",
+                    "translationKey": "DASHBOARD_TITLE_PATIENT_INFORMATION_KEY",
+                    "name": "patientInformation",
+                    "displayOrder": 3,
+                    "patientAttributes": ["caste", "class", "education", "occupation", "debt", "distanceFromCenter", "isUrban", "cluster","RationCard", "familyIncome"],
+                    "addressFields": ["address1", "address2", "cityVillage", "countryDistrict"]
+                },
+                "admissionDetails":{
+                    "translationKey":"DASHBOARD_TITLE_ADMISSION_DETAILS_KEY",
+                    "name":"admissionDetails",
+                    "displayOrder": 4
+                },
+                "navigationLinksControl":{
+                    "translationKey":"DASHBOARD_TITLE_NAVIGATION_LINKS_CONTROL_KEY",
+                    "name": "navigationLinksControl",
+                    "displayOrder": 5,
+                    "links": [
+                        {
+                            "translationKey":"HOME_DASHBOARD_KEY",
+                            "url": "../home/#/dashboard"
+                        },
+                        {
+                            "translationKey":"PATIENT_VISIT_PAGE_KEY",
+                            "url": "../clinical/#/patient/{{patientUuid}}/dashboard/visit/{{visitUuid}}"
+                        },
+                        {
+                            "translationKey":"PATIENT_ADT_PAGE_KEY",
+                            "url": "../adt/#/patient/{{patientUuid}}/visit/{{visitUuid}}/"
+                        },
+                        {
+                            "translationKey":"PATIENT_DASHBOARD_KEY",
+                            "url": "../clinical/#/patient/{{patientUuid}}/dashboard"
+                        },
+                        {
+                            "translationKey":"DISCHARGE_SUMMARY_PAGE_KEY",
+                            "url": "../clinical/#/patient/{{patientUuid}}/dashboard/visit/{{visitUuid}}"
+                        },
+                        {
+                            "translationKey":"PROGRAM_MANAGEMENT_PAGE_KEY",
+                            "url": "../clinical/#/patient/{{patientUuid}}/consultationContext"
+                        },
+                        {
+                            "translationKey":"CONSULTATION_PAGE_KEY",
+                            "url": "../clinical/#/patient/{{patientUuid}}/concept-set-group/observations"
+                        }
+                    ]
+                }
+
+            }}
+
+        }
+}

@@ -1,0 +1,248 @@
+.diagnosis {
+    .col{
+      margin: 0 !important;
+    }
+    .comment-toggle{
+      margin: 0;
+    }
+    .table {
+        .row {
+            border-bottom: 1px solid $lightGray;
+        }
+        .table-header.row {
+            border-bottom: 1px solid $lightGray;
+        }
+    }
+    .new-diagnosis, .current-diagnosis, .history-diagnosis {
+        margin-bottom: 25px;
+        //margin-left: 5px;
+        //margin-right: 5px;
+        border: 1px solid #b3b3b3;
+        border-bottom: none;
+    }
+    .new-diagnosis {
+        border: 1px solid darken($lightGray, 10%);
+        //margin: 35px 5px 20px 5px;
+        background: $white;
+        @media screen and (max-width: 768px) {
+            margin-top: 20px;
+        }
+        .row-remover {
+            border: 1px solid $lightGray;
+            border-radius: 5px;
+            float: right;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            span {
+                font-size: 20px;
+                color: $clinicalRemoveBtn;
+                padding: 0;
+            }
+        }
+    }
+    .table-header {
+        background: $lightestGray;
+        border-radius: 5px 5px 0 0;
+        span {
+            font-size: 14px;
+            white-space: nowrap;
+            color: $mediumGray;
+            font-family: $OpenSansBoldFont;
+            font-weight: normal;
+            padding-left: 10px;
+        }
+    }
+    input[type=number] {
+        width: 50px;
+    }
+    .col1 {
+        @include column(3);
+        input[type="text"] {
+            min-width: 160px;
+            margin-left: 10px;
+            margin-top: 0;
+            float: left;
+        }
+        input[type="checkbox"] {
+            margin-top: 8px;
+        }
+        label.add-new {margin-top: 10px; font-size: 12px;}
+        width: 39%;
+    }
+  .col2 {
+    @include column(3);
+    button:first-child {
+      margin-left: 10px;
+    }
+    width: 22%;
+  }
+  .col3 {
+    @include column(3);
+    button:first-child {
+      margin-left: 10px;
+    }
+    width: 23%;
+  }
+  .col4 {
+    @include column(2);
+    width: 12%;
+  }
+  .col5 {
+    @include column(1);
+    width: 3%;
+  }
+  .view-past {
+    position: relative;
+    -webkit-transition: background-color 1s ease;
+    .message {
+      position: absolute;
+      -webkit-transition: display 1s ease;
+      right: 83px;
+      top: 10px;
+      color: orange;
+      margin-bottom: 5px;
+      font-size: 14px;
+      display: none;
+    }
+  }
+  .view-past.edited {
+    background-color: $clinicalHighlight;
+    .message {
+      display: block;
+    }
+  }
+  button:first-child {
+    margin-left: 10px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 1;
+  }
+  button:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 1;
+  }
+  button {
+    padding: 8px 7px;
+    font-size: 11px;
+  }
+  .status button {
+    border-radius: 3px;
+  }
+  button:focus {
+    outline: 0;
+  }
+  button.active {
+    color: $bahmniTertiaryColor;
+    padding-top: 7px;
+    span:before {
+      font-family: FontAwesome;
+      content: "\f00c";
+      font-size: 18px;
+      margin-right: 5px;
+    }
+  }
+}
+.current-diagnosis, .history-diagnosis {
+  .diagnosis-row {
+    overflow: auto;
+    clear: both;
+    .view-past {
+      overflow: auto;
+      clear: both;
+      cursor: pointer;
+      .col {padding-top: 0; padding-bottom: 5px;}
+      .diagnosis-name {
+        padding-left: 10px;
+        font-size: 14px;
+        &.ruled-out {
+          color: $mediumGray;
+          text-decoration: line-through;
+        }
+      }
+      .col2 {padding-left: 10px;}
+      .col2, .col3 {
+        font-size: 12px;
+        margin-top: 5px;
+        
+        .view {margin-bottom: 5px;}
+        .date {
+          margin-right: 5px;
+        }
+      }
+    }
+    button.toggle {
+      font-size: 100%;
+      background: none;
+      i {
+        @include button();
+        padding: 10px 5px 5px 8px;
+      }
+    }
+  }
+}
+
+.diagnosis .history-diagnosis .table-body .row.edit-diagnosis {
+  overflow: auto;
+  clear: both;
+  background: $lightestGray;
+  border-bottom: 0;
+}
+
+
+
+@media screen and (max-width: 930px) {
+  .diagnosis .status button {
+    white-space: nowrap;
+    border-radius: 3px!important;
+  }
+  .diagnosis {
+    button {
+      width: 100px;
+    }
+    button:first-child {
+      margin-left: 10px;
+      border-right: 1px;
+      border-radius: 3px 3px 0 0;
+    }
+    button:last-child {
+      border-radius: 0 0 3px 3px;
+      border-left: 1px;
+      margin-left: 10px;
+    }
+    .view-past .message {
+      font-size: 10px;
+      top: 8px;
+    }
+  }
+}
+
+.visit {
+    .history-diagnosis .diagnosis-row button.toggle {
+        color: $mediumGray;
+        padding: 0;    
+        &.has-notes {
+            i {
+                color: orange;
+            }
+        }
+        i {
+            padding: 0;
+            background: none;
+            border: none;
+            color: $mediumGray;
+            &:hover {
+                background: none;
+            }
+        }
+    }
+
+}
+
+.diagnosis-row button.toggle.has-notes i {
+    color: orange;
+}
+textarea.comment-section {
+    margin: 0 10px 10px 10px;
+    min-width: 80%;
+}

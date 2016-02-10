@@ -1,0 +1,57 @@
+.messages {
+	.error-message, .info-message {
+		width: 35%;
+		margin: 5px auto;
+		color: #333;
+		padding: 5px;
+		border-radius: 2px;
+		box-shadow: 0px 0px 8px -1px $lightGray;
+		font-size: 14px;
+		font-family: $OpenSansBoldFont;
+		text-align: center;
+		position: fixed;
+		top: 50px;
+		left: 32%;
+		z-index: 1;
+	}
+	.error-message {
+	    background: $clinicalFormInvalid;
+	    border: 1px solid darken($clinicalFormInvalid, 30%);
+	    color: #333;
+	  	z-index: 99999;
+		.copy-btn, .show-btn {
+			padding: 5px;
+			margin-left: 5px;
+		}
+
+		.msg {
+			clear: both;
+			padding: 10px;
+			box-sizing: border-box;
+		    word-break:break-all;
+		    &.primary {
+			   color: darken($clinicalFormInvalid, 30%);
+			}
+		}
+	}
+	.info-message {
+		background: $clinicalSuccessMessageBg;
+		border: 1px solid darken($clinicalSuccessMessageBg, 30%);
+		color: green;
+		p:before {
+			content: "\f00c";
+			font-family: FontAwesome;
+			margin-right: 5px;
+			font-size: 18px;
+		}
+	}
+    .null-data-message {
+        padding: 30px 10px;
+        color: $mediumGray;
+        border: 1px solid $lightGray;
+        background: $lightestGray;
+        margin-top: 10px;
+        text-align: center;
+        border-radius: 3px;
+    }
+}

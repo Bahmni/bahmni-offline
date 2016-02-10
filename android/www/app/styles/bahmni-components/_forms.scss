@@ -1,0 +1,378 @@
+/******** form element styling start********/
+
+fieldset { margin: 0; padding: 0; border: 0; }
+
+form, .form {
+    fieldset {
+        display: inline-block;
+        min-width: 60%;
+        border:none;
+        padding:0px;
+        width:100%;
+    }
+    /*&.form-field-inline {
+    @include clearfix();
+        .form-field {
+            float: left;
+            margin-right:15px;
+        }
+    }*/
+    .form-field {
+        @include clearfix();
+        .field-attribute{
+            float:left;
+            label {
+                width:15em;
+                float:left;
+                text-align:right;
+                margin:0.7em 0.8em 0em 0em;
+            }
+        }
+        .field-value {
+            float: left;
+            input[type="text"], input[type="password"],input[type="date"] {
+                float: left;
+                width: 12.5em;
+            }
+
+            input[type="number"] { width: 8em; }
+
+            .value-text-only {
+                display: inline-block;
+                margin: 0.5em 0.8em 0em 0em;
+            }
+        }
+        .offset-label {
+            clear: both;
+            width: 100%;
+            box-sizing: border-box;
+            padding-left: 240px;
+        }
+        .add-more {
+            float: right;
+            margin-left: 5px;
+            @media screen and (max-width: 1024px) {
+              margin-top:7px;
+            }
+        }
+        textarea {
+           height: 35px;
+            width: 600px;;
+            transition: height 0.1s ease;
+            box-sizing: border-box;
+            margin-top: 5px;
+            &:focus {
+                height: 75px;
+            }
+            &.consultation-img-comments {
+                width: 100%;
+            }
+        }
+    }
+    /*.form-field-inline {
+        .form-field {
+            float: left;
+            display: inline;
+            float: left;
+            width: 50%;
+            margin: 0;
+        }
+        p {
+            float:left;
+            margin-left:20px;
+            margin-top:10px;
+        }
+    }*/
+    .input-prepend {
+        float:left;
+
+        input{
+            display: inline-block;
+            margin-bottom: 0;
+            vertical-align: middle;
+            float:left;
+            margin:0px !important;
+        }
+
+        .add-on{
+            @extend input;
+            border-radius: 3px;  
+            height: 21px;
+            min-width: 17px;
+            padding: 4px 5px;
+            background-color: $lightestGray;
+            border: 1px solid $lightGray;
+        }
+    }
+    .input-prepend .add-on:first-child, .input-prepend .btn:first-child {
+        border-radius: 4px 0 0 4px;
+    }
+    .input-prepend .add-on, .input-prepend .btn {
+      margin-right:-1px;
+    }
+    input[disabled], select[disabled], textarea[disabled], input[readonly], 
+    select[readonly], textarea[readonly], .select-arrow select[disabled] {
+        cursor: not-allowed;
+        background-color: $lightestGray;
+        color: $mediumGray;
+        &:focus {
+            cursor: not-allowed;
+            background-color: $lightestGray;
+            outline: none;
+        }
+    }
+    .form-button-wrapper {
+        margin-top:10px;
+        padding-left:14em;
+    }
+}
+
+
+.transparent { opacity: 0.2; }
+.opaque { opacity: 1; }
+
+
+/********* form element styling end***********/
+
+
+
+form, .form {
+  input, select, textarea, ul.select {
+    //min-width: 80%;
+    color: $text;
+    padding: 2px 10px;
+    @media (max-width: 1024px) {
+      padding: 5px 10px;
+    }
+    @media (max-width: 768px) {
+      padding: 7px 10px;
+    }
+    margin: 0;
+    margin-top: 5px;
+    background-color: #FFF;
+    border: 1px solid #DDD;
+    &:focus {
+      outline: 2px solid $link;
+      background: $focus;
+    }
+  }
+  input[type="date"]{
+    padding: 1px 10px;
+    @media (max-width: 1024px) {
+      padding: 5px 10px;
+    }
+    @media (max-width: 768px) {
+      padding: 7px 10px;
+    }
+  }
+
+
+  select {
+    min-width: 197px;
+    width: 197px;
+    height: 25px;
+    @media (max-width : 1024px){
+      height: 32px;
+      width: auto;
+    }
+    @media (max-width : 768px){
+      width: 210px;
+      height: 36px;
+    }
+    float: left;
+  }
+
+  select[disabled] {
+    background: #EEE;
+    border: #CCC 1px solid;
+    color: #CCC;
+    font-style: normal;
+  }
+
+  .select-arrow {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+
+    &:after {
+      position: absolute;
+      display: inline-block;
+      right: 7px;
+      top: 0;
+      height: 34px;
+      content: "\f0d7";
+      font-weight: normal;
+      font-style: normal;
+      text-decoration: inherit;
+      font-family: "FontAwesome";
+      pointer-events: none;
+      margin-top: 5px;
+      padding-left: 5px;
+      line-height: 2.2em;
+      border-left: 1px solid #ccc;
+    }
+
+    select {
+      -webkit-appearance: none;
+      border-radius: 0;
+      background: white;
+      cursor: pointer;
+    }
+
+    select[disabled] {
+      background: #EEE;
+      border: #CCC 1px solid;
+      color: #CCC;
+      font-style: normal;
+      cursor: default;
+    }
+  }
+
+  ul.select {
+    margin-top: 0;
+  }
+
+  fieldset {
+
+
+    legend {
+      text-align: left;
+      padding: 0 10px;
+      font-weight: 300;
+      //text-transform: uppercase;
+    }
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0px;
+    margin-top: 8px;
+  }
+
+  p {
+    text-align: left;
+    //margin-bottom: 15px;
+
+    strong {
+      display: block;
+      text-align: left;
+      clear: both;
+    }
+
+    &.radio {
+      label {
+        margin-top: 0;
+      }
+    }
+
+    &.radio-btn {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 10px 20px 0;
+      input {
+        display: inline-block;
+      }
+      label {
+        display: inline-block;
+        margin: 0;
+      }
+    }
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    min-width: 0;
+    margin: 2px 5px;
+    float: left;
+  }
+
+  input[type="checkbox"] {
+    @include check-box;
+  }
+  input[type="date"]{
+    padding: 1px 10px !important;
+    @media (max-width: 1024px) {
+      padding: 4px 10px !important;
+    }
+    @media (max-width: 768px) {
+      padding: 6px 10px !important;
+    }
+  }
+}
+
+ul.select {
+  text-align: left;
+  margin: 0 20px;
+  padding: 0;
+  font-size: 0.8em;
+
+  li {
+    margin: 0 10px;
+    text-align: left;
+    display: inline-block;
+    width: 250px;
+    padding: 5px;
+    color: $link;
+    background-color: #FFF;
+    border-bottom: 1px solid #EFEFEF;
+
+    &:hover {
+      background-color: $link;
+      color: white;
+      cursor: pointer;
+    }
+
+    &.selected {
+      background-color: $link;
+      color: white;
+      border-color: transparent;
+    }
+  }
+}
+
+form p strong, .form p strong { display: inline; }
+
+.computed-field {
+    background: $lightestGray;
+    border: 2px solid darken($bahmniPrimaryBtnColor, 5%);
+    box-sizing: border-box;
+    outline: 0;
+    &:focus {
+        background: $white;
+    }
+}
+
+.compute-btn, .btn-small {color: darken($bahmniPrimaryBtnColor, 15%);}
+
+
+
+/* form invalid error */
+form.submitted-with-error {
+  .ng-invalid:enabled, .ng-invalid:focus {
+    outline: none !important;
+    border: 2px solid darken($clinicalFormInvalid, 30%);
+    background: $clinicalFormInvalid;
+  }
+}
+
+.illegalValue, buttons-radio.illegalValue button, concept input:invalid.illegalValue {
+  &, &:focus {
+    border: 2px solid darken($clinicalFormInvalid, 30%);
+    background: $clinicalFormInvalid;
+    outline: 0;
+  }
+}
+buttons-radio.illegalValue { border: 0 !important; background: none !important;}
+
+.illegalValue{
+  &:focus {
+    border: 2px solid darken($clinicalFormInvalid, 30%) !important;
+    background: $clinicalFormInvalid !important;
+    outline: 0 !important;
+  }
+}
+
+input[type="time"]{
+  padding: 1px 10px;
+  margin-left: 2px;
+}

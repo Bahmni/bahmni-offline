@@ -26,6 +26,7 @@ app.controller("hostController",function($scope){
   $scope.submit = function(){
     console.log("coming",this.ipValue);
     window.localStorage['host'] = this.ipValue;
-    window.open('https://'+this.ipValue+'/bahmni/#/device/android','_self')
+    //window.open('https://'+this.ipValue+'/bahmni/#/device/android','_self')
+    window.open('file://bahmniapps/home/index.html', "_blank", "location=yes");
   };
 });

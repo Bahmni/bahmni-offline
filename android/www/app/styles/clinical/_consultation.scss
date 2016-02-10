@@ -1,0 +1,36 @@
+.consultation-page {
+    .section-grid {
+        margin-bottom: 15px;
+    }
+    .messages {
+        .null-data-message{
+            margin: 0;
+        }
+    }
+    .consultation-notes {
+        margin-top: 10px;
+        textarea {
+            padding: 10px;
+            margin: 10px;
+            width: 96%;
+        }
+    }
+    .observation {
+        .toggle {
+            padding-right: 3px;
+        }
+    }
+    .disposition {
+        .toggle i {
+            padding-right: 5px;
+        }
+    }
+}
+
+.clinical-consultation {
+    .tabs {
+        .fa-home {
+            padding: 0;
+        }
+    }
+}
