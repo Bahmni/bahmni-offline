@@ -7,9 +7,9 @@
         "128": "bahmni-128.png"
     },
     "app": {
-        "urls": ["https://dev.bahmnidev.org/"],
+        "urls": ["https://192.168.1.103:8082/bahmni/#/device/chrome-app/"],
         "launch": {
-            "web_url": "https://dev.bahmnidev.org/bahmni/home/#/device/chrome-app"
+            "web_url": "https://192.168.1.103:8082/bahmni/#/device/chrome-app"
         }
     },
     "permissions": [

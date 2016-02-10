@@ -1,0 +1,59 @@
+.obs-section {
+  border: 1px solid $lightGray;
+  border-radius: 5px;
+  margin: 1%;
+  font-size: 14px;
+  position: relative;
+  h2 {
+    padding: 10px;
+    font-family: $OpenSansBoldFont;
+    margin-bottom: 0;
+  }
+  .placeholder-message {
+    background: $lightGray;
+    color: $mediumGray;
+    padding: 10px;
+    text-align: center;
+  }
+  section.block {
+    padding: 0!important;
+    border-radius: 0 0 5px 5px;
+  }
+  section {
+    label.date {
+      font-family: $OpenSansBoldFont;
+      background: $lightestGray;
+      padding: 10px;
+      display: block;
+      color: $mediumGray;
+    }
+    .form-field-group .form-field {
+      border: 0;
+    }
+    .form-field .form-field {
+      padding: 0;
+      border: 0;
+      .form-field {
+        padding: 0;
+        border: 0;}
+    }
+    .form-field {
+      border-bottom: 1px solid $lightGray;
+      padding: 5px;
+      font-size: 14px;
+      padding-left: 10px;
+      clear: both;
+      overflow: auto;
+      .field-attribute {
+        width: 45%;
+        display: inline-block;
+      }
+    .value-text-only {
+        display: inline-block;
+    }
+    }
+    .is-abnormal .field-attribute {
+      color: red;
+    }
+  }
+}
