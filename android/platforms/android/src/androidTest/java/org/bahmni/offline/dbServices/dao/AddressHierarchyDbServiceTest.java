@@ -90,7 +90,7 @@ public class AddressHierarchyDbServiceTest extends ActivityInstrumentationTestCa
         List<AddressHierarchyEntry> addressHierarchyEntries= new AddressHierarchyDbService(mDBHelper).search(new JSONObject(params.toString()));
 
         assertEquals(addressHierarchyEntries.size(), 1);
-        assertEquals(addressHierarchyEntries.get(0).getName(), "Barguna");
+        assertEquals(addressHierarchyEntries.get(0).getName(), "Barna");
         assertEquals(addressHierarchyEntries.get(0).getUuid(), "559ba00d-d2d6-443e-be7b-f4e9fb7265fb");
         assertEquals(addressHierarchyEntries.get(0).getParent().getName(), "Barisal");
         assertEquals(addressHierarchyEntries.get(0).getParent().getUuid(), "b3f2af24-ae8f-4699-83d9-78e0d97ba976");
