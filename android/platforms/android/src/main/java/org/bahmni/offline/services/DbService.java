@@ -3,6 +3,7 @@ package org.bahmni.offline.services;
 import android.content.Context;
 import android.database.Cursor;
 
+import org.bahmni.offline.AddressHierarchyEntry;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.Util;
 import org.bahmni.offline.dbServices.dao.*;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class DbService {
@@ -103,6 +106,34 @@ public class DbService {
         JSONObject addressHierarcyRequest = new JSONObject(addressHierarchy);
         JSONObject jsonObject = addressHierarchyDbService.insertAddressHierarchy(addressHierarcyRequest);
         return jsonObject == null ? null : String.valueOf(jsonObject);
+    }
+
+    @JavascriptInterface
+    public String searchAddress(String addressHierarchy) throws JSONException {
+        JSONObject addressHierarchyRequest = new JSONObject(addressHierarchy);
+        List<AddressHierarchyEntry> addressHierarchyEntries = addressHierarchyDbService.search(addressHierarchyRequest);
+        JSONArray addressAsJSONArray = getAddressAsJSONArray(addressHierarchyEntries);
+        return addressAsJSONArray == null ? null : addressAsJSONArray.toString();
+    }
+
+    private JSONArray getAddressAsJSONArray(List<AddressHierarchyEntry> addressHierarchyEntries) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for(AddressHierarchyEntry addressHierarchyEntry: addressHierarchyEntries){
+            jsonArray.put(getAddressAsJSONObject(addressHierarchyEntry));
+        }
+        return jsonArray;
+    }
+
+    private JSONObject getAddressAsJSONObject(AddressHierarchyEntry addressHierarchyEntry) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", addressHierarchyEntry.getAddressHierarchyEntryId());
+        jsonObject.put("name", addressHierarchyEntry.getName());
+        jsonObject.put("userGeneratedId", addressHierarchyEntry.getUserGeneratedId());
+        jsonObject.put("uuid", addressHierarchyEntry.getUuid());
+        if(addressHierarchyEntry.getParent() != null) {
+            jsonObject.put("parent", getAddressAsJSONObject(addressHierarchyEntry.getParent()));
+        }
+        return jsonObject;
     }
 
 
