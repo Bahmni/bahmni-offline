@@ -8,6 +8,7 @@ import org.bahmni.offline.AddressHierarchyEntry;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
 import org.bahmni.offline.Utils.TestUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -68,11 +69,11 @@ public class AddressHierarchyDbServiceTest extends ActivityInstrumentationTestCa
         params.put("limit", 20);
         params.put("addressField", "stateProvince");
 
-        List<AddressHierarchyEntry> addressHierarchyEntries= new AddressHierarchyDbService(mDBHelper).search(new JSONObject(params.toString()));
+        JSONArray parentAddressJSON = new AddressHierarchyDbService(mDBHelper).search(new JSONObject(params.toString()));
 
-        assertEquals(addressHierarchyEntries.size(), 1);
-        assertEquals(addressHierarchyEntries.get(0).getName(), "Barisal");
-        assertEquals(addressHierarchyEntries.get(0).getUuid(), "b3f2af24-ae8f-4699-83d9-78e0d97ba976");
+        assertEquals(parentAddressJSON.length(), 1);
+        assertEquals(parentAddressJSON.getJSONObject(0).getString("name"), "Barisal");
+        assertEquals(parentAddressJSON.getJSONObject(0).getString("uuid"), "b3f2af24-ae8f-4699-83d9-78e0d97ba976");
 
     }
 
@@ -87,13 +88,13 @@ public class AddressHierarchyDbServiceTest extends ActivityInstrumentationTestCa
         params.put("limit", 20);
         params.put("addressField", "countyDistrict");
 
-        List<AddressHierarchyEntry> addressHierarchyEntries= new AddressHierarchyDbService(mDBHelper).search(new JSONObject(params.toString()));
+        JSONArray childAddressJSON = new AddressHierarchyDbService(mDBHelper).search(new JSONObject(params.toString()));
 
-        assertEquals(addressHierarchyEntries.size(), 1);
-        assertEquals(addressHierarchyEntries.get(0).getName(), "Barguna");
-        assertEquals(addressHierarchyEntries.get(0).getUuid(), "559ba00d-d2d6-443e-be7b-f4e9fb7265fb");
-        assertEquals(addressHierarchyEntries.get(0).getParent().getName(), "Barisal");
-        assertEquals(addressHierarchyEntries.get(0).getParent().getUuid(), "b3f2af24-ae8f-4699-83d9-78e0d97ba976");
+       assertEquals(childAddressJSON.length(), 1);
+        assertEquals(childAddressJSON.getJSONObject(0).getString("name"), "Barguna");
+        assertEquals(childAddressJSON.getJSONObject(0).getString("uuid"), "559ba00d-d2d6-443e-be7b-f4e9fb7265fb");
+        assertEquals(childAddressJSON.getJSONObject(0).getJSONObject("parent").getString("name"), "Barisal");
+        assertEquals(childAddressJSON.getJSONObject(0).getJSONObject("parent").getString("uuid"), "b3f2af24-ae8f-4699-83d9-78e0d97ba976");
 
     }
 }

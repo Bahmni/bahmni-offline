@@ -9,6 +9,7 @@ import org.bahmni.offline.AddressField;
 import org.bahmni.offline.AddressHierarchyEntry;
 import org.bahmni.offline.AddressHierarchyLevel;
 import org.bahmni.offline.Constants;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,7 +66,7 @@ public class AddressHierarchyDbService {
         return addressHierarchyLevel;
     }
 
-    public ArrayList<AddressHierarchyEntry> search(JSONObject addressHierarchyRequest) throws JSONException {
+    public JSONArray search(JSONObject addressHierarchyRequest) throws JSONException {
 
         String searchString = null, addressFieldString = null, parentUuid = null, userGeneratedIdForParent = null;
         Integer limit = null;
@@ -86,17 +87,17 @@ public class AddressHierarchyDbService {
         }
 
         if (searchString.isEmpty() || addressFieldString.isEmpty()) {
-            return new ArrayList<AddressHierarchyEntry>();
+            return null;
         }
 
         if (limit <= 0) {
-            return new ArrayList<AddressHierarchyEntry>();
+            return null;
         }
 
         AddressHierarchyLevel level = getAddressHierarchyLevelByAddressField(AddressField.getByName(addressFieldString));
 
         if (level == null) {
-            return new ArrayList<AddressHierarchyEntry>();
+            return null;
         }
 
         AddressHierarchyEntry parentEntry = getAddressHierarchyEntryByUuid(parentUuid);
@@ -104,7 +105,7 @@ public class AddressHierarchyDbService {
             parentEntry = getAddressHierarchyEntryByUserGenId(userGeneratedIdForParent);
         }
 
-        return getAddresses(retrieveAddressHierarchyEntries(level, searchString, parentEntry, limit));
+        return getAddressAsJSONArray(getAddresses(retrieveAddressHierarchyEntries(level, searchString, parentEntry, limit)));
 
     }
 
@@ -289,6 +290,27 @@ public class AddressHierarchyDbService {
     private <T>List<T> limit(List<T> list, int limit) {
         return limit > list.size()? list: list.subList(0, limit);
     }
+
+    private JSONArray getAddressAsJSONArray(List<AddressHierarchyEntry> addressHierarchyEntries) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for(AddressHierarchyEntry addressHierarchyEntry: addressHierarchyEntries){
+            jsonArray.put(getAddressAsJSONObject(addressHierarchyEntry));
+        }
+        return jsonArray;
+    }
+
+    private JSONObject getAddressAsJSONObject(AddressHierarchyEntry addressHierarchyEntry) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", addressHierarchyEntry.getAddressHierarchyEntryId());
+        jsonObject.put("name", addressHierarchyEntry.getName());
+        jsonObject.put("userGeneratedId", addressHierarchyEntry.getUserGeneratedId());
+        jsonObject.put("uuid", addressHierarchyEntry.getUuid());
+        if(addressHierarchyEntry.getParent() != null) {
+            jsonObject.put("parent", getAddressAsJSONObject(addressHierarchyEntry.getParent()));
+        }
+        return jsonObject;
+    }
+
 
 
 }

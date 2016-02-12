@@ -1,6 +1,7 @@
 package org.bahmni.offline.dbServices.dao;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.Util;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -20,6 +21,25 @@ public class PatientAttributeDbService {
     public PatientAttributeDbService(DbHelper mDBHelper, Util util) {
         this.mDBHelper = mDBHelper;
         this.util = util;
+    }
+
+    public ArrayList<JSONObject> getAttributeTypes() throws JSONException {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
+
+        Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
+        d.moveToFirst();
+        while (!d.isAfterLast()) {
+            JSONObject attributeEntry = new JSONObject();
+            attributeEntry.put("attributeTypeId", d.getInt(d.getColumnIndex("attributeTypeId")));
+            attributeEntry.put("uuid", d.getString(d.getColumnIndex("uuid")));
+            attributeEntry.put("attributeName", d.getString(d.getColumnIndex("attributeName")));
+            attributeEntry.put("format", d.getString(d.getColumnIndex("format")));
+            attributeTypeMap.add(attributeEntry);
+            d.moveToNext();
+        }
+        d.close();
+        return attributeTypeMap;
     }
 
     public void insertAttributeTypes(String host) throws JSONException, IOException {

@@ -111,30 +111,10 @@ public class DbService {
     @JavascriptInterface
     public String searchAddress(String addressHierarchy) throws JSONException {
         JSONObject addressHierarchyRequest = new JSONObject(addressHierarchy);
-        List<AddressHierarchyEntry> addressHierarchyEntries = addressHierarchyDbService.search(addressHierarchyRequest);
-        JSONArray addressAsJSONArray = getAddressAsJSONArray(addressHierarchyEntries);
+        JSONArray addressAsJSONArray = addressHierarchyDbService.search(addressHierarchyRequest);
         return addressAsJSONArray == null ? null : addressAsJSONArray.toString();
     }
 
-    private JSONArray getAddressAsJSONArray(List<AddressHierarchyEntry> addressHierarchyEntries) throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        for(AddressHierarchyEntry addressHierarchyEntry: addressHierarchyEntries){
-            jsonArray.put(getAddressAsJSONObject(addressHierarchyEntry));
-        }
-        return jsonArray;
-    }
-
-    private JSONObject getAddressAsJSONObject(AddressHierarchyEntry addressHierarchyEntry) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", addressHierarchyEntry.getAddressHierarchyEntryId());
-        jsonObject.put("name", addressHierarchyEntry.getName());
-        jsonObject.put("userGeneratedId", addressHierarchyEntry.getUserGeneratedId());
-        jsonObject.put("uuid", addressHierarchyEntry.getUuid());
-        if(addressHierarchyEntry.getParent() != null) {
-            jsonObject.put("parent", getAddressAsJSONObject(addressHierarchyEntry.getParent()));
-        }
-        return jsonObject;
-    }
 
 
     private SQLiteDatabase initSchema() throws IOException, JSONException {
@@ -164,23 +144,10 @@ public class DbService {
     }
 
     private void insertPatientData(JSONObject patientData, String requestType) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
-        Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
-        d.moveToFirst();
-        ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
-        while (!d.isAfterLast()) {
-            JSONObject attributeEntry = new JSONObject();
-            attributeEntry.put("attributeTypeId", d.getInt(d.getColumnIndex("attributeTypeId")));
-            attributeEntry.put("uuid", d.getString(d.getColumnIndex("uuid")));
-            attributeEntry.put("attributeName", d.getString(d.getColumnIndex("attributeName")));
-            attributeEntry.put("format", d.getString(d.getColumnIndex("format")));
-            attributeTypeMap.add(attributeEntry);
-            d.moveToNext();
-        }
-        d.close();
+        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
         if (requestType.equals("POST")) {
             parseAttributeValues(attributes, attributeTypeMap);
         }
