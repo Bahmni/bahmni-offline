@@ -82,7 +82,7 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
                 assertEquals(true, returnedAttribute.getBoolean("value"));
             }
             if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("cluster")) {
-                assertEquals("Shivtarai", returnedAttribute.getString("display"));
+                assertEquals("Shivtarai2", returnedAttribute.getString("display"));
             }
         }
     }
