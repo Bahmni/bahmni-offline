@@ -1,0 +1,1 @@
+The chrome extension will be built by the GO pipeline. The bahmni apps code - https://github.com/Bahmni/openmrs-module-bahmniapps will be bundled into this. 
