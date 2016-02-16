@@ -8,7 +8,7 @@
     },
     "app": {
         "launch": {
-            "local_path": "home/index.html#/login"
+            "local_path": "app/home/index.html#/login"
         }
     },
     "permissions": [
