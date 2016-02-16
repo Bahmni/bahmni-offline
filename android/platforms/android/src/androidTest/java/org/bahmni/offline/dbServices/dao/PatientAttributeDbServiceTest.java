@@ -5,20 +5,16 @@ import android.test.ActivityInstrumentationTestCase2;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
-import org.bahmni.offline.Util;
 import org.bahmni.offline.Utils.TestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+
 
 
 public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCase2<MainActivity>{
@@ -40,9 +36,6 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         JSONObject patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
 
-        Util util = Mockito.mock(Util.class);
-        when(util.getData(any(URL.class))).thenReturn(TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext()));
-
         SQLiteDatabase db =  mDBHelper.getWritableDatabase(Constants.KEY);
 
         ArrayList<JSONObject> attributeTypeMap = TestUtils.getAttributeTypeMap(db);
@@ -50,7 +43,7 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
-        PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper, util);
+        PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         patientAttributeDbService.insertAttributes(uuid, attributes, attributeTypeMap);
 
         JSONObject result = patientDbService.getPatientByUuid(uuid);

@@ -5,21 +5,16 @@ import android.test.ActivityInstrumentationTestCase2;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
-import org.bahmni.offline.Util;
 import org.bahmni.offline.Utils.TestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainActivity>{
 
@@ -41,11 +36,9 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
 
 
-        Util util = Mockito.mock(Util.class);
-        when(util.getData(any(URL.class))).thenReturn(TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext()));
 
         PatientDbService patientDbService = new PatientDbService(mDBHelper);
-        PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper, util);
+        PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         PatientAddressDbService patientAddressDbService = new PatientAddressDbService(mDBHelper);
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
@@ -61,7 +54,9 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         ArrayList<JSONObject> attributeTypeMap = TestUtils.getAttributeTypeMap(db);
 
-        patientAttributeDbService.insertAttributeTypes("https://somehost.com/");
+        String patientAttributeTypesJSON = TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext());
+        JSONObject patientAttributeTypes = new JSONObject(patientAttributeTypesJSON);
+        patientAttributeDbService.insertAttributeTypes(patientAttributeTypes.get("results").toString());
         patientAttributeDbService.insertAttributes(uuid, attributes, attributeTypeMap);
     }
 

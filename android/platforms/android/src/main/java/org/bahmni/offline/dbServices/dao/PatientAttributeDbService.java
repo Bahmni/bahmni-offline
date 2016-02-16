@@ -3,24 +3,20 @@ package org.bahmni.offline.dbServices.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import org.bahmni.offline.Constants;
-import org.bahmni.offline.Util;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class PatientAttributeDbService {
 
     private DbHelper mDBHelper;
-    private Util util;
 
-    public PatientAttributeDbService(DbHelper mDBHelper, Util util) {
+    public PatientAttributeDbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
-        this.util = util;
     }
 
     public ArrayList<JSONObject> getAttributeTypes() throws JSONException {
@@ -42,10 +38,10 @@ public class PatientAttributeDbService {
         return attributeTypeMap;
     }
 
-    public void insertAttributeTypes(String host) throws JSONException, IOException {
+    public void insertAttributeTypes(String params) throws JSONException, IOException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         try {
-            JSONArray personAttributeTypeList = new JSONObject(util.getData(new URL(host + "/openmrs/ws/rest/v1/personattributetype?v=custom:(uuid,name,format)"))).getJSONArray("results");
+            JSONArray personAttributeTypeList = new JSONArray(params);
             for (int i = 0; i < personAttributeTypeList.length(); i++) {
                 ContentValues values = new ContentValues();
                 values.put("attributeTypeId", String.valueOf(i));

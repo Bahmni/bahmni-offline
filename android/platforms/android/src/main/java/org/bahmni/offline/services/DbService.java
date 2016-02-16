@@ -41,18 +41,17 @@ public class DbService {
         SQLiteDatabase.loadLibs(mContext);
         patientDbService = new PatientDbService(mDBHelper);
         patientAddressDbService = new PatientAddressDbService(mDBHelper);
-        patientAttributeDbService = new PatientAttributeDbService(mDBHelper, new Util());
+        patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         markerDbService = new MarkerDbService(mDBHelper);
         addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
     }
 
     @JavascriptInterface
-    public void populateData(String host) throws IOException, JSONException {
+    public void populateData(String params) throws IOException, JSONException {
 //        TODO: Hemanth/Abishek/Ranganathan - We don't need to take host as a parameter once we build event log for attributeTypes.
         initSchema();
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
 //        TODO: Hemanth/Abishek/Ranganathan - Next line will go away once we build event log for attributeTypes
-        patientAttributeDbService.insertAttributeTypes(host);
+        patientAttributeDbService.insertAttributeTypes(params);
     }
 
     @JavascriptInterface
