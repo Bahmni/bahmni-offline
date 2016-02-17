@@ -18,12 +18,14 @@ public class ConfigDbService {
 
 
     @JavascriptInterface
-    public void insertConfig(String key, String value){
+    public String insertConfig(String key, String value, String eTag) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         ContentValues values = new ContentValues();
         values.put("key", key);
         values.put("value", value);
+        values.put("etag", eTag);
         db.insertWithOnConflict("configs", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        return getConfig(key);
     }
 
     @JavascriptInterface
@@ -31,8 +33,17 @@ public class ConfigDbService {
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         Cursor c = db.rawQuery("SELECT * from configs" +
                 " WHERE key = '" + key + "' limit 1 ", new String[]{});
+        if(c.getCount() < 1){
+            c.close();
+            return null;
+        }
         c.moveToFirst();
-        return String.valueOf(new JSONObject(c.getString(c.getColumnIndex("value"))));
+        JSONObject config = new JSONObject();
+        config.put("value", new JSONObject(c.getString(c.getColumnIndex("value"))));
+        config.put("etag", c.getString(c.getColumnIndex("etag")));
+        config.put("module", c.getString(c.getColumnIndex("key")));
+        c.close();
+        return String.valueOf(config);
 
     }
 }
