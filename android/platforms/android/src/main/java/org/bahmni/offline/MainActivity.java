@@ -1,8 +1,13 @@
 package org.bahmni.offline;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.cordova.CordovaActivity;
+import org.bahmni.offline.dbServices.dao.ConfigDbService;
+import org.bahmni.offline.dbServices.dao.DbHelper;
 import org.bahmni.offline.services.DbService;
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkPreferences;
@@ -15,11 +20,20 @@ public class MainActivity extends CordovaActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         XWalkView xWalkWebView = (XWalkView) findViewById(R.id.xwalkWebView);
         XWalkCookieManager mCookieManager = new XWalkCookieManager();
         mCookieManager.setAcceptCookie(true);
         mCookieManager.setAcceptFileSchemeCookies(true);
-        xWalkWebView.addJavascriptInterface(new DbService(MainActivity.this), "AndroidOfflineService");
+
+        Context c = getApplicationContext();
+        DbHelper mDBHelper = new DbHelper(MainActivity.this, c.getExternalFilesDir(null) + "/Bahmni.db");
+        JodaTimeAndroid.init(c);
+        SQLiteDatabase.loadLibs(c);
+
+        xWalkWebView.addJavascriptInterface(new DbService(mDBHelper), "AndroidOfflineService");
+        xWalkWebView.addJavascriptInterface(new ConfigDbService(mDBHelper), "AndroidConfigDbService");
+
         xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);
         // turn on debugging
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);

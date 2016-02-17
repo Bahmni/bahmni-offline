@@ -1,5 +1,6 @@
 package org.bahmni.offline.services;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class DbService {
-    Context mContext;
     private DbHelper mDBHelper;
     private PatientDbService patientDbService;
     private PatientAddressDbService patientAddressDbService;
@@ -34,11 +34,8 @@ public class DbService {
     private AddressHierarchyDbService addressHierarchyDbService;
 
 
-    public DbService(Context c) {
-        mContext = c;
-        mDBHelper = new DbHelper(c, c.getExternalFilesDir(null) + "/Bahmni.db");
-        JodaTimeAndroid.init(c);
-        SQLiteDatabase.loadLibs(mContext);
+    public DbService(DbHelper mDBHelper) {
+        this.mDBHelper = mDBHelper;
         patientDbService = new PatientDbService(mDBHelper);
         patientAddressDbService = new PatientAddressDbService(mDBHelper);
         patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
@@ -115,8 +112,8 @@ public class DbService {
     }
 
 
-
-    private SQLiteDatabase initSchema() throws IOException, JSONException {
+    @JavascriptInterface
+    public SQLiteDatabase initSchema() throws IOException, JSONException {
         Authenticator.setDefault(new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication("admin", "test".toCharArray());
@@ -133,6 +130,7 @@ public class DbService {
         mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
         mDBHelper.createTable(Constants.CREATE_IDGEN_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
+        mDBHelper.createTable(Constants.CREATE_CONFIG_TABLE);
 
         mDBHelper.createIndex(Constants.CREATE_GIVEN_NAME_INDEX);
         mDBHelper.createIndex(Constants.CREATE_MIDDLE_NAME_INDEX);
