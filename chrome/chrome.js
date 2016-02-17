@@ -24,5 +24,5 @@ var hideImplementationInputs = function() {
 };
 
 var goToHome = function(){
-  window.location = "app/home/index.html#/login";
+  window.location = "app/home/index.html#device/chrome-app";
 };
