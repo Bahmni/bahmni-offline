@@ -44,9 +44,7 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public void populateData(String params) throws IOException, JSONException {
-//        TODO: Hemanth/Abishek/Ranganathan - We don't need to take host as a parameter once we build event log for attributeTypes.
-//        initSchema();
+    public void populateAttributeTypes(String params) throws IOException, JSONException {
 //        TODO: Hemanth/Abishek/Ranganathan - Next line will go away once we build event log for attributeTypes
         patientAttributeDbService.insertAttributeTypes(params);
     }
