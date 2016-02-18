@@ -46,7 +46,7 @@ public class DbService {
     @JavascriptInterface
     public void populateData(String params) throws IOException, JSONException {
 //        TODO: Hemanth/Abishek/Ranganathan - We don't need to take host as a parameter once we build event log for attributeTypes.
-        initSchema();
+//        initSchema();
 //        TODO: Hemanth/Abishek/Ranganathan - Next line will go away once we build event log for attributeTypes
         patientAttributeDbService.insertAttributeTypes(params);
     }
@@ -113,14 +113,7 @@ public class DbService {
 
 
     @JavascriptInterface
-    public SQLiteDatabase initSchema() throws IOException, JSONException {
-        Authenticator.setDefault(new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("admin", "test".toCharArray());
-            }
-        });
-
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+    public void initSchema() throws IOException, JSONException {
 
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
@@ -137,7 +130,6 @@ public class DbService {
         mDBHelper.createIndex(Constants.CREATE_FAMILY_NAME_INDEX);
         mDBHelper.createIndex(Constants.CREATE_IDENTIFIER_INDEX);
 
-        return db;
     }
 
     private void insertPatientData(JSONObject patientData, String requestType) throws JSONException {
