@@ -1,0 +1,251 @@
+/*doc
+---
+title: Sections
+name: section
+category: Bahmni styleGuide
+---
+
+Section grid styles can be applied to any element. Typically you'll want to
+use either a `<div>` or an `<section` element:
+
+```html_example
+<div class="primary-section-grid">
+	<h2 class="section-title">Section Title</h2>
+	<p>This is a primary section grid</p>
+</div>
+```
+
+```html_example
+<div class="section-grid">
+	<h2 class="section-title">Section Title</h2>
+	<p>This is a secondary section grid</p>
+	<ul>
+		<li><a class="document-link">Document link</a></li>
+		<li><a class="document-link">Document link</a></li>
+		<li><a class="document-link">Document link</a></li>
+	</ul>
+</div>
+```
+
+*/
+
+
+/* helpers */
+/* grid sections */
+.primary-section-grid {
+	border: 1px solid $primarySectionGridBorder;
+	border-radius: $smallestSpacing;
+    box-shadow: 0px 0px 8px -1px $lightGray;
+}
+
+.section-grid,
+%section-grid {
+	border: 1px solid $bahmniSecondaryColor;
+	border-radius: 5px 5px 0 0;
+	background: $white;
+}
+.section-title-wrapper{
+  background: $bahmniSecondaryColor;
+  padding-right: 10px;
+  button{
+	margin-top: 4px;
+  }
+}
+
+
+h2.section-title {
+	font-family: $OpenSansFont;
+	padding: $defaultSpacing;
+	margin-top: 0;
+	margin-bottom: 0;
+	color: $white;
+	font-size: 16px;
+	clear: both; 
+	// overflow: auto;
+	background: $bahmniSecondaryColor;
+	position: relative;
+	border-radius: 2px 2px 0 0;
+	.section-title-text{
+		padding-top: 8px;
+		display: inline-block;
+	}
+	&.has-link {
+        cursor: pointer;
+    	&:hover {
+    		background: darken($bahmniSecondaryColor,5%);
+    	}
+	    .title-link {
+	        border-bottom: 1px solid white;
+	    }
+	    .fa-external-link {
+	        position: absolute;
+	        right: 0;
+	        top: 0;
+	        font-size: 26px;
+	        opacity: 0.5;
+	    }
+	}
+}
+
+/* document link */
+a.document-link {
+	display: block;
+	padding: 5px;
+	font-size: 14px;
+	line-height: 1.3em;
+	&:hover {
+		text-decoration: underline;
+		.fa-star{
+		  text-decoration: none;
+		}
+	}
+}
+
+/* notes */
+table {
+    tr.test-notes-parent, tr.notes-open {
+      border-bottom: 0;
+      td {
+        border: 0;
+      }
+    }
+    tr.notes-open td {
+      background: $clinicalNotesColor;
+    }
+    tr.has-test-notes td {
+        border: 0;
+    }
+}
+
+.notes {
+	font-size: 12px;
+	background: $clinicalNotesColor;
+	line-height: 1.4em;
+	padding: 3px;
+	margin: 10px 0;
+	overflow: auto;
+	clear: both;
+	border: 0;
+	color: #000;
+	strong, .title {
+		float: left;
+		margin-right: $smallestSpacing;
+    	font-family: $OpenSansBoldFont;
+    	display: inline;
+	}
+	pre, .content {
+		background: none;
+	}
+	&.inline-notes {
+		margin: 0;
+	}
+	&.test-notes, &.inline-comments {
+		font-size: 12px;
+		background: #fff;
+		color: $darkGray;
+		margin: 0;
+		
+		i[class^=fa-] {
+			font-size: 14px;
+			margin-right: 5px;
+		}
+		pre.left {
+			font-size: 12px;
+		}
+	}
+	&.test-notes {
+		padding: 3px 3px 3px 15px;
+	}
+}
+
+/* file-attachment */
+.has-uploaded-file {
+	&:hover {
+		background: $lightestGray;
+		cursor: pointer;
+	}
+	.uploaded-file {
+		display: inline-block;
+		width: 100%;
+		height: 100%;
+		// width: 15px;
+		&:focus{
+			border: none;
+			outline: none;
+		}
+	  	.fa-paper-clip {
+		  	float: left;
+		  	margin-top: -5px;
+		}
+	}
+}
+
+/* footer note with date time provider */
+.footer-note {
+	text-align: right;
+	span {
+		font-size: 12px;
+		color: $mediumGray;
+	}
+	.time-stamp {
+		display: block;
+		.date {
+			text-transform: uppercase;
+		}
+		.time {
+			color: $mediumGray;
+			margin-left: 5px;
+		}
+	}
+	.provider {
+		float: right;
+	}
+}
+
+/* disable any (block) element aesthetically, form elements needs a wrapper. */
+.is-disabled {
+	position: relative;
+	&:before {
+	    position: absolute;
+	    content: '';
+	    width: 100%;
+	    height: 100%;
+	    opacity: 0.3;
+	    background: $lightestGray;
+	    top: 0;
+	    left: 0;
+	}
+}
+
+.box-container{
+    overflow: hidden;
+    background-color: $white;
+    padding: 15px;
+    margin-bottom: 10px;
+   @include box-shadow-for-section();
+  	&.box-container-patient-info{
+      padding-top: 0;
+	  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    }
+    &.box-container-default{
+      margin-bottom: 0;
+	  padding: 0 15px;
+	  /*@media (max-width: 768px) {
+		padding: 15px 10px 15px 5px;
+	  }*/
+    }
+    section.section-padding{
+      padding-top: 14px;
+    }
+    legend{
+      width: 100%;
+      a{
+        color: $black;
+        display: inline-block;
+        width: 95%;
+		@media (max-width: 580px) {
+		  width: 92%;
+		}
+      }
+    }
+}

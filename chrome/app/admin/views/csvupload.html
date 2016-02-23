@@ -1,0 +1,134 @@
+<div nv-file-drop uploader="uploader" filters="queueLimit, customFilter">
+
+    <div class="csv-upload-page">
+        <div>
+            <section class="primary-section-grid">
+                <h2 class="section-title">Select files</h2>
+                <form class="select-file-form">
+                    <fieldset class="select-file-type">
+                        <ul>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="concept" ng-value="'concept'" > 
+                                <label for="concept">Concept</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="conceptset" ng-value="'conceptset'" >
+                                <label for="conceptset">Concept Set</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="program" ng-value="'program'" > 
+                                <label for="program">Program</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="patient" ng-value="'patient'" > 
+                                <label for="patient">Patient</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="encounter" ng-value="'encounter'">
+                                <label for="encounter">Encounter</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="drug" ng-value="'drug'" > 
+                                <label for="drug">Drug</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="labResults" ng-value="'labResults'" > 
+                                <label for="labResults">Lab Results</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option" 
+                                id="referenceterms" ng-value="'referenceterms'" > 
+                                <label for="referenceterms">Reference Terms</label>
+                            </li>
+                            <li>
+                                <input type="radio" name="upload-type" ng-model="option"
+                                       id="relationship" ng-value="'relationship'" >
+                                <label for="relationship">Relationship Information</label>
+                            </li>
+                        </ul>
+                    </fieldset>
+                    <fieldset class="upload-selected-file">
+                        <input id="inputFileUpload" class="input-file-upload" type="file" nv-file-select uploader="uploader" multiple />
+                        <label for="inputFileUpload" class="button confirm">
+                            Choose file(s)
+                        </label>
+                    </fieldset>
+                </form>
+            </section>
+
+            <section ng-if="uploader.queue.length" class="section-grid">
+                <h2 class="section-title">File to Upload</h2>
+                <table class="file-to-upload">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Upload Progress</th>
+                            <th>Upload Status</th>
+                            <th class="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in uploader.queue">
+                            <td><strong>{{ item.file.name }}</strong></td>
+                            <td>{{ item.file.size/1024|number:2 }} KB</td>
+                            <td>
+                                <progress value="{{item.progress}}" max="100"></progress>
+                            </td>
+                            <td>
+                                <span ng-if="item.isSuccess">Success</span>
+                                <span ng-if="item.isCancel">Canceled</span>
+                                <span ng-if="item.isError">Error</span>
+                            </td>
+                            <td nowrap>
+                                <button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                    Upload
+                                </button>
+                                <button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+                                    Cancel
+                                </button>
+                                <button type="button" ng-click="item.remove()">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section class="section-grid">
+                <h2 class="section-title">Uploaded files
+                    <button class="refresh-btn fr" ng-click="loadImportedItems()">
+                        <i class="fa fa-refresh"></i> <span>Refresh</span>
+                    </button>
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Error Message</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>                    
+                    <tbody>
+                        <tr ng-repeat="item in importedItems">
+                            <td><strong>{{ item.originalFileName }}</strong></td>
+                            <td>{{ item.startTime | bahmniDateTime }}</td>
+                            <td>{{ item.status }}</td>
+                            <td>{{ item.errorMessage }}</td>
+                            <td><a ng-if="item.hasError()" ng-href="{{item.errorFileUrl()}}">Error File</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</div>

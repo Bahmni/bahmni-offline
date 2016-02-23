@@ -1,0 +1,152 @@
+
+@import "registrationHeader";
+@import "registrationSearch";
+@import "patientCommonInformation";
+@import "patientAdditionalInfo";
+@import "relationship";
+@import "patientDeathInformation";
+
+body{
+  font-size: 14px;
+  @media (max-width : 768px){
+    font-size: 15px;
+  }
+}
+.reg-wrapper{
+  .reg-body-wrapper{
+    padding:10px 0;
+    @media (max-width : 768px){
+      padding:15px;
+    }
+    .observation-section{
+      width: 100%;
+      article{
+        width: 42%;
+        margin-left: 0;
+        @media (max-width : 768px){
+          width: 100%;
+        }
+        &.obs-section{
+          width: 40%;
+          margin-left: 8.375%;
+          float: right;
+          @media (max-width : 768px){
+            width: 100%;
+            margin:15px auto;
+          }
+        }
+      }
+      .form-horizontal {
+        fieldset {
+          label {
+            float: left;
+            width: 15em;
+            margin-right: 15px;
+            margin-left: 0;
+            text-align: right;
+            @media (max-width : 768px){
+              width: 17em;
+            }
+            @media (max-width : 580px){
+              text-align: left;
+              width: 100%;
+            }
+          }
+          .field-value {
+            input{
+                width: 12.5em!important;
+            }
+            textarea{
+              width: 14em!important;
+            }
+          }
+          &.hasLegend{
+            .offset-label{
+              padding-left:0;
+            }
+          }
+        }
+      }
+    }
+    &.visit-patient-page{
+      .observation-section{
+        article{
+          min-width: 42%;
+          width: auto;
+        }
+      }
+    }
+  }
+  .obs-section section{
+    .form-field{
+      padding: 0;
+      border-bottom: 0;
+    }
+    &.hierarchy{
+      .testUnderPanel{
+        width: 40%;
+        display: inline-block;
+      }
+    }
+  }
+}
+
+.reg-body-wrapper{
+  .autocomplete{
+    width: 220px;
+  }
+}
+
+.additional-attribute{
+  &.active{
+    .fa-caret-right{
+      display: none;
+    }
+    .fa-caret-down{
+      display: inline;
+    }
+  }
+  .fa-caret-down{
+    display: none;
+  }
+
+}
+
+.showOn-desktop-registration{
+  display: block !important;
+  @media (max-width : 990px){
+    display: none !important;
+  }
+}
+
+.showOn-small-screen-registration{
+  display: none !important;
+  @media (max-width : 990px){
+    display: block !important;
+    float: none !important;
+    clear: both;
+  }
+}
+
+.patientExistingIdentifier{
+  @media (max-width : 990px){
+    width: auto;
+    float: left;
+  }
+}
+.otherInfoContainer{
+  input[type="number"]{
+    width: 12.5em!important;
+    @media (max-width : 800px){
+      width: 11.5em !important;
+    }
+    @media (max-width : 768px){
+      width: 12.5em !important;
+    }
+  }
+}
+
+
+
+
+

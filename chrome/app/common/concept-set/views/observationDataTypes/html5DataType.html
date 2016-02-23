@@ -1,0 +1,33 @@
+<input id="{{::observation.uniqueId}}" ng-if="::(observation.isNumeric() && !observation.isStepperControl())"
+        obs-constraints obs="::observation"
+       ng-model="observation.value" ng-blur="handleUpdate()"
+       ng-disabled="observation.disabled"
+       ng-class="{'is-abnormal': observation.abnormalObs.value, 'illegalValue': !observation.isValid(atLeastOneValueIsSet,conceptSetRequired), 'computed-field': observation.isComputedAndEditable()}"
+        focus-me="::observation.isFocused"/>
+
+<input id="{{::observation.uniqueId}}" obs-constraints obs="::observation"
+       ng-if="!observation.isNumeric() && !observation._isDateTimeDataType() && !observation.conceptUIConfig.displayMonthAndYear" ng-disabled="observation.disabled"
+       ng-model="observation.value" ng-blur="handleUpdate()"
+       ng-class="{'is-abnormal': observation.abnormalObs.value, 'illegalValue': !observation.isValid(atLeastOneValueIsSet,conceptSetRequired), 'computed-field': observation.isComputedAndEditable()}"
+       focus-me="::observation.isFocused"/>
+<stepper id="{{::observation.uniqueId}}"
+         ng-model="observation.value" ng-blur="handleUpdate()" obs="observation"
+         ng-class="{'is-abnormal': observation.abnormalObs.value, 'illegalValue': !observation.isValid(atLeastOneValueIsSet, conceptSetRequired)}"
+         focus-me="::observation.isFocused"
+         ng-if="::(observation.isNumeric() && observation.isStepperControl())"></stepper>
+
+<datetimepicker model="observation.value"
+                observation="observation"
+                ng-blur="handleUpdate()"
+                allow-future-dates="(observation.conceptUIConfig && observation.conceptUIConfig.allowFutureDates)"
+                show-time="true" illegal-value="!observation.isValid(atLeastOneValueIsSet, conceptSetRequired)"
+                ng-if="::(observation._isDateTimeDataType())"></datetimepicker>
+
+<monthyearpicker min-year="observation.conceptUIConfig.minYear"
+                 max-year="observation.conceptUIConfig.maxYear"
+                 ng-if="!observation.isNumeric() && !observation._isDateTimeDataType() && observation.conceptUIConfig.displayMonthAndYear"
+                 observation="observation"
+                 ng-blur="handleUpdate()"
+                 illegal-value="!observation.isValid(atLeastOneValueIsSet, conceptSetRequired)"
+                 model="observation.value">
+</monthyearpicker>

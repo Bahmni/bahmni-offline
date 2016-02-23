@@ -1,0 +1,69 @@
+{
+    "name": "stacktrace-js",
+    "description": "Framework-agnostic, micro-library for getting stack traces in all environments",
+    "maintainers": [
+        "Eric Wendelin <me@eriwen.com> (http://www.eriwen.com)",
+        "Victor Homyakov <vkhomyackov@gmail.com> (https://github.com/victor-homyakov)",
+        "Oliver Salzburg (https://github.com/oliversalzburg)"
+    ],
+    "version": "1.0.1",
+    "license": "SEE LICENSE IN LICENSE",
+    "keywords": [
+        "stacktrace",
+        "error",
+        "debugger",
+        "client",
+        "browser"
+    ],
+    "homepage": "http://www.stacktracejs.com",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/stacktracejs/stacktrace.js.git"
+    },
+    "dependencies": {
+        "error-stack-parser": "~1.2",
+        "stack-generator": "~1",
+        "stacktrace-gps": "~2"
+    },
+    "devDependencies": {
+        "colors": "^1.1.2",
+        "del": "^1.2.0",
+        "es6-promise": "^3.0.2",
+        "gulp": "^3.9.0",
+        "gulp-concat": "^2.6.0",
+        "gulp-coveralls": "^0.1.4",
+        "gulp-jshint": "^1.11.2",
+        "gulp-sourcemaps": "^1.5.2",
+        "gulp-uglify": "^1.4.1",
+        "jasmine-node": "~1.14",
+        "jasmine-sinon": "^0.4.0",
+        "json3": "^3.3.2",
+        "karma": "^0.13.9",
+        "karma-chrome-launcher": "^0.2.0",
+        "karma-coverage": "^0.5.2",
+        "karma-firefox-launcher": "^0.1.6",
+        "karma-ie-launcher": "^0.2.0",
+        "karma-jasmine": "^0.1.5",
+        "karma-opera-launcher": "^0.3.0",
+        "karma-phantomjs2-launcher": "^0.3.2",
+        "karma-safari-launcher": "^0.1.1",
+        "karma-sauce-launcher": "^0.2.14",
+        "karma-sinon": "^1.0.4",
+        "run-sequence": "^1.1.2",
+        "sinon": "^1.16.1"
+    },
+    "bugs": {
+        "url": "https://github.com/stacktracejs/stacktrace.js/issues"
+    },
+    "main": "./stacktrace.js",
+    "files": [
+        "LICENSE",
+        "CHANGELOG.md",
+        "README.md",
+        "stacktrace.js",
+        "dist/"
+    ],
+    "scripts": {
+        "test": "gulp test"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "BAHMNI_PAGE_TITLE_KEY": "Bahmni Home",
+    "LOGIN_LABEL_LOGIN_KEY": "Login",
+    "LOGIN_LABEL_USERNAME_KEY": "Username",
+    "LOGIN_LABEL_PASSWORD_KEY": "Password",
+    "LOGIN_LABEL_LOCATION_KEY": "Location",
+    "LOGIN_LABEL_LOGIN_ERROR_MESSAGE_KEY": "You are not authenticated or your session expired. Please login.",
+    "LOGIN_MESSAGE_ENTER_USERNAME_KEY": "Enter your username",
+    "LOGIN_MESSAGE_ENTER_PASSWORD_KEY": "Enter your password",
+    "LOGIN_LABEL_SELECT_LOCATION_KEY": "Select Location",
+    "LOGIN_LABEL_SELECT_LOCALE_KEY": "Select Locale",
+    "HEADER_LABEL_LOGOUT_KEY": "Logout",
+    "HEADER_LABEL_SYNC_KEY": "Sync"
+}

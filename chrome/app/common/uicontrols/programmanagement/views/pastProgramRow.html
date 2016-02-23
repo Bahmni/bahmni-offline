@@ -1,0 +1,79 @@
+<div class="program-tile">
+    <div class="programName cursor-pointer" toggle="program.isOpen">
+        <i class="fa fa-caret-right" ng-hide="program.isOpen"></i>
+        <i class="fa fa-caret-down" ng-show="program.isOpen"></i>
+        {{::program.display}}
+    </div>
+    <div class="form">
+        <div class="form-field">
+            <div class="field-attribute">
+                <label>{{::'PROGRAM_MANAGEMENT_LABEL_PROGRAM_OUTCOME' | translate}}: </label>
+            </div>
+            <div class="field-value">
+                <span>
+                    {{::program.outcome.display}}
+                </span>
+            </div>
+        </div>
+        <div class="form-field">
+            <div class="field-attribute">
+                <label>{{::'PROGRAM_MANAGEMENT_START_DATE_KEY' | translate}}:  </label>
+            </div>
+            <div class="field-value">
+                <span>
+                    {{::program.dateEnrolled | bahmniDate}}
+                </span>
+            </div>
+        </div>
+        <div class="form-field">
+            <div class="field-attribute">
+                <label>{{::'PROGRAM_MANAGEMENT_STOP_DATE_KEY' | translate}}: </label>
+            </div>
+            <div class="field-value">
+                <span>
+                    {{::program.dateCompleted | bahmniDate}}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div ng-if="program.isOpen" class="form">
+        <program-attributes patient-program="program" program-attribute-types="programAttributeTypes"></program-attributes>
+        <div class="program-timeline-container" ng-if="program.states.length!=0 && program.isOpen">
+            <div class="program-timeline">
+                <timeline program="program"></timeline>
+            </div>
+        </div>
+    </div>
+    <div class="state-list" ng-show="program.isOpen && hasProgramWorkflowStates(program)">
+        <table>
+            <tbody>
+            <tr ng-repeat="state in program.states| orderBy:'auditInfo.dateCreated':true"
+                ng-if="state.voided != true">
+                <td>{{state.state.concept.display}}</td>
+                <td ng-if="state.endDate">{{::state.startDate | bahmniDate}} {{::'PROGRAM_MANAGEMENT_TO_KEY' |
+                    translate}} {{::state.endDate | bahmniDate}}
+                </td>
+                <td ng-if="!state.endDate">{{::'PROGRAM_MANAGEMENT_STARTED_ON_KEY' | translate}} {{::state.startDate
+                    | bahmniDate}}
+                </td>
+                <td>{{::'PROGRAM_MANAGEMENT_BY_KEY' | translate}} {{state.auditInfo.creator.display}}
+                    {{::'PROGRAM_MANAGEMENT_ON_KEY' | translate}} {{::state.auditInfo.dateCreated | bahmniDate}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a ng-show="program.isOpen"
+       class="back-btn dashboard-link" id="dashboard-link"
+       ui-sref="patient.dashboard.show({
+               patientUuid: patient.uuid,
+               programUuid: program.program.uuid,
+               conceptSetGroupName: 'observations',
+               dateEnrolled: program.fromDate,
+               dateCompleted: program.toDate,
+               enrollment : program.uuid})">
+        <span class="proggram-dashboard-text">
+            <span class="patient-name" >{{::patientProgram.display}} Dashboard</span>
+        </span>
+    </a>
+</div>

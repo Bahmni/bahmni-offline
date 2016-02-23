@@ -1,0 +1,61 @@
+<div class="login">
+
+    <header class="reg-header">
+        <div class="left">{{'LOGIN_LABEL_LOGIN_KEY' | translate}}</div>
+        <div class="right locale-wrapper">
+            <span class="locale-text">{{'LOGIN_LABEL_SELECT_LOCALE_KEY' | translate}} </span>
+             <select id="locale" ng-model="selectedLocale" ng-options="item as item for item in locales" required/>
+        </div>
+    </header>
+
+    <form ng-submit="login()" name="loginForm" bm-form autofillable="true">
+        <div class="login-body">
+            <div class="note-container">
+                <div class="note error" ng-show="errorMessageTranslateKey">
+                    <div class="text">
+                        {{errorMessageTranslateKey | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-field">
+                <div class="field-attribute">
+                    <label for="username">
+                        {{'LOGIN_LABEL_USERNAME_KEY' | translate}} <span class="asterick">*</span>
+                    </label>
+                </div>
+
+                <div class="field-value">
+                    <input type="text" name="username" id="username" ng-model="loginInfo.username" autofocus="autofocus"  placeholder="{{'LOGIN_MESSAGE_ENTER_USERNAME_KEY' | translate}}">
+                </div>
+            </div>
+            <div class="form-field">
+                <div class="field-attribute">
+                    <label for="password">
+                        {{'LOGIN_LABEL_PASSWORD_KEY' | translate}} <span class="asterick">*</span>
+                    </label>
+                </div>
+                <div class="field-value">
+                    <input type="password" id="password" name="password" ng-model="loginInfo.password"  placeholder="{{'LOGIN_MESSAGE_ENTER_PASSWORD_KEY' | translate}}">
+                </div>
+            </div>
+
+            <div class="form-field">
+                <div class="field-attribute">
+                    <label for="location">
+                        {{'LOGIN_LABEL_LOCATION_KEY' | translate}} <span class="asterick">*</span>
+                    </label>
+                </div>
+                <div class="field-value">
+                    <select id="location" ng-model="loginInfo.currentLocation" ng-options="item as item.display for item in locations" required>
+                        <option value="">{{'LOGIN_LABEL_SELECT_LOCATION_KEY' | translate}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="confirm">{{'LOGIN_LABEL_LOGIN_KEY' | translate}}</button>
+            </div>
+        </div>
+    </form>
+
+</div>
