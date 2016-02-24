@@ -8,6 +8,8 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.cordova.CordovaActivity;
 import org.bahmni.offline.dbServices.dao.ConfigDbService;
 import org.bahmni.offline.dbServices.dao.DbHelper;
+import org.bahmni.offline.dbServices.dao.LocationDbService;
+import org.bahmni.offline.dbServices.dao.ReferenceDataDbService;
 import org.bahmni.offline.services.DbService;
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkPreferences;
@@ -33,6 +35,8 @@ public class MainActivity extends CordovaActivity
 
         xWalkWebView.addJavascriptInterface(new DbService(mDBHelper), "AndroidOfflineService");
         xWalkWebView.addJavascriptInterface(new ConfigDbService(mDBHelper), "AndroidConfigDbService");
+        xWalkWebView.addJavascriptInterface(new LocationDbService(mDBHelper), "AndroidLocationDbService");
+        xWalkWebView.addJavascriptInterface(new ReferenceDataDbService(mDBHelper), "AndroidReferenceDataDbService");
 
         xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);
         // turn on debugging

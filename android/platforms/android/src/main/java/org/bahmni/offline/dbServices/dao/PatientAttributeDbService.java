@@ -38,10 +38,10 @@ public class PatientAttributeDbService {
         return attributeTypeMap;
     }
 
-    public void insertAttributeTypes(String params) throws JSONException, IOException {
+    public void insertAttributeTypes(String attributes) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         try {
-            JSONArray personAttributeTypeList = new JSONArray(params);
+            JSONArray personAttributeTypeList = new JSONArray(attributes);
             for (int i = 0; i < personAttributeTypeList.length(); i++) {
                 ContentValues values = new ContentValues();
                 values.put("attributeTypeId", String.valueOf(i));

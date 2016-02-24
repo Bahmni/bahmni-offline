@@ -44,12 +44,6 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public void populateAttributeTypes(String params) throws IOException, JSONException {
-//        TODO: Hemanth/Abishek/Ranganathan - Next line will go away once we build event log for attributeTypes
-        patientAttributeDbService.insertAttributeTypes(params);
-    }
-
-    @JavascriptInterface
     public String getPatientByUuid(String uuid) throws JSONException {
         return String.valueOf(patientDbService.getPatientByUuid(uuid));
     }
@@ -122,6 +116,8 @@ public class DbService {
         mDBHelper.createTable(Constants.CREATE_IDGEN_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
         mDBHelper.createTable(Constants.CREATE_CONFIG_TABLE);
+        mDBHelper.createTable(Constants.CREATE_REFERENCE_DATA_TABLE);
+        mDBHelper.createTable(Constants.CREATE_LOGIN_LOCATIONS_TABLE);
 
         mDBHelper.createIndex(Constants.CREATE_GIVEN_NAME_INDEX);
         mDBHelper.createIndex(Constants.CREATE_MIDDLE_NAME_INDEX);
