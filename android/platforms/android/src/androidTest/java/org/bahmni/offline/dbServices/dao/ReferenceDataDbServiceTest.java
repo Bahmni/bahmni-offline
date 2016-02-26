@@ -43,4 +43,28 @@ public class ReferenceDataDbServiceTest extends ActivityInstrumentationTestCase2
         assertEquals(new JSONObject(locationsJson).getJSONArray("results").length(), referenceData.getJSONObject("value").getJSONArray("results").length());
 
     }
+
+    @Test
+    public void testShouldInsertEmptyReferenceDataAndGetByKey() throws Exception {
+
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        String referenceDataKey = "RelationshipTypeMap";
+        String etag = "someEtag";
+
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_REFERENCE_DATA_TABLE);
+
+        ReferenceDataDbService referenceDataDbService = new ReferenceDataDbService(mDBHelper);
+
+        referenceDataDbService.insertReferenceData(referenceDataKey, "", etag);
+
+        JSONObject referenceData = new JSONObject(referenceDataDbService.getReferenceData(referenceDataKey));
+
+        assertEquals(etag, referenceData.getString("etag"));
+        assertEquals(referenceDataKey, referenceData.getString("key"));
+        assertEquals("", referenceData.getString("value"));
+
+    }
 }

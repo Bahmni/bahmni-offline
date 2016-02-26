@@ -56,7 +56,11 @@ public class ReferenceDataDbService {
             config.put("value", new JSONArray(c.getString(c.getColumnIndex("value"))));
         }
         else{
-            config.put("value", new JSONObject(c.getString(c.getColumnIndex("value"))));
+            if(c.getString(c.getColumnIndex("value")).trim().equals("")){
+                config.put("value", "");
+            }
+            else
+                config.put("value", new JSONObject(c.getString(c.getColumnIndex("value"))));
         }
         config.put("etag", c.getString(c.getColumnIndex("etag")));
         config.put("key", c.getString(c.getColumnIndex("key")));
