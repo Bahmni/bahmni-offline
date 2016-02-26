@@ -22,10 +22,10 @@ app.run(function($ionicPlatform) {
 });
 
 app.controller("hostController",function($scope){
-  $scope.ipValue ='';
   $scope.submit = function(){
     console.log("coming",this.ipValue);
     window.localStorage['host'] = this.ipValue;
-    window.open('file:///android_asset/www/app/home/index.html#device/android','_self')
+    window.localStorage['offlineRootDir'] = "/android_asset/www/";
+    window.open('file:///android_asset/www/app/home/index.html#device/android','_self');
   };
 });
