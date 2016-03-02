@@ -84,7 +84,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", searchString);
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("address_field_name", "address2");
+        params.put("addressFieldName", "address2");
 
         final JSONArray[] returnValue = new JSONArray[1];
 
@@ -103,7 +103,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", searchString);
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("address_field_name", "address2");
+        params.put("addressFieldName", "address2");
 
         final JSONArray[] returnValue = new JSONArray[1];
 
@@ -122,8 +122,8 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", "");
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("address_field_name", "stateProvince");
-        params.put("address_field_value", searchString);
+        params.put("addressFieldName", "stateProvince");
+        params.put("addressFieldValue", searchString);
 
         final JSONArray[] returnValue = new JSONArray[1];
 
@@ -143,7 +143,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", searchString);
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("address_field_name", "address2");
+        params.put("addressFieldName", "address2");
 
         final JSONArray[] returnValue = new JSONArray[1];
 
@@ -163,9 +163,9 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", "");
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("address_field_name", "address2");
-        params.put("address_field_value", "");
-        params.put("custom_attribute", searchString);
+        params.put("addressFieldName", "address2");
+        params.put("addressFieldValue", "");
+        params.put("customAttribute", searchString);
         params.put("patientAttributes", searchArray);
         final JSONArray[] returnValue = new JSONArray[1];
 
@@ -173,18 +173,18 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         JSONObject result = returnValue[0].getJSONObject(0);
         assertEquals(searchString, new JSONObject(result.getString("customAttribute")).getString("caste"));
 
-        params.put("custom_attribute", true);
+        params.put("customAttribute", true);
         executeSearch(params, returnValue);
         result = returnValue[0].getJSONObject(0);
         assertTrue(new JSONObject(result.getString("customAttribute")).getBoolean("isUrban"));
 
         searchString = "6th to 9th";
-        params.put("custom_attribute", searchString);
+        params.put("customAttribute", searchString);
         executeSearch(params, returnValue);
         result = returnValue[0].getJSONObject(0);
         assertEquals(searchString, new JSONObject(result.getString("customAttribute")).getString("education"));
 
-        params.put("custom_attribute", 23);
+        params.put("customAttribute", 23);
         executeSearch(params, returnValue);
         result = returnValue[0].getJSONObject(0);
         assertEquals(23, new JSONObject(result.getString("customAttribute")).getInt("landHolding"));

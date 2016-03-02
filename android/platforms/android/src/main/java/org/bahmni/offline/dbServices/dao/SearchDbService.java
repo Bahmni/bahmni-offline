@@ -72,8 +72,8 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         }
 
         String addressFieldName = null;
-        if (params.has("address_field_name") && null != params.getString("address_field_name")) {
-            addressFieldName = params.getString("address_field_name").replace("_", "");
+        if (params.has("addressFieldName") && null != params.getString("addressFieldName")) {
+            addressFieldName = params.getString("addressFieldName").replace("_", "");
         }
 
         String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, " + addressFieldName + " as addressFieldValue " +
@@ -91,12 +91,12 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
                 " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ")";
         String appender = " WHERE ";
 
-        if (params.has("address_field_value") && !params.getString("address_field_value").equals("")) {
-            sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + params.getString("address_field_value") + "%') ";
+        if (params.has("addressFieldValue") && !params.getString("addressFieldValue").equals("")) {
+            sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + params.getString("addressFieldValue") + "%') ";
             appender = " AND ";
         }
-        if (params.has("custom_attribute") && !params.getString("custom_attribute").equals("")) {
-            sqlString += appender + "pa.attributeValue LIKE '%" + params.getString("custom_attribute") + "%'";
+        if (params.has("customAttribute") && !params.getString("customAttribute").equals("")) {
+            sqlString += appender + "pa.attributeValue LIKE '%" + params.getString("customAttribute") + "%'";
             appender = " AND ";
 
         }
