@@ -51,7 +51,7 @@ public class DbService {
     @JavascriptInterface
     public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
         JSONArray json = new SearchDbService(mDBHelper).execute(params).get();
-        return String.valueOf(new JSONObject().put("pageOfResults", json));
+        return String.valueOf(new JSONObject().put("data", new JSONObject().put("pageOfResults", json)));
     }
 
     @JavascriptInterface
