@@ -16,7 +16,7 @@ app.run(function($ionicPlatform) {
       StatusBar.styleDefault();
     }
     if(window.localStorage['host']){
-      window.open('file:///android_asset/www/app/home/index.html#device/android','_self')
+      window.open('file:///android_asset/www/app/offline/index.html#device/android','_self')
     }
   });
 });
@@ -26,6 +26,6 @@ app.controller("hostController",function($scope){
     console.log("coming",this.ipValue);
     window.localStorage['host'] = this.ipValue;
     window.localStorage['offlineRootDir'] = "/android_asset/www/";
-    window.open('file:///android_asset/www/app/home/index.html#device/android','_self');
+    window.open('file:///android_asset/www/app/offline/index.html#device/android','_self');
   };
 });
