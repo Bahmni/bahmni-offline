@@ -40,7 +40,7 @@ public class PatientDbService {
         ContentValues values = new ContentValues();
         JSONObject patient = patientData.getJSONObject("patient");
         JSONObject person = patient.getJSONObject("person");
-        JSONObject personName = person.getJSONObject("preferredName");
+        JSONObject personName = person.getJSONArray("names").getJSONObject(0);
         JSONArray identifiers = new JSONArray(patient.getString("identifiers"));
         String patientIdentifier = null;
         if(!identifiers.getJSONObject(0).isNull("identifier")){

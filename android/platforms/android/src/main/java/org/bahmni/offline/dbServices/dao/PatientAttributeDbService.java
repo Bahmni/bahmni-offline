@@ -56,7 +56,7 @@ public class PatientAttributeDbService {
         }
     }
 
-    public void insertAttributes(String patientUuid, JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
+    public void insertAttributes(String patientUuid, JSONArray attributes) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         if (attributes != null && attributes.length() > 0) {
             for (int j = 0; j < attributes.length(); j++) {
@@ -72,7 +72,7 @@ public class PatientAttributeDbService {
 
                     String attributeTypeId = null;
 
-                    for (JSONObject attributeEntry : attributeTypeMap) {
+                    for (JSONObject attributeEntry : getAttributeTypes()) {
                         if (attributeEntry.getString("uuid").equals(personAttribute.getJSONObject("attributeType").getString("uuid"))) {
                             attributeTypeId = attributeEntry.getString("attributeTypeId");
                         }
