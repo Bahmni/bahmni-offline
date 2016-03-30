@@ -49,6 +49,11 @@ public class DbService {
     }
 
     @JavascriptInterface
+    public String getAttributeTypes() throws JSONException {
+        return String.valueOf(patientAttributeDbService.getAttributeTypes());
+    }
+
+    @JavascriptInterface
     public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
         JSONArray json = new SearchDbService(mDBHelper).execute(params).get();
         return String.valueOf(new JSONObject().put("data", new JSONObject().put("pageOfResults", json)));
@@ -70,9 +75,9 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String createPatient(String request, String requestType) throws JSONException, IOException, ExecutionException, InterruptedException {
+    public String createPatient(String request) throws JSONException, IOException, ExecutionException, InterruptedException {
 
-        insertPatientData(new JSONObject(request), requestType);
+        insertPatientData(new JSONObject(request));
 
         String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
         return String.valueOf(new JSONObject().put("data", new JSONObject(getPatientByUuid(uuid))));
@@ -126,46 +131,19 @@ public class DbService {
 
     }
 
-    private void insertPatientData(JSONObject patientData, String requestType) throws JSONException {
+    private void insertPatientData(JSONObject patientData) throws JSONException {
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
 
-        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
-        if (requestType.equals("POST")) {
-            parseAttributeValues(attributes, attributeTypeMap);
-        }
+//        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
         String patientUuid = patientDbService.insertPatient(patientData);
 
 
-        patientAttributeDbService.insertAttributes(patientUuid, attributes, attributeTypeMap);
+        patientAttributeDbService.insertAttributes(patientUuid, attributes);
 
-        if (!person.isNull("preferredAddress")) {
-            JSONObject address = person.getJSONObject("preferredAddress");
+        if (!person.isNull("addresses")) {
+            JSONObject address = person.getJSONArray("addresses").getJSONObject(0);
             patientAddressDbService.insertAddress(address, patientUuid);
-        }
-    }
-
-    private void parseAttributeValues(JSONArray attributes, ArrayList<JSONObject> attributeTypeMap) throws JSONException {
-        for (int i = 0; i < attributes.length(); i++) {
-            JSONObject attribute = attributes.getJSONObject(i);
-            if (attribute.isNull("voided") || (!attribute.isNull("voided") && !attribute.getBoolean("voided"))) {
-                String format = getFormat(attributeTypeMap, attribute);
-                if ("java.lang.Integer".equals(format)) {
-                    attribute.put("value", Integer.parseInt(attribute.getString("value")));
-                }
-                if ("java.lang.Float".equals(format)) {
-                    attribute.put("value", Float.parseFloat(attribute.getString("value")));
-                } else if ("java.lang.Boolean".equals(format)) {
-                    attribute.put("value", attribute.getString("value").equals("true"));
-
-                } else if ("org.openmrs.Concept".equals(format)) {
-                    String display = attribute.getString("value");
-                    JSONObject value = new JSONObject();
-                    value.put("display", display);
-                    value.put("uuid", attribute.getString("hydratedObject"));
-                    attribute.put("value", value);
-                }
-            }
         }
     }
 

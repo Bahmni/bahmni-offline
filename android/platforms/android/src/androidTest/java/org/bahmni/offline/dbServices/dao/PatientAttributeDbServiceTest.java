@@ -53,29 +53,26 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
 
         for (int i = 0; i < returnedAttributes.length(); i++) {
             JSONObject returnedAttribute = returnedAttributes.getJSONObject(i);
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("caste")) {
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("c1f4239f-3f10-11e4-adec-0800271c1b75")) {
                 assertEquals("hindu", returnedAttribute.getString("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("class")) {
-                assertEquals("General", returnedAttribute.getString("display"));
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("c1f455e7-3f10-11e4-adec-0800271c1b75")) {
+                assertEquals("General", returnedAttribute.getString("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("education")) {
-                assertEquals("6th to 9th", returnedAttribute.getString("display"));
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("c1f4a004-3f10-11e4-adec-0800271c1b75")) {
+                assertEquals("6th to 9th", returnedAttribute.getString("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("occupation")) {
-                assertEquals("Government", returnedAttribute.getString("display"));
-            }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("landHolding")) {
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("3dfdc176-17fd-42b1-b5be-c7e25b78b602")) {
                 assertEquals(23, returnedAttribute.getInt("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("debt")) {
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("fb3c00b1-81c8-40fe-89e8-6b3344688a13")) {
                 assertEquals("21", returnedAttribute.getString("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("isUrban")) {
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("9234695b-0f68-4970-aeb7-3b32d4a2b346")) {
                 assertEquals(true, returnedAttribute.getBoolean("value"));
             }
-            if(returnedAttribute.getJSONObject("attributeType").getString("display").equals("cluster")) {
-                assertEquals("Shivtarai", returnedAttribute.getString("display"));
+            if(returnedAttribute.getJSONObject("attributeType").getString("uuid").equals("35e98d04-3981-4257-a593-fadd81bfc109")) {
+                assertEquals("Shivtarai", returnedAttribute.getString("value"));
             }
         }
     }
