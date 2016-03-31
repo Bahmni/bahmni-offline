@@ -1,27 +1,16 @@
 package org.bahmni.offline.services;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-
-import org.bahmni.offline.AddressHierarchyEntry;
-import org.bahmni.offline.Constants;
-import org.bahmni.offline.Util;
-import org.bahmni.offline.dbServices.dao.*;
-
-import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
-
+import org.bahmni.offline.Constants;
+import org.bahmni.offline.dbServices.dao.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xwalk.core.JavascriptInterface;
 
 import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
