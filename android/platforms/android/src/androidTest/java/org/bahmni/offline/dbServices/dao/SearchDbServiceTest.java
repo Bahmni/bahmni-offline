@@ -57,7 +57,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         String patientAttributeTypesJSON = TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext());
         JSONObject patientAttributeTypes = new JSONObject(patientAttributeTypesJSON);
         patientAttributeDbService.insertAttributeTypes(patientAttributeTypes.get("results").toString());
-        patientAttributeDbService.insertAttributes(uuid, attributes, attributeTypeMap);
+        patientAttributeDbService.insertAttributes(uuid, attributes);
     }
 
     private void executeSearch(final JSONObject params, final JSONArray[] returnValue) throws Throwable {
