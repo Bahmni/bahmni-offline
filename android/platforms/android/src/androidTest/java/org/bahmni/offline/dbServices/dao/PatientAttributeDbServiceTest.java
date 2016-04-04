@@ -44,7 +44,7 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         JSONArray attributes = person.getJSONArray("attributes");
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
-        patientAttributeDbService.insertAttributes(uuid, attributes, attributeTypeMap);
+        patientAttributeDbService.insertAttributes(uuid, attributes);
 
         JSONObject result = patientDbService.getPatientByUuid(uuid);
 
