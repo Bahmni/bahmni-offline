@@ -25,8 +25,12 @@
     </style>
   </head>
   <body>
-    <input type="text" name="ipValue" id="ipValue" value="" placeholder="Please Enter IP"/>
+  <form name="hostForm">
+    <input type="text" name="ipValue" id="ipValue" value="" placeholder="Please Enter IP" required/>
     <button type="submit" name="enter" id="enterButton">Enter</button>
+    <input type="submit" style="display:none"/>
+  </form>
     <script src="chrome.js"></script>
+
   </body>
 </html>
