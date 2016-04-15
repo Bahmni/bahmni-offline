@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS patient (identifier TEXT, uuid TEXT PRIMARY KEY, givenName TEXT, middleName TEXT, familyName TEXT, gender TEXT, birthdate TEXT, dateCreated TEXT, patientJson TEXT, relationships TEXT);
+CREATE TABLE IF NOT EXISTS patient_attribute_types (attributeTypeId INTEGER, attributeName TEXT, uuid TEXT PRIMARY KEY, format TEXT);
+CREATE TABLE IF NOT EXISTS patient_attributes (attributeTypeId INTEGER, attributeValue TEXT, patientUuid TEXT, uuid TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS event_log_marker (lastReadEventUuid TEXT, catchmentNumber TEXT PRIMARY KEY, lastReadTime DATETIME);
+CREATE TABLE IF NOT EXISTS address_hierarchy_entry (id INTEGER, name TEXT, levelId INTEGER, parentId INTEGER, userGeneratedId TEXT, uuid TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS address_hierarchy_level (addressHierarchyLevelId INTEGER, name TEXT, parentLevelId INTEGER, addressField TEXT, uuid TEXT PRIMARY KEY, required INTEGER);
+CREATE TABLE IF NOT EXISTS patient_address (address1 TEXT, address2 TEXT, cityVillage TEXT, stateProvince TEXT, postalCode TEXT, country TEXT, countyDistrict TEXT, address3 TEXT, address4 TEXT, address5 TEXT, address6 TEXT, patientUuid TEXT PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS idgen (identifier INTEGER PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS configs (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
+CREATE TABLE IF NOT EXISTS reference_data (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
+CREATE TABLE IF NOT EXISTS login_locations (uuid TEXT PRIMARY KEY, value TEXT);
+CREATE INDEX IF NOT EXISTS givenNameIndex ON patient(givenName);
+CREATE INDEX IF NOT EXISTS middleNameIndex ON patient(middleName);
+CREATE INDEX IF NOT EXISTS familyNameIndex ON patient(familyName);
+CREATE INDEX IF NOT EXISTS identifierIndex ON patient(identifier);

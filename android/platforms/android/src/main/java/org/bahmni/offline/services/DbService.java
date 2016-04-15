@@ -10,8 +10,6 @@ import org.xwalk.core.JavascriptInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class DbService {
@@ -100,23 +98,7 @@ public class DbService {
 
     @JavascriptInterface
     public void initSchema() throws IOException, JSONException {
-
-        mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
-        mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
-        mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
-        mDBHelper.createTable(Constants.CREATE_EVENT_LOG_MARKER_TABLE);
-        mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
-        mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);
-        mDBHelper.createTable(Constants.CREATE_IDGEN_TABLE);
-        mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
-        mDBHelper.createTable(Constants.CREATE_CONFIG_TABLE);
-        mDBHelper.createTable(Constants.CREATE_REFERENCE_DATA_TABLE);
-        mDBHelper.createTable(Constants.CREATE_LOGIN_LOCATIONS_TABLE);
-
-        mDBHelper.createIndex(Constants.CREATE_GIVEN_NAME_INDEX);
-        mDBHelper.createIndex(Constants.CREATE_MIDDLE_NAME_INDEX);
-        mDBHelper.createIndex(Constants.CREATE_FAMILY_NAME_INDEX);
-        mDBHelper.createIndex(Constants.CREATE_IDENTIFIER_INDEX);
+        mDBHelper.runMigration(mDBHelper.getWritableDatabase(Constants.KEY), "migration_0.sql");
 
     }
 
