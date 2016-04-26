@@ -71,13 +71,13 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String insertMarker(String eventUuid, String catchmentNumber) {
-        return markerDbService.insertMarker(eventUuid, catchmentNumber);
+    public String insertMarker(String markerName, String eventUuid, String catchmentNumber) {
+        return markerDbService.insertMarker(markerName, eventUuid, catchmentNumber);
     }
 
     @JavascriptInterface
-    public String getMarker() throws JSONException {
-        JSONObject marker = markerDbService.getMarker();
+    public String getMarker(String markerName) throws JSONException {
+        JSONObject marker = markerDbService.getMarker(markerName);
         return marker == null ? null : String.valueOf(marker);
     }
 
