@@ -19,6 +19,8 @@ public class DbService {
     private PatientAttributeDbService patientAttributeDbService;
     private MarkerDbService markerDbService;
     private AddressHierarchyDbService addressHierarchyDbService;
+    private EncounterDbService encounterDbService;
+    private VisitDbService visitDbService;
 
 
     public DbService(DbHelper mDBHelper) {
@@ -28,11 +30,23 @@ public class DbService {
         patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         markerDbService = new MarkerDbService(mDBHelper);
         addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
+        encounterDbService = new EncounterDbService(mDBHelper);
+        visitDbService = new VisitDbService(mDBHelper);
     }
 
     @JavascriptInterface
     public String getPatientByUuid(String uuid) throws JSONException {
         return String.valueOf(patientDbService.getPatientByUuid(uuid));
+    }
+
+    @JavascriptInterface
+    public String getEncountersByPatientUuid(String uuid) throws JSONException {
+        return String.valueOf(encounterDbService.getEncountersByPatientUuid(uuid));
+    }
+
+    @JavascriptInterface
+    public String getVisitByUuid(String uuid) throws JSONException {
+        return String.valueOf(visitDbService.getVisitByUuid(uuid));
     }
 
     @JavascriptInterface
@@ -100,6 +114,18 @@ public class DbService {
     public void initSchema() throws IOException, JSONException {
         mDBHelper.runMigration(mDBHelper.getWritableDatabase(Constants.KEY), "migration_0.sql");
 
+    }
+
+    @JavascriptInterface
+    public String insertEncounterData(String request) throws JSONException {
+        JSONObject jsonObject = encounterDbService.insertEncounterData(new JSONObject(request));
+        return jsonObject == null ? null : String.valueOf(jsonObject);
+    }
+
+    @JavascriptInterface
+    public String insertVisitData(String request) throws JSONException {
+        JSONObject jsonObject = visitDbService.insertVisitData(new JSONObject(request));
+        return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
     private void insertPatientData(JSONObject patientData) throws JSONException {

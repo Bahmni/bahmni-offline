@@ -9,6 +9,11 @@ CREATE TABLE IF NOT EXISTS idgen (identifier INTEGER PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS configs (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
 CREATE TABLE IF NOT EXISTS reference_data (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
 CREATE TABLE IF NOT EXISTS login_locations (uuid TEXT PRIMARY KEY, value TEXT);
+CREATE TABLE IF NOT EXISTS encounter (uuid TEXT PRIMARY KEY, patientUuid TEXT, encounterDateTime DATETIME, encounterJson TEXT);
+CREATE TABLE IF NOT EXISTS visit (uuid TEXT PRIMARY KEY, patientUuid TEXT, visitJson TEXT);
+
+
+
 CREATE INDEX IF NOT EXISTS givenNameIndex ON patient(givenName);
 CREATE INDEX IF NOT EXISTS middleNameIndex ON patient(middleName);
 CREATE INDEX IF NOT EXISTS familyNameIndex ON patient(familyName);
