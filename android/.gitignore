@@ -11,6 +11,11 @@ platforms/android/*
 !platforms/android/assets/
 platforms/android/assets/www/*
 platforms/android/assets/_where-is-www.txt
+!platforms/android/cordova/
+platforms/android/cordova/*
+!platforms/android/cordova/lib/
+platforms/android/cordova/lib/*
+!platforms/android/cordova/lib/build.js
 !platforms/android/res/
 !platforms/android/libs/
 !platforms/android/build.gradle
