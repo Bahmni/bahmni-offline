@@ -49,7 +49,7 @@ public class ReferenceDataDbService {
         }
         c.moveToFirst();
         JSONObject config = new JSONObject();
-        if(referenceDataKey.equals("LocaleList") || referenceDataKey.equals("DefaultEncounterType")) {
+        if(referenceDataKey.equals("LocaleList") || referenceDataKey.equals("DefaultEncounterType") || referenceDataKey.equals("encounterSessionDuration")) {
             config.put("value", c.getString(c.getColumnIndex("value")));
         }
         else if(referenceDataKey.equals("IdentifierSources") || referenceDataKey.equals("AddressHierarchyLevels")) {

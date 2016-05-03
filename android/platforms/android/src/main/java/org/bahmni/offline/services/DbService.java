@@ -128,6 +128,12 @@ public class DbService {
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
+    @JavascriptInterface
+    public String findActiveEncounter(String params, String encounterSessionDurationInMinutes) throws JSONException {
+        JSONObject encounterData = encounterDbService.findActiveEncounter(new JSONObject(params), Integer.parseInt(encounterSessionDurationInMinutes));
+        return encounterData == null ? null : String.valueOf(encounterData);
+    }
+
     private void insertPatientData(JSONObject patientData) throws JSONException {
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");

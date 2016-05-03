@@ -1,7 +1,6 @@
 package org.bahmni.offline;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.joda.time.DateTime;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Date;
 
 public class Util {
     //    TODO: Hemanth/Abishek/Ranganathan - this calss will be deleted once we build eventlog for person_attributes.
@@ -49,5 +49,12 @@ public class Util {
             }
         }
         return sb.toString();
+    }
+
+    public static DateTime addMinutesToDate(int minutes, Date beforeTime){
+        final long ONE_MINUTE_IN_MILLIS = 60000;
+
+        long curTimeInMs = beforeTime.getTime();
+        return new DateTime(curTimeInMs + (minutes * ONE_MINUTE_IN_MILLIS));
     }
 }
