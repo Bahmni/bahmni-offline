@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS address_hierarchy_level (addressHierarchyLevelId INTE
 CREATE TABLE IF NOT EXISTS patient_address (address1 TEXT, address2 TEXT, cityVillage TEXT, stateProvince TEXT, postalCode TEXT, country TEXT, countyDistrict TEXT, address3 TEXT, address4 TEXT, address5 TEXT, address6 TEXT, patientUuid TEXT PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS idgen (identifier INTEGER PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS configs (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
-CREATE TABLE IF NOT EXISTS reference_data (key TEXT PRIMARY KEY, value TEXT, etag TEXT);
+CREATE TABLE IF NOT EXISTS reference_data (key TEXT PRIMARY KEY, data TEXT, etag TEXT);
+CREATE TABLE IF NOT EXISTS concept (uuid TEXT PRIMARY KEY, data TEXT, parents TEXT, name TEXT);
 CREATE TABLE IF NOT EXISTS login_locations (uuid TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS encounter (uuid TEXT PRIMARY KEY, patientUuid TEXT, encounterType TEXT, providerUuid TEXT, encounterDateTime DATETIME, encounterJson TEXT);
 CREATE TABLE IF NOT EXISTS visit (uuid TEXT PRIMARY KEY, patientUuid TEXT, visitJson TEXT);

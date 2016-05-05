@@ -27,7 +27,7 @@ public class ReferenceDataDbService {
         SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
         ContentValues values = new ContentValues();
         values.put("key", referenceDataKey);
-        values.put("value", data);
+        values.put("data", data);
         values.put("etag", eTag);
         db.insertWithOnConflict("reference_data", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         if(referenceDataKey.equals("PersonAttributeType")){
@@ -50,17 +50,17 @@ public class ReferenceDataDbService {
         c.moveToFirst();
         JSONObject config = new JSONObject();
         if(referenceDataKey.equals("LocaleList") || referenceDataKey.equals("DefaultEncounterType") || referenceDataKey.equals("encounterSessionDuration")) {
-            config.put("value", c.getString(c.getColumnIndex("value")));
+            config.put("data", c.getString(c.getColumnIndex("data")));
         }
         else if(referenceDataKey.equals("IdentifierSources") || referenceDataKey.equals("AddressHierarchyLevels")) {
-            config.put("value", new JSONArray(c.getString(c.getColumnIndex("value"))));
+            config.put("data", new JSONArray(c.getString(c.getColumnIndex("data"))));
         }
         else{
-            if(c.getString(c.getColumnIndex("value")).trim().equals("")){
-                config.put("value", "");
+            if(c.getString(c.getColumnIndex("data")).trim().equals("")){
+                config.put("data", "");
             }
             else
-                config.put("value", new JSONObject(c.getString(c.getColumnIndex("value"))));
+                config.put("data", new JSONObject(c.getString(c.getColumnIndex("data"))));
         }
         config.put("etag", c.getString(c.getColumnIndex("etag")));
         config.put("key", c.getString(c.getColumnIndex("key")));
