@@ -159,4 +159,10 @@ public class DbService {
         return null;
     }
 
+    @JavascriptInterface
+    public String findEncounterByEncounterUuid(String encounterUuid) throws JSONException {
+        JSONObject encounterData = encounterDbService.findEncounterByEncounterUuid(encounterUuid);
+        return encounterData == null ? null : String.valueOf(encounterData);
+    }
+
 }

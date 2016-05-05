@@ -74,4 +74,19 @@ public class EncounterDbService {
         c.close();
         return  encounter;
     }
+
+    public JSONObject findEncounterByEncounterUuid(String encounterUuid) throws JSONException{
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        Cursor c = db.rawQuery("SELECT encounterJson from encounter" +
+                " WHERE uuid = '" + encounterUuid + "'" , new String[]{});
+        if (c.getCount() < 1) {
+            c.close();
+            return null;
+        }
+        c.moveToFirst();
+        JSONObject encounter = new JSONObject();
+        encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+        c.close();
+        return encounter;
+    }
 }
