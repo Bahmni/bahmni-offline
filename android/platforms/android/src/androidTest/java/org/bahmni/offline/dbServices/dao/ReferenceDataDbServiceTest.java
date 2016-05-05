@@ -40,7 +40,7 @@ public class ReferenceDataDbServiceTest extends ActivityInstrumentationTestCase2
 
         assertEquals(etag, referenceData.getString("etag"));
         assertEquals(referenceDataKey, referenceData.getString("key"));
-        assertEquals(new JSONObject(locationsJson).getJSONArray("results").length(), referenceData.getJSONObject("value").getJSONArray("results").length());
+        assertEquals(new JSONObject(locationsJson).getJSONArray("results").length(), referenceData.getJSONObject("data").getJSONArray("results").length());
 
     }
 
@@ -64,7 +64,7 @@ public class ReferenceDataDbServiceTest extends ActivityInstrumentationTestCase2
 
         assertEquals(etag, referenceData.getString("etag"));
         assertEquals(referenceDataKey, referenceData.getString("key"));
-        assertEquals("", referenceData.getString("value"));
+        assertEquals("", referenceData.getString("data"));
 
     }
 }
