@@ -21,6 +21,7 @@ public class DbService {
     private AddressHierarchyDbService addressHierarchyDbService;
     private EncounterDbService encounterDbService;
     private VisitDbService visitDbService;
+    private ObservationDbService observationDbService;
 
 
     public DbService(DbHelper mDBHelper) {
@@ -32,6 +33,7 @@ public class DbService {
         addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
         encounterDbService = new EncounterDbService(mDBHelper);
         visitDbService = new VisitDbService(mDBHelper);
+        observationDbService = new ObservationDbService(mDBHelper);
     }
 
     @JavascriptInterface
@@ -50,8 +52,20 @@ public class DbService {
     }
 
     @JavascriptInterface
+    public String getVisitUuidsByPatientUuid(String patientUuid, int numberOfVisits) throws JSONException {
+        JSONArray jsonArray = visitDbService.getVisitUuidsByPatientUuid(patientUuid,numberOfVisits);
+        return jsonArray == null ? null : String.valueOf(jsonArray);
+    }
+
+    @JavascriptInterface
     public String getAttributeTypes() throws JSONException {
         return String.valueOf(patientAttributeDbService.getAttributeTypes());
+    }
+
+    @JavascriptInterface
+    public String getObservationsFor(String params) throws JSONException {
+        JSONArray jsonArray = observationDbService.getObservationsFor(new JSONObject(params));
+        return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
     @JavascriptInterface
@@ -126,6 +140,12 @@ public class DbService {
     public String insertVisitData(String request) throws JSONException {
         JSONObject jsonObject = visitDbService.insertVisitData(new JSONObject(request));
         return jsonObject == null ? null : String.valueOf(jsonObject);
+    }
+
+    @JavascriptInterface
+    public String insertObservationData(String patientUuid, String visitUuid, String observationData) throws JSONException {
+        JSONArray jsonArray = observationDbService.insertObservationData(patientUuid ,visitUuid, new JSONArray(observationData));
+        return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
     @JavascriptInterface

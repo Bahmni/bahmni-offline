@@ -43,4 +43,26 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         assertEquals(2, visit.getJSONObject("visitJson").getJSONArray("encounters").length());
 
     }
+
+    @Test
+    public void testShouldGetVisitsByPatientByUuid() throws  Exception {
+
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        int numberOfVisits = 2;
+        String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
+
+        VisitDbService visitDbService = new VisitDbService(mDBHelper);
+        String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
+
+        visitDbService.insertVisitData(new JSONObject(visitJson));
+
+        JSONArray visits = visitDbService.getVisitUuidsByPatientUuid(patientUuid,numberOfVisits);
+
+        assertEquals(visits.length(), 1);
+        assertEquals(visits.getString(0), "de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
+    }
 }
