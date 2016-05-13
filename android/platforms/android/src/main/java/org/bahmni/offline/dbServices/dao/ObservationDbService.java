@@ -31,37 +31,36 @@ public class ObservationDbService {
                 values.put("observationJson", String.valueOf(observation));
                 db.insertWithOnConflict("observation", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             }else{
-                deleteObservationByUuid(observationUuid);
+                deleteObservationByUuid(db, observationUuid, patientUuid);
             }
         }
+        db.close();
         return observationData;
     }
 
-    private void deleteObservationByUuid(String observationUuid) {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+    private void deleteObservationByUuid(SQLiteDatabase db, String observationUuid, String patientUuid) {
 
-        db.beginTransaction();
+        db.delete("observation", "uuid =? AND patientUuid=?", new String[]{observationUuid, patientUuid});
 
-        db.rawExecSQL("DELETE FROM observation WHERE uuid = '" + observationUuid + "'");
-
-        db.setTransactionSuccessful();
-
-        db.endTransaction();
     }
 
     public JSONArray getObservationsFor(JSONObject params) throws JSONException {
         String patientUuid = params.getString("patientUuid");
-        String conceptNames = concatArray(params.getJSONArray("conceptNames"));
-        String visitUuids = concatArray(params.getJSONArray("visitUuids"));
+        JSONArray conceptNamesArray = params.getJSONArray("conceptNames");
+        String conceptNames = conceptNamesArray.toString();
+        JSONArray visitUuidsArray = params.getJSONArray("visitUuids");
+        String visitUuids = visitUuidsArray.toString();
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         JSONArray observations = new JSONArray();
+        String inClauseConceptNameList = conceptNamesArray.length() > 0 ? conceptNames.substring(2, conceptNames.length() - 2) : conceptNames;
+        String inClauseVisitUuidsList = visitUuidsArray.length() > 0 ? visitUuids.substring(2, visitUuids.length() - 2) : visitUuids;
         Cursor c = db.rawQuery("SELECT observationJson from observation" +
                 " WHERE patientUuid = '" + patientUuid + "'" +
-                " AND conceptName in ('" + conceptNames + "') " +
-                " AND ( visitUuid in ('" + visitUuids + "') OR visitUuid is NULL )", new String[]{});
+                " AND conceptName in (\"" + inClauseConceptNameList + "\") " +
+                " AND ( visitUuid in (\"" + inClauseVisitUuidsList + "\") OR visitUuid is NULL )", new String[]{});
         if (c.getCount() < 1) {
             c.close();
-            return null;
+            return new JSONArray();
         }
         c.moveToFirst();
         for (int index = 0; index < c.getCount(); index++) {
@@ -73,16 +72,5 @@ public class ObservationDbService {
         c.close();
         return observations;
     }
-
-    private String concatArray(JSONArray array) throws JSONException{
-        String concatenatedString = "";
-        for(int index = 0; index < array.length(); index++) {
-            concatenatedString = concatenatedString + array.get(index);
-            if(index < array.length()-1)
-                concatenatedString += ",";
-        }
-        return concatenatedString;
-    }
-
 
 }
