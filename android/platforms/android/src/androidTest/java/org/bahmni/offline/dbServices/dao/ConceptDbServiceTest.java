@@ -45,14 +45,52 @@ public class ConceptDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         String expectedChild1Name = "Pulse Data";
         assertEquals(expectedChild1Name, actualChild1Concept.getJSONObject("name").getString("name"));
 
-        JSONArray actualParents = child1Concept.getJSONObject("parents").getJSONArray("parentUuids");
+        JSONArray actualParents = child1Concept.getJSONObject("parents").getJSONArray("parentConcepts");
         boolean parentPresent = false;
         for (int i = 0; i < actualParents.length(); i++) {
-            if (actualParents.getString(i).equals(conceptUuid)) {
+            if (new JSONObject(actualParents.getString(0)).get("uuid").equals(conceptUuid)) {
                 parentPresent = true;
             }
         }
         assertTrue(parentPresent);
+    }
+
+    @Test
+    public void testShouldGetAllParentConceptsForGivenChildConcept() throws Exception {
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_CONCEPT_TABLE);
+
+        ConceptDbService conceptDbService = new ConceptDbService(mDBHelper);
+        String conceptJson = TestUtils.readFileFromAssets("concept.json", getInstrumentation().getContext());
+
+        conceptDbService.insertConceptAndUpdateHierarchy(conceptJson, null);
+
+        String parentConcepts = conceptDbService.getAllParentsInHierarchy("Pulse Data");
+        JSONArray results = new JSONArray(parentConcepts);
+
+        assertEquals(2, results.length());
+    }
+
+    public void testShouldReturnArrayWithOneConceptNameIfThereIsNoParent() throws Exception {
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_CONCEPT_TABLE);
+
+        ConceptDbService conceptDbService = new ConceptDbService(mDBHelper);
+        String conceptJson = TestUtils.readFileFromAssets("concept.json", getInstrumentation().getContext());
+
+        conceptDbService.insertConceptAndUpdateHierarchy(conceptJson, null);
+
+        String parentConcepts = conceptDbService.getAllParentsInHierarchy("Vitals");
+        JSONArray results = new JSONArray(parentConcepts);
+
+        assertEquals(1, results.length());
+
     }
 }
 

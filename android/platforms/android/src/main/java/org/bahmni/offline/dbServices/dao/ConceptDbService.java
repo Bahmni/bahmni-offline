@@ -39,16 +39,16 @@ public class ConceptDbService {
         String uuid = ((data.getJSONArray("results") != null) && (data.getJSONArray("results").get(0) != null)) ? data.getJSONArray("results").getJSONObject(0).getString("uuid") : null;
         JSONObject currentParents = getParents(uuid);
         JSONObject parents = new JSONObject();
-        JSONArray parentUuids = new JSONArray();
-        if(currentParents != null && currentParents.getJSONObject("parents").getJSONArray("parentUuids").length() > 0) {
-            parentUuids = currentParents.getJSONObject("parents").getJSONArray("parentUuids");
+        JSONArray parentConcepts = new JSONArray();
+        if(currentParents != null && currentParents.getJSONObject("parents").getJSONArray("parentConcepts").length() > 0) {
+            parentConcepts = currentParents.getJSONObject("parents").getJSONArray("parentConcepts");
         }
         for (int i = 0; i < parent.length(); i++) {
-            if (!isParentAlreadyPresent(parentUuids, parent.getString(i))) {
-                parentUuids.put(parent.getString(i));
+            if (!isParentAlreadyPresent(parentConcepts, parent.getString(i))) {
+                parentConcepts.put(parent.getString(i));
             }
         }
-        parents.put("parentUuids", parentUuids);
+        parents.put("parentConcepts", parentConcepts);
         ContentValues values = new ContentValues();
         values.put("data", data.toString());
         values.put("parents", parents.toString());
@@ -119,7 +119,10 @@ public class ConceptDbService {
 
     private void updateChildren(JSONObject concept) throws JSONException {
         JSONArray parent = new JSONArray();
-        parent.put(concept.get("uuid"));
+        JSONObject parentObject = new JSONObject();
+        parentObject.put("uuid", concept.get("uuid"));
+        parentObject.put("conceptName", concept.getJSONObject("name").get("name"));
+        parent.put(parentObject);
         for (int i = 0; i < concept.getJSONArray("setMembers").length(); i++) {
             insertConcept(new JSONObject().put("results", new JSONArray().put(concept.getJSONArray("setMembers").getJSONObject(i))), parent);
         }
@@ -127,18 +130,40 @@ public class ConceptDbService {
 
     private void updateParentJson(JSONObject child) throws JSONException {
         JSONObject parents = getParents(child.getString("uuid"));
-        if (parents == null || (parents!=null && parents.getJSONObject("parents").getJSONArray("parentUuids").length() == 0))
+        if (parents == null || (parents!=null && parents.getJSONObject("parents").getJSONArray("parentConcepts").length() == 0))
             return;
-        for (int i = 0; i < parents.getJSONObject("parents").getJSONArray("parentUuids").length(); i++) {
-            JSONObject parentConcept = new JSONObject(getConcept(parents.getJSONObject("parents").getJSONArray("parentUuids").getString(i)));
+        for (int i = 0; i < parents.getJSONObject("parents").getJSONArray("parentConcepts").length(); i++) {
+            JSONObject parentConcept = new JSONObject(getConcept(new JSONObject(parents.getJSONObject("parents").getJSONArray("parentConcepts").getString(i)).getString("uuid")));
             JSONArray parentConceptSetMembers = parentConcept.getJSONObject("data").getJSONArray("results").getJSONObject(0).getJSONArray("setMembers");
             for (int j = 0; j < parentConceptSetMembers.length(); j++) {
                 if (parentConceptSetMembers.getJSONObject(j).getString("uuid").equals(child.getString("uuid"))) {
                     parentConceptSetMembers.put(j, child);
                 }
             }
-            insertConcept(parentConcept.getJSONObject("data"), parentConcept.getJSONObject("parents").getJSONArray("parentUuids"));
+            insertConcept(parentConcept.getJSONObject("data"), parentConcept.getJSONObject("parents").getJSONArray("parentConcepts"));
             updateParentJson(parentConcept.getJSONObject("data").getJSONArray("results").getJSONObject(0));
         }
+    }
+
+
+    private JSONArray getAllParents(String childConceptName, JSONArray results) throws JSONException {
+        String childConcept = getConceptByName(childConceptName);
+        if(childConcept == null)
+            return results;
+        results.put(childConceptName);
+        JSONObject conceptJson = new JSONObject(childConcept);
+        JSONArray parentConcepts = conceptJson.getJSONObject("parents").getJSONArray("parentConcepts");
+        if(parentConcepts.length() > 0){
+            return getAllParents(new JSONObject(parentConcepts.getString(0)).getString("conceptName"), results);
+        }
+        return results;
+    }
+
+    @JavascriptInterface
+    public String getAllParentsInHierarchy(String childConceptName) throws JSONException {
+        JSONArray results = getAllParents(childConceptName, new JSONArray());
+        if(results.length() == 0)
+            return new JSONArray().toString();
+        return  results.toString();
     }
 }
