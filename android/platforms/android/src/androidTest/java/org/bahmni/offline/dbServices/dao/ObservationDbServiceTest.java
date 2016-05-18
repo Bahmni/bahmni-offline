@@ -53,7 +53,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
     }
 
-    @Ignore //will add it later, now it is failing because of multi threading nature of sqlite
+    @Test
     public void testShouldRemoveObservationsIfTheObservationDataIsRemovedFromEncounter() throws Exception {
 
         Context context = getInstrumentation().getTargetContext();
@@ -61,7 +61,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/BahmniObs.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
