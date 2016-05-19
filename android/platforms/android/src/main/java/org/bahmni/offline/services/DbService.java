@@ -1,5 +1,6 @@
 package org.bahmni.offline.services;
 
+import android.content.ContentValues;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.dbServices.dao.*;
@@ -10,6 +11,7 @@ import org.xwalk.core.JavascriptInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class DbService {
@@ -21,7 +23,9 @@ public class DbService {
     private AddressHierarchyDbService addressHierarchyDbService;
     private EncounterDbService encounterDbService;
     private VisitDbService visitDbService;
+    private ErrorLogDbService errorLogDbService;
     private ObservationDbService observationDbService;
+
 
 
     public DbService(DbHelper mDBHelper) {
@@ -33,6 +37,7 @@ public class DbService {
         addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
         encounterDbService = new EncounterDbService(mDBHelper);
         visitDbService = new VisitDbService(mDBHelper);
+        errorLogDbService = new ErrorLogDbService(mDBHelper);
         observationDbService = new ObservationDbService(mDBHelper);
     }
 
@@ -52,20 +57,8 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String getVisitUuidsByPatientUuid(String patientUuid, int numberOfVisits) throws JSONException {
-        JSONArray jsonArray = visitDbService.getVisitUuidsByPatientUuid(patientUuid,numberOfVisits);
-        return jsonArray == null ? null : String.valueOf(jsonArray);
-    }
-
-    @JavascriptInterface
     public String getAttributeTypes() throws JSONException {
         return String.valueOf(patientAttributeDbService.getAttributeTypes());
-    }
-
-    @JavascriptInterface
-    public String getObservationsFor(String params) throws JSONException {
-        JSONArray jsonArray = observationDbService.getObservationsFor(new JSONObject(params));
-        return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
     @JavascriptInterface
@@ -143,12 +136,6 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String insertObservationData(String patientUuid, String visitUuid, String observationData) throws JSONException {
-        JSONArray jsonArray = observationDbService.insertObservationData(patientUuid ,visitUuid, new JSONArray(observationData));
-        return jsonArray == null ? null : String.valueOf(jsonArray);
-    }
-
-    @JavascriptInterface
     public String findActiveEncounter(String params, String encounterSessionDurationInMinutes) throws JSONException {
         JSONObject encounterData = encounterDbService.findActiveEncounter(new JSONObject(params), Integer.parseInt(encounterSessionDurationInMinutes));
         return encounterData == null ? null : String.valueOf(encounterData);
@@ -185,4 +172,13 @@ public class DbService {
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 
+    @JavascriptInterface
+    public void insertLog(String failedRequest, int responseStatus, String stackTrace) throws JSONException {
+        errorLogDbService.insertLog(failedRequest, responseStatus, stackTrace);
+    }
+
+    @JavascriptInterface
+    public String getAllLogs() throws JSONException {
+        return errorLogDbService.getAllLogs().toString();
+    }
 }
