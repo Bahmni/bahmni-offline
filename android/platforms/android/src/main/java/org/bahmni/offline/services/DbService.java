@@ -57,14 +57,32 @@ public class DbService {
     }
 
     @JavascriptInterface
+    public String getVisitUuidsByPatientUuid(String patientUuid, int numberOfVisits) throws JSONException {
+        JSONArray jsonArray = visitDbService.getVisitUuidsByPatientUuid(patientUuid, numberOfVisits);
+        return jsonArray == null ? null : String.valueOf(jsonArray);
+    }
+
+    @JavascriptInterface
     public String getAttributeTypes() throws JSONException {
         return String.valueOf(patientAttributeDbService.getAttributeTypes());
+    }
+
+    @JavascriptInterface
+    public String getObservationsFor(String params) throws JSONException {
+        JSONArray jsonArray = observationDbService.getObservationsFor(new JSONObject(params));
+        return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
     @JavascriptInterface
     public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
         JSONArray json = new SearchDbService(mDBHelper).execute(params).get();
         return String.valueOf(new JSONObject().put("data", new JSONObject().put("pageOfResults", json)));
+    }
+
+    @JavascriptInterface
+    public String insertObservationData(String patientUuid, String visitUuid, String observationData) throws JSONException {
+        JSONArray jsonArray = observationDbService.insertObservationData(patientUuid, visitUuid, new JSONArray(observationData));
+        return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
     @JavascriptInterface
