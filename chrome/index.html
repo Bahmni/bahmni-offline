@@ -6,30 +6,126 @@
     <style>
       body {
         margin: 0;
+        font-family: "OpenSans", Arial, sans-serif !important;
       }
-      #ipValue {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 22%;
-        height: 4%;
+      .offline-outer-wrap{
+        width:auto;
+        display: table;
+        position: fixed;
+        top:40%;
+        left:50%;
         transform: translate(-50%, -50%);
+        border-radius: 10px;
+        box-sizing: border-box;
+        background: #699;
       }
-      #enterButton {
-        position: absolute;
-        top: 48%;
-        height: 4%;
-        left: 63%;
+      .offline-outer-wrap h2 {
+        color: #fff;
+        font-weight: 700;
+        font-size: 24px;
+        display: block;
+        padding: 10px 20px;
+        margin: 0;
+      }
+      .offline-wrap{
+        background:#fff;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 10px 10px -10px #666;
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+      }
+      .offline-wrap p{
+        font-size: 15px;
+        color:#363463;
+      }
+      .hostForm{
+        width:440px;
+        display: table;
+        margin: 0 auto;
+      }
+      .form-field{
+        clear: both;
+        display: block;
+        margin-bottom: 10px;
+        overflow: hidden;
+      }
+      .ipValue{
+        float: left;
+        width: 15em;
+        padding: 6px 10px;
+        border:1px solid rgb(221, 221, 221);
+        font-size: 14px;
+      }
+      .field-attribute{
+        float:left;
+        width: 11em;
+      }
+      .field-value{
+        float: left;
+        width: auto;
+
+      }
+      .field-attribute label{
+        text-align: right;
+        margin: 8px .8em 8px 0;
+        color: #363463;
+        font-size: 14px;
+        display: block;
+      }
+      .asterick{
+        color: red;
+      }
+      .enterButton {
+        border-radius: 3px;
+        background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
+        border: 1px solid #88af28;
+        display: inline-block;
+        line-height: 1.2em;
+        color: #fff;
+        cursor: pointer;
+        min-width: 0;
+        max-width: 100%;
+        text-decoration: none;
+        padding: 8px 0;
+        font-size: 16px;
+        width: 14.5em;
+        font-family: "OpenSans", Arial, sans-serif !important;
+        letter-spacing: 1px;
+      }
+      .enterButton:hover{
+        background: #8eb82a;
+        border-color: #779b23;
       }
 
     </style>
   </head>
   <body>
-  <form name="hostForm">
-    <input type="text" name="ipValue" id="ipValue" value="" placeholder="Please Enter IP" required/>
-    <button type="submit" name="enter" id="enterButton">Enter</button>
-    <input type="submit" style="display:none"/>
-  </form>
+  <div class="offline-outer-wrap">
+    <h2>Bahmni</h2>
+    <div class="offline-wrap">
+      <p>Please provide Bahmni instance's IP or hostname to continue with setup</p>
+      <form name="hostForm" class="hostForm">
+        <div class="form-field">
+          <div class="field-attribute">
+            <label for="ipAddress">
+              Hostname / IP Address <span class="asterick">*</span>
+            </label>
+          </div>
+          <div class="field-value">
+            <input type="text" name="ipValue" id="ipValue" class="ipValue" value="" placeholder="Please Enter IP" required/>
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="field-attribute">
+            <label></label>
+          </div>
+          <div class="field-value">
+            <button type="submit" name="enter" id="enterButton" class="enterButton" accesskey="e"><u><strong>E</strong></u>nter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
     <script src="chrome.js"></script>
 
   </body>

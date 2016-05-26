@@ -1,1 +1,93 @@
 /* Empty. Add your own CSS if you like */
+body {
+  margin: 0;
+  font-family: "OpenSans", Arial, sans-serif !important;
+}
+.offline-outer-wrap{
+  width:auto;
+  display: table;
+  position: fixed;
+  top:40%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  box-sizing: border-box;
+  background: #699;
+}
+.offline-outer-wrap h2 {
+  color: #fff;
+  font-weight: 700;
+  font-size: 24px;
+  display: block;
+  padding: 10px 20px;
+  margin: 0;
+}
+.offline-wrap{
+  background:#fff;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 10px 10px -10px #666;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+}
+.offline-wrap p{
+  font-size: 15px;
+  color:#363463;
+}
+.hostForm{
+  width:440px;
+  display: table;
+  margin: 0 auto;
+}
+.form-field{
+  clear: both;
+  display: block;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.ipValue{
+  float: left;
+  width: 15em;
+  padding: 6px 10px !important;
+  border:1px solid rgb(221, 221, 221) !important;
+  font-size: 14px;
+}
+.field-attribute{
+  float:left;
+  width: 13em;
+}
+.field-value{
+  float: left;
+  width: auto;
+
+}
+.field-attribute label{
+  text-align: right;
+  margin: 8px .8em 8px 0;
+  color: #363463;
+  font-size: 14px;
+  display: block;
+}
+.asterick{
+  color: red;
+}
+.enterButton {
+  border-radius: 3px;
+  background: linear-gradient(to bottom,#a1d030,#88af28) #88af28;
+  border: 1px solid #88af28;
+  display: inline-block;
+  line-height: 1.2em;
+  color: #fff;
+  cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
+  text-decoration: none;
+  padding: 8px 0;
+  font-size: 16px;
+  width: 13.2em;
+  font-family: "OpenSans", Arial, sans-serif !important;
+  letter-spacing: 1px;
+}
+.enterButton:hover{
+  background: #8eb82a;
+  border-color: #779b23;
+}
