@@ -49,7 +49,8 @@ public class ReferenceDataDbService {
         }
         c.moveToFirst();
         JSONObject config = new JSONObject();
-        if(referenceDataKey.equals("LocaleList") || referenceDataKey.equals("DefaultEncounterType") || referenceDataKey.equals("encounterSessionDuration")) {
+        if(referenceDataKey.equals("LocaleList") || referenceDataKey.equals("DefaultEncounterType") ||
+                referenceDataKey.equals("encounterSessionDuration") || referenceDataKey.equals("NonCodedDrugConcept")) {
             config.put("data", c.getString(c.getColumnIndex("data")));
         }
         else if(referenceDataKey.equals("IdentifierSources") || referenceDataKey.equals("AddressHierarchyLevels")) {

@@ -32,6 +32,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         String uuid = "1c5c237a-dc6e-4f4f-bcff-c761c1ae5972";
         String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
         DateTime encounterDateTime = new DateTime("2016-04-22T11:06:20.000+0530");
+        String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
@@ -44,6 +45,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
 
         assertEquals(uuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("encounterUuid"));
         assertEquals(patientUuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("patientUuid"));
+        assertEquals(visitUuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("visitUuid"));
         assertEquals(encounterDateTime, new DateTime(encounters.getJSONObject(0).getJSONObject("encounter").getString("encounterDateTime")));
     }
 
@@ -99,5 +101,35 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
 
         assertNotNull(encounterObject);
         assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterObject.getJSONObject("encounter").getString("encounterUuid"));
+    }
+
+    @Test
+    public void  testShouldGetEncounterByVisit() throws Exception {
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
+
+        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+
+        JSONObject encounter = new JSONObject(encounterJson);
+        encounter.put("encounterDateTime", Util.addMinutesToDate(-10, new Date()).toString());
+
+        encounterDbService.insertEncounterData(encounter);
+
+        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        JSONArray visitUuids = new JSONArray();
+        visitUuids.put(0, "47a706a2-c0e6-4e40-ae31-4a3535be2ace");
+        JSONObject params = new JSONObject();
+        params.put("patientUuid", patientUuid);
+        params.put("visitUuids", visitUuids);
+
+        JSONArray encounterList = encounterDbService.getEncountersByVisits(params);
+
+        assertNotNull(encounterList);
+        assertEquals(1, encounterList.length());
+        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterList.getJSONObject(0).getJSONObject("encounter").getString("encounterUuid"));
     }
 }

@@ -28,6 +28,7 @@ public class EncounterDbService {
         values.put("encounterDateTime", new DateTime(encounterData.getString("encounterDateTime")).toString());
         values.put("providerUuid", encounterData.getJSONArray("providers").getJSONObject(0).getString("uuid"));
         values.put("encounterType", encounterData.getString("encounterType").toUpperCase());
+        values.put("visitUuid", encounterData.getString("visitUuid"));
         values.put("encounterJson", String.valueOf(encounterData));
         db.insertWithOnConflict("encounter", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         return  encounterData;
@@ -89,4 +90,33 @@ public class EncounterDbService {
         c.close();
         return encounter;
     }
+
+    public JSONArray getEncountersByVisits(JSONObject params) throws JSONException{
+        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        JSONArray visitUuidsArray = params.getJSONArray("visitUuids");
+        String visitUuids = visitUuidsArray.toString();
+        String patientUuid = params.getString("patientUuid");
+        JSONArray encounterList = new JSONArray();
+
+        String inClauseVisitUuidsList = visitUuidsArray.length() > 0 ? visitUuids.substring(2, visitUuids.length() - 2) : visitUuids;
+
+        Cursor c = db.rawQuery("SELECT encounterJson from encounter" +
+                " WHERE patientUuid = '" + patientUuid + "' AND visitUuid IN (\"" + inClauseVisitUuidsList + "\") ORDER BY encounterDateTime DESC ", new String[]{});
+        if (c.getCount() < 1) {
+            c.close();
+            return null;
+        }
+        c.moveToFirst();
+        Integer index=0;
+        while (index < c.getCount()) {
+            JSONObject encounter = new JSONObject();
+            encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+            encounterList.put(index, encounter);
+            c.moveToNext();
+            index++;
+        }
+        c.close();
+        return encounterList;
+    }
+
 }

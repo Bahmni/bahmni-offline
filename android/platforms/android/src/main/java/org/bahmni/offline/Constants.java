@@ -13,7 +13,7 @@ public class Constants {
     public static String CREATE_REFERENCE_DATA_TABLE= "CREATE TABLE IF NOT EXISTS reference_data (key TEXT PRIMARY KEY, data TEXT, etag TEXT);";
     public static String CREATE_CONCEPT_TABLE= "CREATE TABLE IF NOT EXISTS concept (uuid TEXT PRIMARY KEY, data TEXT, parents TEXT, name TEXT);";
     public static String CREATE_LOGIN_LOCATIONS_TABLE= "CREATE TABLE IF NOT EXISTS login_locations (uuid TEXT PRIMARY KEY, value TEXT);";
-    public static String CREATE_ENCOUNTER_TABLE = "CREATE TABLE IF NOT EXISTS encounter (uuid TEXT PRIMARY KEY, patientUuid TEXT, encounterType TEXT, providerUuid TEXT, encounterDateTime DATETIME, encounterJson TEXT);";
+    public static String CREATE_ENCOUNTER_TABLE = "CREATE TABLE IF NOT EXISTS encounter (uuid TEXT PRIMARY KEY, patientUuid TEXT, encounterType TEXT, providerUuid TEXT, encounterDateTime DATETIME, visitUuid TEXT, encounterJson TEXT);";
     public static String CREATE_ERRORLOG_TABLE = "CREATE TABLE IF NOT EXISTS error_log (id INTEGER PRIMARY KEY AUTOINCREMENT, failedRequest TEXT, logDateTime DATETIME, responseStatus INTEGER, stackTrace TEXT);";
     public static String CREATE_VISIT_TABLE = "CREATE TABLE IF NOT EXISTS visit (uuid TEXT PRIMARY KEY, patientUuid TEXT, startDatetime DATETIME, visitJson TEXT);";
     public static String CREATE_OBSERVATION_TABLE = "CREATE TABLE IF NOT EXISTS observation(uuid TEXT PRIMARY KEY , encounterUuid TEXT, visitUuid TEXT, patientUuid TEXT, conceptName TEXT, observationJson TEXT);";

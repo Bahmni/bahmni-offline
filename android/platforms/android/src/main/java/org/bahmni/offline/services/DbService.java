@@ -57,8 +57,8 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String getVisitUuidsByPatientUuid(String patientUuid, int numberOfVisits) throws JSONException {
-        JSONArray jsonArray = visitDbService.getVisitUuidsByPatientUuid(patientUuid, numberOfVisits);
+    public String getVisitsByPatientUuid(String patientUuid, int numberOfVisits) throws JSONException {
+        JSONArray jsonArray = visitDbService.getVisitsByPatientUuid(patientUuid, numberOfVisits);
         return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
@@ -156,6 +156,12 @@ public class DbService {
     @JavascriptInterface
     public String findActiveEncounter(String params, String encounterSessionDurationInMinutes) throws JSONException {
         JSONObject encounterData = encounterDbService.findActiveEncounter(new JSONObject(params), Integer.parseInt(encounterSessionDurationInMinutes));
+        return encounterData == null ? null : String.valueOf(encounterData);
+    }
+
+    @JavascriptInterface
+    public String getEncountersByVisits(String params) throws JSONException {
+        JSONArray encounterData = encounterDbService.getEncountersByVisits(new JSONObject(params));
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 

@@ -6,6 +6,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
 import org.bahmni.offline.Utils.TestUtils;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -52,17 +53,24 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
 
         int numberOfVisits = 2;
         String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
+        DateTime startDateTime = new DateTime("2016-04-26T17:36:18.000+0530");
+
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
 
         VisitDbService visitDbService = new VisitDbService(mDBHelper);
         String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
 
-        visitDbService.insertVisitData(new JSONObject(visitJson));
+        JSONObject visit = new JSONObject(visitJson);
+        visitDbService.insertVisitData(visit);
 
-        JSONArray visits = visitDbService.getVisitUuidsByPatientUuid(patientUuid,numberOfVisits);
+        visit.put("uuid", "fe5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
+        visitDbService.insertVisitData(visit);
 
-        assertEquals(visits.length(), 1);
-        assertEquals(visits.getString(0), "de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
+        JSONArray visits = visitDbService.getVisitsByPatientUuid(patientUuid ,numberOfVisits);
+
+        assertEquals(visits.length(), 2);
+        assertEquals("de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad", visits.getJSONObject(0).getString("uuid"));
+        assertEquals(startDateTime, new DateTime(visits.getJSONObject(1).getString("startDatetime")));
     }
 }
