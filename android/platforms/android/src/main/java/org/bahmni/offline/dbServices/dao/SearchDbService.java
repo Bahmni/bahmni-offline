@@ -25,14 +25,15 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
         SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
         try {
-            json = constructResponse(db.rawQuery(generateQuery(params[0]), new String[]{}));
+            json = constructResponse(db.rawQuery(generateQuery(params[0]), new String[]{}), params[0]);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return json;
     }
 
-    private JSONArray constructResponse(Cursor c) throws JSONException {
+    private JSONArray constructResponse(Cursor c, String parameters) throws JSONException {
+        JSONObject params = new JSONObject(parameters);
         c.moveToFirst();
         String[] columnNames = c.getColumnNames();
         JSONArray json = new JSONArray();
@@ -41,7 +42,11 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             for (int i = 0; i < columnNames.length; i++) {
                 if (columnNames[i].equals("birthdate")) {
                     obj.put("age", Years.yearsBetween(DateTime.parse(c.getString(i)), new DateTime()).getYears());
-                } else {
+                } else if(params.has("addressFieldName") && columnNames[i].equals(params.getString("addressFieldName"))){
+                    JSONObject address = new JSONObject();
+                    address.put(params.getString("addressFieldName"), c.getString(i));
+                    obj.put("addressFieldValue", address);
+                } else{
                     obj.put(columnNames[i], c.getString(i));
                 }
             }
@@ -76,8 +81,8 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             addressFieldName = params.getString("addressFieldName").replace("_", "");
         }
 
-        String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, " + addressFieldName + " as addressFieldValue " +
-                ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
+        String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +
+        ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
                 "  from patient p " +
                 " join patient_address padd " +
                 " on p.uuid = padd.patientUuid" +

@@ -126,11 +126,13 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("addressFieldValue", searchString);
 
         final JSONArray[] returnValue = new JSONArray[1];
+        JSONObject addressFieldValue = new JSONObject();
+        addressFieldValue.put("stateProvince",searchString );
 
         executeSearch(params, returnValue);
 
         JSONObject result = returnValue[0].getJSONObject(0);
-        assertEquals("Chattisgarh", result.getString("addressFieldValue"));
+        assertEquals(addressFieldValue.toString(), result.getString("addressFieldValue"));
     }
 
 
@@ -190,6 +192,26 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         assertEquals(23, new JSONObject(result.getString("customAttribute")).getInt("landHolding"));
     }
 
+    @Test
+    public void testShouldReturnEmptyResultsIfThereAreNoPatientsWithGivenAddress() throws Throwable {
+
+        String searchString = "abc";
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byIdOrNameOrVillage");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "stateProvince");
+        params.put("addressFieldValue", searchString);
+
+        final JSONArray[] returnValue = new JSONArray[1];
+        JSONObject addressFieldValue = new JSONObject();
+        addressFieldValue.put("stateProvince",searchString );
+
+        executeSearch(params, returnValue);
+
+        assertEquals(0, returnValue[0].length());
+    }
 
 
 }
