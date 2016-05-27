@@ -28,7 +28,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
@@ -59,7 +59,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/BahmniObs.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
@@ -92,7 +92,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
@@ -123,7 +123,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
@@ -158,7 +158,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
@@ -191,7 +191,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);

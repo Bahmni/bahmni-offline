@@ -30,7 +30,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         SQLiteDatabase.loadLibs(context);
 
         String uuid = "1c5c237a-dc6e-4f4f-bcff-c761c1ae5972";
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         DateTime encounterDateTime = new DateTime("2016-04-22T11:06:20.000+0530");
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
@@ -54,7 +54,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        String patientUuid = "fc6ede09-f16f-4877-d2f5-ed8b2182ec11";
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String providerUuid = "6a5d9c71-bb71-47ad-abed-bda86637f1b7";
 
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");

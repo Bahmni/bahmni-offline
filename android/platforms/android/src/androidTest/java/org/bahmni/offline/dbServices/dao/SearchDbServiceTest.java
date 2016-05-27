@@ -6,6 +6,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
 import org.bahmni.offline.Utils.TestUtils;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainActivity>{
@@ -23,8 +25,8 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
     }
 
     private DbHelper mDBHelper;
-
-
+    private JSONObject patientData;
+    PatientDbService patientDbService;
 
     public void setUp() throws Exception {
         Context context = getInstrumentation().getTargetContext();
@@ -34,16 +36,16 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
+        mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
 
-
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        patientDbService = new PatientDbService(mDBHelper);
         PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         PatientAddressDbService patientAddressDbService = new PatientAddressDbService(mDBHelper);
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
-        JSONObject patientData = new JSONObject(patientJson);
+        patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
 
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
@@ -51,8 +53,6 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         JSONObject address = person.getJSONObject("preferredAddress");
         patientAddressDbService.insertAddress(address, uuid);
 
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
-        ArrayList<JSONObject> attributeTypeMap = TestUtils.getAttributeTypeMap(db);
 
         String patientAttributeTypesJSON = TestUtils.readFileFromAssets("patientAttributeTypes.json", getInstrumentation().getContext());
         JSONObject patientAttributeTypes = new JSONObject(patientAttributeTypesJSON);
@@ -212,6 +212,146 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
 
         assertEquals(0, returnValue[0].length());
     }
+    @Test
+    public void testShouldNotDisplayIfPatientDatecreatedAndEncounterDateIsNotWithinDuration() throws Throwable {
 
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byDate");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+        params.put("duration", 14);
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+        JSONObject encounterJsonObj = new JSONObject(encounterJson);
+
+        encounterJsonObj.remove("encounterDateTime");
+        encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(20));
+        encounterDbService.insertEncounterData(encounterJsonObj);
+
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(20));
+        patientDbService.insertPatient(patientData);
+
+        executeSearch(params, returnValue);
+
+        assertEquals(returnValue[0].length(), 0);
+
+    }
+
+    @Test
+    public void testShouldDisplayIfPatientDatecreatedIsNotWithinDurationAndEncounterDateIsWithinDuration() throws Throwable {
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byDate");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+        params.put("duration", 14);
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+        JSONObject encounterJsonObj = new JSONObject(encounterJson);
+
+        encounterJsonObj.remove("encounterDateTime");
+        encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(2));
+        encounterDbService.insertEncounterData(encounterJsonObj);
+
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(20));
+        patientDbService.insertPatient(patientData);
+
+        executeSearch(params, returnValue);
+        JSONObject result = returnValue[0].getJSONObject(0);
+
+        assertEquals(result.getString("givenName"), "test");
+
+    }
+
+    @Test
+    public void testShouldDisplayAsRecentPatientIfDateCreatedIsWithinDaterangeAndThereIsNoEncounterForPatient() throws Throwable {
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byDate");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+        params.put("duration", 14);
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
+        patientDbService.insertPatient(patientData);
+
+        executeSearch(params, returnValue);
+        JSONObject result = returnValue[0].getJSONObject(0);
+
+        assertEquals(result.getString("givenName"), "test");
+
+    }
+
+    @Test
+    public void testShouldDisplayAsRecentPatientIfDatecreatedIsWithinDateRangeAndEncounterDateIsNotInDateRangeForPatient() throws Throwable {
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byDate");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+        params.put("duration", 14);
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+        JSONObject encounterJsonObj = new JSONObject(encounterJson);
+
+        encounterJsonObj.remove("encounterDateTime");
+        encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(20));
+        encounterDbService.insertEncounterData(encounterJsonObj);
+
+
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
+        patientDbService.insertPatient(patientData);
+
+        executeSearch(params, returnValue);
+        JSONObject result = returnValue[0].getJSONObject(0);
+
+        assertEquals(result.getString("givenName"), "test");
+
+    }
+
+    @Test
+    public void testShouldDisplayAsRecentPatientIfDatecreatedAndEncounterDateIsWithinDateRange() throws Throwable {
+
+        final JSONObject params = new JSONObject();
+        params.put("q", "");
+        params.put("s", "byDate");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+        params.put("duration", 14);
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+        JSONObject encounterJsonObj = new JSONObject(encounterJson);
+
+        encounterJsonObj.remove("encounterDateTime");
+        encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(2));
+        encounterDbService.insertEncounterData(encounterJsonObj);
+
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
+        patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
+        patientDbService.insertPatient(patientData);
+
+        executeSearch(params, returnValue);
+        JSONObject result = returnValue[0].getJSONObject(0);
+
+        assertEquals(result.getString("givenName"), "test");
+    }
 
 }

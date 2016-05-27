@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
     private DbHelper mDBHelper;
@@ -93,13 +95,22 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
                 " left outer join " + "patient_attributes pa1 on " +
                 " pa1.patientUuid = p.uuid" +
                 " left outer join patient_attribute_types" +
-                " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ")";
+                " pat on pa1.attributeTypeId = pat.attributeTypeId and pat.attributeName in (" + attributeNames + ") " +
+                " left outer join encounter on encounter.patientUuid = p.uuid";
         String appender = " WHERE ";
 
         if (params.has("addressFieldValue") && !params.getString("addressFieldValue").equals("")) {
             sqlString += appender + "(padd." + addressFieldName + " LIKE '%" + params.getString("addressFieldValue") + "%') ";
             appender = " AND ";
         }
+
+        if (params.has("duration")) {
+            DateTime startDate =  DateTime.now().minusDays(params.getInt("duration"));
+            sqlString += appender + " (encounter.encounterDateTime >= '" + startDate + "' OR p.dateCreated >= '" + startDate + "' )";
+            appender = " AND ";
+        }
+
+
         if (params.has("customAttribute") && !params.getString("customAttribute").equals("")) {
             sqlString += appender + "pa.attributeValue LIKE '%" + params.getString("customAttribute") + "%'";
             appender = " AND ";
