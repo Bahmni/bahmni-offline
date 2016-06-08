@@ -37,6 +37,8 @@ body {
   width:440px;
   display: table;
   margin: 0 auto;
+  position: relative;
+  padding-top:20px;
 }
 .form-field{
   clear: both;
@@ -90,4 +92,13 @@ body {
 .enterButton:hover{
   background: #8eb82a;
   border-color: #779b23;
+}
+
+.error_message{
+  left:182px;
+  position: absolute;
+  font-size: 12px;
+  font-family: "OpenSans", Arial, sans-serif !important;
+  color: red;
+  top: -4px;
 }

@@ -96,6 +96,11 @@
         background: #8eb82a;
         border-color: #779b23;
       }
+      .error {
+        font-size: 12px;
+        font-family: "OpenSans", Arial, sans-serif !important;
+        color: red;
+      }
 
     </style>
   </head>
@@ -112,7 +117,8 @@
             </label>
           </div>
           <div class="field-value">
-            <input type="text" name="ipValue" id="ipValue" class="ipValue" value="" placeholder="Please Enter IP" required/>
+            <div><span id="message" class="error"></span></div>
+            <input type="text" name="ipValue" id="ipValue" class="ipValue" value="" placeholder="Please Enter IP" required />
           </div>
         </div>
         <div class="form-field">
@@ -120,7 +126,7 @@
             <label></label>
           </div>
           <div class="field-value">
-            <button type="submit" name="enter" id="enterButton" class="enterButton" accesskey="e"><u><strong>E</strong></u>nter</button>
+            <button type="submit" name="enter" id="enterButton" class="enterButton" accesskey="e" ><u><strong>E</strong></u>nter</button>
           </div>
         </div>
       </form>
