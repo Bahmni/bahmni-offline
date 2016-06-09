@@ -49,7 +49,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         JSONObject observation = observations.getJSONObject(0);
 
-        assertEquals(5, observation.getJSONObject("observation").getJSONArray("groupMembers").length());
+        assertEquals(5, observation.getJSONArray("groupMembers").length());
 
     }
 
@@ -113,7 +113,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         JSONObject observation = observations.getJSONObject(0);
 
-        assertEquals(5, observation.getJSONObject("observation").getJSONArray("groupMembers").length());
+        assertEquals(5, observation.getJSONArray("groupMembers").length());
 
     }
 

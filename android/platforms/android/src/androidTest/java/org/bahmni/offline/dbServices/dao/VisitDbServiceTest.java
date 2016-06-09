@@ -40,8 +40,8 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         JSONObject visit = visitDbService.getVisitByUuid(uuid);
 
         assertEquals(uuid, visit.getString("uuid"));
-        assertEquals(patientUuid, visit.getJSONObject("visitJson").getJSONObject("patient").getString("uuid"));
-        assertEquals(2, visit.getJSONObject("visitJson").getJSONArray("encounters").length());
+        assertEquals(patientUuid, visit.getJSONObject("patient").getString("uuid"));
+        assertEquals(2, visit.getJSONArray("encounters").length());
 
     }
 
