@@ -64,9 +64,7 @@ public class ObservationDbService {
         }
         c.moveToFirst();
         for (int index = 0; index < c.getCount(); index++) {
-            JSONObject observationJson = new JSONObject();
-            observationJson.put("observation", new JSONObject(c.getString(c.getColumnIndex("observationJson"))));
-            observations.put(index, observationJson);
+            observations.put(index, new JSONObject(c.getString(c.getColumnIndex("observationJson"))));
             c.moveToNext();
         }
         c.close();

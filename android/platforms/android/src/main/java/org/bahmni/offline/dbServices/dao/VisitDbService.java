@@ -37,10 +37,7 @@ public class VisitDbService {
             return null;
         }
         c.moveToFirst();
-        JSONObject visitJson = new JSONObject();
-        visitJson.put("visitJson", new JSONObject(c.getString(c.getColumnIndex("visitJson"))));
-        visitJson.put("uuid", c.getString(c.getColumnIndex("uuid")));
-        visitJson.put("patientUuid", c.getString(c.getColumnIndex("patientUuid")));
+        JSONObject visitJson = new JSONObject(c.getString(c.getColumnIndex("visitJson")));
         c.close();
         return visitJson;
     }
