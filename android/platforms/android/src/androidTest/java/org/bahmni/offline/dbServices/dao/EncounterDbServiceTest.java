@@ -43,10 +43,10 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
 
         JSONArray encounters = encounterDbService.getEncountersByPatientUuid(patientUuid);
 
-        assertEquals(uuid, encounters.getJSONObject(0).getString("encounterUuid"));
-        assertEquals(patientUuid, encounters.getJSONObject(0).getString("patientUuid"));
-        assertEquals(visitUuid, encounters.getJSONObject(0).getString("visitUuid"));
-        assertEquals(encounterDateTime, new DateTime(encounters.getJSONObject(0).getString("encounterDateTime")));
+        assertEquals(uuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("encounterUuid"));
+        assertEquals(patientUuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("patientUuid"));
+        assertEquals(visitUuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("visitUuid"));
+        assertEquals(encounterDateTime, new DateTime(encounters.getJSONObject(0).getJSONObject("encounter").getString("encounterDateTime")));
     }
 
     @Test
@@ -75,8 +75,8 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
 
         JSONObject activeEncounter = encounterDbService.findActiveEncounter(params, 60);
 
-        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", activeEncounter.getString("encounterUuid"));
-        assertEquals(patientUuid, activeEncounter.getString("patientUuid"));
+        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", activeEncounter.getJSONObject("encounter").getString("encounterUuid"));
+        assertEquals(patientUuid, activeEncounter.getJSONObject("encounter").getString("patientUuid"));
 
     }
 
@@ -100,7 +100,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         JSONObject encounterObject = encounterDbService.findEncounterByEncounterUuid(encounterUuid);
 
         assertNotNull(encounterObject);
-        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterObject.getString("encounterUuid"));
+        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterObject.getJSONObject("encounter").getString("encounterUuid"));
     }
 
     @Test
@@ -130,6 +130,6 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
 
         assertNotNull(encounterList);
         assertEquals(1, encounterList.length());
-        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterList.getJSONObject(0).getString("encounterUuid"));
+        assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterList.getJSONObject(0).getJSONObject("encounter").getString("encounterUuid"));
     }
 }
