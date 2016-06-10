@@ -45,7 +45,9 @@ public class EncounterDbService {
         }
         c.moveToFirst();
         for(Integer i=0; i < c.getCount(); i++){
-            encounterList.put(i, new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+            JSONObject encounter = new JSONObject();
+            encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+            encounterList.put(i, encounter);
             c.moveToNext();
         }
         c.close();
@@ -68,7 +70,8 @@ public class EncounterDbService {
             return null;
         }
         c.moveToFirst();
-        JSONObject encounter = new JSONObject(c.getString(c.getColumnIndex("encounterJson")));
+        JSONObject encounter = new JSONObject();
+        encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
         c.close();
         return  encounter;
     }
@@ -82,7 +85,8 @@ public class EncounterDbService {
             return null;
         }
         c.moveToFirst();
-        JSONObject encounter = new JSONObject(c.getString(c.getColumnIndex("encounterJson")));
+        JSONObject encounter = new JSONObject();
+        encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
         c.close();
         return encounter;
     }
@@ -105,7 +109,9 @@ public class EncounterDbService {
         c.moveToFirst();
         Integer index=0;
         while (index < c.getCount()) {
-            encounterList.put(index, new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+            JSONObject encounter = new JSONObject();
+            encounter.put("encounter", new JSONObject(c.getString(c.getColumnIndex("encounterJson"))));
+            encounterList.put(index, encounter);
             c.moveToNext();
             index++;
         }
