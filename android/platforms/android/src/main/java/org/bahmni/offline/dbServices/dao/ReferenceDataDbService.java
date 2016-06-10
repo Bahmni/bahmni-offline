@@ -24,7 +24,7 @@ public class ReferenceDataDbService {
 
     @JavascriptInterface
     public void insertReferenceData(String referenceDataKey, String data, String eTag) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("key", referenceDataKey);
         values.put("data", data);
@@ -40,7 +40,7 @@ public class ReferenceDataDbService {
 
     @JavascriptInterface
     public String getReferenceData(String referenceDataKey) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from reference_data" +
                 " WHERE key = '" + referenceDataKey + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){

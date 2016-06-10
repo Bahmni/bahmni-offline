@@ -19,7 +19,7 @@ public class LocationDbService {
 
     @JavascriptInterface
     public void insertLocations(JSONArray locations) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         for (int i = 0; i < locations.length(); i++) {
             ContentValues values = new ContentValues();
             values.put("uuid", locations.getJSONObject(i).getString("uuid"));
@@ -30,7 +30,7 @@ public class LocationDbService {
 
     @JavascriptInterface
     public String getLocationByUuid(String uuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from login_locations" +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){

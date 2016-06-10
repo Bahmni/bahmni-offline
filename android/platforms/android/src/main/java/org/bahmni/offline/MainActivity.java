@@ -1,12 +1,16 @@
 package org.bahmni.offline;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.cordova.CordovaActivity;
-import org.bahmni.offline.dbServices.dao.*;
+import org.bahmni.offline.dbServices.dao.ConceptDbService;
+import org.bahmni.offline.dbServices.dao.ConfigDbService;
+import org.bahmni.offline.dbServices.dao.DbHelper;
+import org.bahmni.offline.dbServices.dao.LocationDbService;
+import org.bahmni.offline.dbServices.dao.ReferenceDataDbService;
 import org.bahmni.offline.services.DbService;
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkPreferences;
@@ -25,10 +29,12 @@ public class MainActivity extends CordovaActivity
         mCookieManager.setAcceptCookie(true);
         mCookieManager.setAcceptFileSchemeCookies(true);
 
-        Context c = getApplicationContext();
-        DbHelper mDBHelper = new DbHelper(MainActivity.this, c.getExternalFilesDir(null) + "/Bahmni.db");
-        JodaTimeAndroid.init(c);
-        SQLiteDatabase.loadLibs(c);
+        String databaseName = "/Bahmni.db";
+        String dbPath = getExternalFilesDir(null) + databaseName;
+        DbHelper mDBHelper = new DbHelper(this, dbPath);
+
+        JodaTimeAndroid.init(this);
+        SQLiteDatabase.loadLibs(this);
 
         xWalkWebView.addJavascriptInterface(new DbService(mDBHelper), "AndroidOfflineService");
         xWalkWebView.addJavascriptInterface(new ConfigDbService(mDBHelper), "AndroidConfigDbService");

@@ -21,7 +21,7 @@ public class MarkerDbService {
     }
 
     public JSONObject getMarker(String markerName) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from event_log_marker where markerName = '" + markerName + "' LIMIT 1 ", new String[]{});
         JSONObject jsonObject = new JSONObject();
 
@@ -44,7 +44,7 @@ public class MarkerDbService {
     }
 
     public String insertMarker(String markerName, String eventUuid, String catchmentNumber) {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("markerName", markerName);
         values.put("lastReadEventUuid", eventUuid);

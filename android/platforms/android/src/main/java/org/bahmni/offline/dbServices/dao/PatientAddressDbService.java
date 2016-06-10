@@ -15,7 +15,7 @@ public class PatientAddressDbService {
     }
 
     public void insertAddress(JSONObject address, String patientUuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         String[] addressFields = new String[]{"address1", "address2", "address3", "address4", "address5", "address6",

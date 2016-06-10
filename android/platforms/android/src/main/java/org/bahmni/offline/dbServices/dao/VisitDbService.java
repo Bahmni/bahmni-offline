@@ -18,7 +18,7 @@ public class VisitDbService {
     }
 
     public JSONObject insertVisitData(JSONObject visitData) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("uuid", visitData.getString("uuid"));
         values.put("patientUuid", visitData.getJSONObject("patient").getString("uuid"));
@@ -29,7 +29,7 @@ public class VisitDbService {
     }
 
     public JSONObject getVisitByUuid(String uuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from visit" +
                 " WHERE uuid = '" + uuid + "'" , new String[]{});
         if (c.getCount() < 1) {
@@ -46,7 +46,7 @@ public class VisitDbService {
     }
 
     public JSONArray getVisitsByPatientUuid(String patientUuid, Integer numberOfVisits) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT uuid, startDatetime from visit" +
                 " WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC LIMIT " + numberOfVisits , new String[]{});
         if (c.getCount() < 1) {

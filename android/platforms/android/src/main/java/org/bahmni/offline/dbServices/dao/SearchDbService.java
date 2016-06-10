@@ -25,7 +25,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
     protected JSONArray doInBackground(String... params) {
         JSONArray json = null;
 
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         try {
             json = constructResponse(db.rawQuery(generateQuery(params[0]), new String[]{}), params[0]);
         } catch (JSONException e) {

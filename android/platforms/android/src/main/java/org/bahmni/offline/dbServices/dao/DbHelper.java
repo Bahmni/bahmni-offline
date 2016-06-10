@@ -1,22 +1,29 @@
 package org.bahmni.offline.dbServices.dao;
 
+import android.app.Activity;
 import android.content.Context;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 import org.bahmni.offline.Constants;
+import org.bahmni.offline.services.EncryptionService;
 
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.SecretKey;
 
 public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
+    private Context myContext;
 
-    private final Context myContext;
+    private String encryptionKey;
 
     public DbHelper(Context context, String dbPath) {
         super(context, dbPath, null, DATABASE_VERSION);
-        myContext = context;
+        this.myContext = context;
+        this.encryptionKey = new EncryptionService(context).generateKey();
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -60,7 +67,15 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     private void executeSql(String sqlToCreateTable) {
-        getWritableDatabase(Constants.KEY).execSQL(sqlToCreateTable);
+        getWritableDatabase().execSQL(sqlToCreateTable);
+    }
+
+    public SQLiteDatabase getWritableDatabase(){
+        return super.getWritableDatabase(encryptionKey);
+    }
+
+    public SQLiteDatabase getReadableDatabase(){
+        return super.getReadableDatabase(encryptionKey);
     }
 
     public void createIndex(String sqlToCreateIndex) {

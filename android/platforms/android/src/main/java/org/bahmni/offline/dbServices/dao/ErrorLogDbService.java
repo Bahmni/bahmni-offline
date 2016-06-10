@@ -22,7 +22,7 @@ public class ErrorLogDbService {
 
     @JavascriptInterface
     public void insertLog(String failedRequest, int responseStatus, String stackTrace) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("failedRequest", failedRequest);
         values.put("logDateTime", new Date().getTime());
@@ -32,7 +32,7 @@ public class ErrorLogDbService {
     }
 
     public JSONArray getAllLogs() throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray errorLogList = new JSONArray();
         Cursor c = db.rawQuery("SELECT * from error_log", new String[]{});
         if (c.getCount() < 1) {

@@ -35,7 +35,7 @@ public class ConceptDbService {
     }
 
     private void insertConcept(JSONObject data, JSONArray parent) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String uuid = ((data.getJSONArray("results") != null) && (data.getJSONArray("results").get(0) != null)) ? data.getJSONArray("results").getJSONObject(0).getString("uuid") : null;
         JSONObject currentParents = getParents(uuid);
         JSONObject parents = new JSONObject();
@@ -60,7 +60,7 @@ public class ConceptDbService {
 
     @JavascriptInterface
     public String getConcept(String conceptUuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from concept" +
                 " WHERE uuid = '" + conceptUuid + "' limit 1 ", new String[]{});
         if (c.getCount() < 1) {
@@ -78,7 +78,7 @@ public class ConceptDbService {
 
     @JavascriptInterface
     public String getConceptByName(String conceptName) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from concept" +
                 " WHERE name = '" + conceptName + "' limit 1 ", new String[]{});
         if (c.getCount() < 1) {
@@ -94,7 +94,7 @@ public class ConceptDbService {
     }
 
     private JSONObject getParents(String conceptUuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT parents from concept" +
                 " WHERE uuid = '" + conceptUuid + "' limit 1 ", new String[]{});
         if (c.getCount() < 1) {

@@ -21,7 +21,7 @@ public class EncounterDbService {
     }
 
     public JSONObject insertEncounterData(JSONObject encounterData) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("uuid", encounterData.getString("encounterUuid"));
         values.put("patientUuid", encounterData.getString("patientUuid"));
@@ -35,7 +35,7 @@ public class EncounterDbService {
     }
 
     public JSONArray getEncountersByPatientUuid(String uuid) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray encounterList = new JSONArray();
         Cursor c = db.rawQuery("SELECT * from encounter" +
                 " WHERE patientUuid = '" + uuid + "'" , new String[]{});
@@ -55,7 +55,7 @@ public class EncounterDbService {
     }
 
     public JSONObject findActiveEncounter(JSONObject encounterDataParams, Integer encounterSessionDurationInMinutes) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         String patientUuid = encounterDataParams.getString("patientUuid");
         String providerUuid = encounterDataParams.getString("providerUuid");
         String encounterType =  (encounterDataParams.getString("encounterType") != null) ?  encounterDataParams.getString("encounterType").toUpperCase() : null;
@@ -77,7 +77,7 @@ public class EncounterDbService {
     }
 
     public JSONObject findEncounterByEncounterUuid(String encounterUuid) throws JSONException{
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT encounterJson from encounter" +
                 " WHERE uuid = '" + encounterUuid + "'" , new String[]{});
         if (c.getCount() < 1) {
@@ -92,7 +92,7 @@ public class EncounterDbService {
     }
 
     public JSONArray getEncountersByVisits(JSONObject params) throws JSONException{
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray visitUuidsArray = params.getJSONArray("visitUuids");
         String visitUuids = visitUuidsArray.toString();
         String patientUuid = params.getString("patientUuid");

@@ -20,7 +20,7 @@ public class PatientAttributeDbService {
     }
 
     public ArrayList<JSONObject> getAttributeTypes() throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         ArrayList<JSONObject> attributeTypeMap = new ArrayList<JSONObject>();
 
         Cursor d = db.rawQuery("SELECT attributeTypeId, uuid, attributeName, format FROM patient_attribute_types", new String[]{});
@@ -39,7 +39,7 @@ public class PatientAttributeDbService {
     }
 
     public void insertAttributeTypes(String attributes) {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         try {
             JSONArray personAttributeTypeList = new JSONArray(attributes);
             for (int i = 0; i < personAttributeTypeList.length(); i++) {
@@ -57,7 +57,7 @@ public class PatientAttributeDbService {
     }
 
     public void insertAttributes(String patientUuid, JSONArray attributes) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         if (attributes != null && attributes.length() > 0) {
             for (int j = 0; j < attributes.length(); j++) {
                 ContentValues values = new ContentValues();

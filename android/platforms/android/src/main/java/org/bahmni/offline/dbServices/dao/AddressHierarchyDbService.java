@@ -29,7 +29,7 @@ public class AddressHierarchyDbService {
     }
 
     private JSONObject insertAddressHierarchyEntry(JSONObject addressHierarchy) throws JSONException {
-        SQLiteDatabase db = dbHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("id", addressHierarchy.getInt("addressHierarchyEntryId"));
@@ -49,7 +49,7 @@ public class AddressHierarchyDbService {
     }
 
     private JSONObject insertAddressHierarchyLevel(JSONObject addressHierarchyLevel) throws JSONException {
-        SQLiteDatabase db = dbHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("addressHierarchyLevelId", addressHierarchyLevel.getInt("levelId"));
@@ -120,7 +120,7 @@ public class AddressHierarchyDbService {
 
     private List<AddressHierarchyEntry> getAddressHierarchyEntriesByLevelAndLikeName(AddressHierarchyLevel level,
                                                                                      String searchString, int limit) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyEntry> addressHierarchyEntries = new ArrayList<AddressHierarchyEntry>();
         Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
                 " WHERE name like '%" + searchString + "%' AND levelId = " + level.getLevelId() + " LIMIT " + limit + " ", new String[]{});
@@ -145,7 +145,7 @@ public class AddressHierarchyDbService {
 
     public AddressHierarchyEntry getAddressHierarchyEntryById(Integer id) {
         if(id != null){
-            SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
                     " WHERE id = '" + id + "' limit 1 ", new String[]{});
             if(c.getCount() < 1){
@@ -172,7 +172,7 @@ public class AddressHierarchyDbService {
             return new ArrayList<AddressHierarchyEntry>();
         }
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyEntry> addressHierarchyEntries = new ArrayList<AddressHierarchyEntry>();
         Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
                 " WHERE name like '%" + searchString + "%' AND levelId = " + level.getLevelId() + " AND parentId = " + parent.getAddressHierarchyEntryId(), new String[]{});
@@ -198,7 +198,7 @@ public class AddressHierarchyDbService {
 
 
     private AddressHierarchyEntry getAddressHierarchyEntryByUserGenId(String userGeneratedIdForParent) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
                 " WHERE userGeneratedId = '" + userGeneratedIdForParent + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
@@ -215,7 +215,7 @@ public class AddressHierarchyDbService {
     }
 
     public AddressHierarchyEntry getAddressHierarchyEntryByUuid(String uuid) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
@@ -233,7 +233,7 @@ public class AddressHierarchyDbService {
     }
 
     public List<AddressHierarchyLevel> getAddressHierarchyLevels() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyLevel> addressHierarchyLevelList = new ArrayList<AddressHierarchyLevel>();
         Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_level", new String[]{});
         if(c.getCount() < 1){

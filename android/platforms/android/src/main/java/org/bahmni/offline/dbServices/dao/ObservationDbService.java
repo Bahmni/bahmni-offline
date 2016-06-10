@@ -17,7 +17,7 @@ public class ObservationDbService {
     }
 
     public JSONArray insertObservationData(String patientUuid, String visitUuid, JSONArray observationData) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         for(int index=0; index<observationData.length(); index++) {
             JSONObject observation = observationData.getJSONObject(index);
@@ -50,7 +50,7 @@ public class ObservationDbService {
         String conceptNames = conceptNamesArray.toString();
         JSONArray visitUuidsArray = params.getJSONArray("visitUuids");
         String visitUuids = visitUuidsArray.toString();
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray observations = new JSONArray();
         String inClauseConceptNameList = conceptNamesArray.length() > 0 ? conceptNames.substring(2, conceptNames.length() - 2) : conceptNames;
         String inClauseVisitUuidsList = visitUuidsArray.length() > 0 ? visitUuids.substring(2, visitUuids.length() - 2) : visitUuids;

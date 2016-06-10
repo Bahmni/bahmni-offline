@@ -87,7 +87,7 @@ public class DbService {
 
     @JavascriptInterface
     public void deletePatientData(String uuid) {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
 
         db.beginTransaction();
 
@@ -137,7 +137,7 @@ public class DbService {
 
     @JavascriptInterface
     public void initSchema() throws IOException, JSONException {
-        mDBHelper.runMigration(mDBHelper.getWritableDatabase(Constants.KEY), "migration_0.sql");
+        mDBHelper.runMigration(mDBHelper.getWritableDatabase(), "migration_0.sql");
 
     }
 

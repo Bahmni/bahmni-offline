@@ -36,7 +36,7 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         JSONObject patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
 
-        SQLiteDatabase db =  mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db =  mDBHelper.getWritableDatabase();
 
         ArrayList<JSONObject> attributeTypeMap = TestUtils.getAttributeTypeMap(db);
 

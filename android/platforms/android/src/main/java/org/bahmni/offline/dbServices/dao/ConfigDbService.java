@@ -19,7 +19,7 @@ public class ConfigDbService {
 
     @JavascriptInterface
     public String insertConfig(String key, String value, String eTag) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("key", key);
         values.put("value", value);
@@ -30,7 +30,7 @@ public class ConfigDbService {
 
     @JavascriptInterface
     public String getConfig(String key) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase(Constants.KEY);
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from configs" +
                 " WHERE key = '" + key + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
