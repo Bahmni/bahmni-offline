@@ -43,16 +43,22 @@ public class MarkerDbService {
         return jsonObject;
     }
 
-    public String insertMarker(String markerName, String eventUuid, String catchmentNumber) {
+    public String insertMarker(String markerName, String eventUuid, String catchmentNumber) throws JSONException  {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        Date date = new Date();
         ContentValues values = new ContentValues();
         values.put("markerName", markerName);
         values.put("lastReadEventUuid", eventUuid);
         values.put("catchmentNumber", catchmentNumber);
-        values.put("lastReadTime", new Date().toString());
+        values.put("lastReadTime", ((Date) date).toString());
 
         db.insertWithOnConflict("event_log_marker", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
-        return eventUuid;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("markerName", markerName);
+        jsonObject.put("lastReadEventUuid", eventUuid);
+        jsonObject.put("catchmentNumber", catchmentNumber);
+        jsonObject.put("lastReadTime", ((Date) date).toString());
+        return jsonObject.toString();
     }
 }
