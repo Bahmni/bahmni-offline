@@ -9,7 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xwalk.core.JavascriptInterface;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -40,6 +42,26 @@ public class DbService {
         errorLogDbService = new ErrorLogDbService(mDBHelper);
         observationDbService = new ObservationDbService(mDBHelper);
     }
+    
+    @JavascriptInterface
+    public String getLog(){
+       try {
+           Process process = Runtime.getRuntime().exec("logcat -d -v brief -t 100");
+           BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+           StringBuilder log = new StringBuilder();
+           String line = "";
+           while ((line = bufferedReader.readLine()) != null) {
+               log.append(line);
+           }
+           return String.valueOf(log);
+       }
+       catch (IOException e) {
+           return "Error getting logs";
+       }
+    }
+
 
     @JavascriptInterface
     public String getPatientByUuid(String uuid) throws JSONException {
