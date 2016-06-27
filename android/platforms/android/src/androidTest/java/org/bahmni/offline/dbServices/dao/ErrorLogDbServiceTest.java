@@ -20,7 +20,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
     }
 
     @Test
-    public void shouldStoreErrorInformationOfFailedRequestInErrorLogTable() throws JSONException {
+    public void testShouldStoreErrorInformationOfFailedRequestInErrorLogTable() throws JSONException {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
@@ -29,7 +29,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
 
         ErrorLogDbService errorLogDbService = new ErrorLogDbService(mDBHelper);
 
-        errorLogDbService.insertLog("http://failedRequest", 500, "Service tempporaily unavailable");
+        errorLogDbService.insertLog("http://failedRequest", 500, "Service tempporaily unavailable", null, null);
 
         JSONArray errorLogList = errorLogDbService.getAllLogs();
 

@@ -21,13 +21,15 @@ public class ErrorLogDbService {
     }
 
     @JavascriptInterface
-    public void insertLog(String failedRequest, int responseStatus, String stackTrace) throws JSONException {
+    public void insertLog(String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("failedRequest", failedRequest);
         values.put("logDateTime", new Date().getTime());
         values.put("responseStatus", responseStatus);
         values.put("stackTrace", stackTrace);
+        values.put("requestPayload", requestPayload);
+        values.put("provider", provider);
         db.insertWithOnConflict("error_log", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -42,11 +44,12 @@ public class ErrorLogDbService {
         c.moveToFirst();
         for(Integer i=0; i < c.getCount(); i++){
             JSONObject errorlog = new JSONObject();
-            errorlog.put("id", c.getInt(c.getColumnIndex("id")));
             errorlog.put("failedRequest", c.getString(c.getColumnIndex("failedRequest")));
             errorlog.put("logDateTime", c.getString(c.getColumnIndex("logDateTime")));
             errorlog.put("responseStatus", c.getInt(c.getColumnIndex("responseStatus")));
             errorlog.put("stackTrace", c.getString(c.getColumnIndex("stackTrace")));
+            errorlog.put("requestPayload", c.getString(c.getColumnIndex("requestPayload")));
+            errorlog.put("provider", c.getString(c.getColumnIndex("provider")));
             errorLogList.put(i, errorlog);
             c.moveToNext();
         }

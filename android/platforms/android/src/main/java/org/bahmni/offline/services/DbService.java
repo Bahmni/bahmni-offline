@@ -219,8 +219,8 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public void insertLog(String failedRequest, int responseStatus, String stackTrace) throws JSONException {
-        errorLogDbService.insertLog(failedRequest, responseStatus, stackTrace);
+    public void insertLog(String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
+        errorLogDbService.insertLog(failedRequest, responseStatus, stackTrace, requestPayload, provider);
     }
 
     @JavascriptInterface
