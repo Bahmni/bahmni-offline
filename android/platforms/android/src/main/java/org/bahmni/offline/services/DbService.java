@@ -159,7 +159,6 @@ public class DbService {
 
     @JavascriptInterface
     public void initSchema() throws IOException, JSONException {
-        mDBHelper.runMigration(mDBHelper.getWritableDatabase(), "migration_0.sql");
 
     }
 

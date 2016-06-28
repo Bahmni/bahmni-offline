@@ -14,8 +14,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.SecretKey;
 
 public class DbHelper extends SQLiteOpenHelper {
-    // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    // If you change the database schema, you must increment the database version. Lets say you wrote migration_8.sql then DATABASE_VERSION should be 9
+    public static final int DATABASE_VERSION = 2;
     private Context myContext;
 
     private String encryptionKey;
@@ -27,20 +27,20 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
+        onUpgrade(db, 0, DATABASE_VERSION);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         int currentVersion = oldVersion;
         String fileName;
-        while(oldVersion <= newVersion) {
-                fileName = "migrations_"+String.valueOf(currentVersion)+".sql";
+        while(currentVersion < newVersion) {
+                fileName = "migration_"+String.valueOf(currentVersion)+".sql";
                 runMigration(db, fileName);
                 currentVersion++;
         }
     }
 
     public void runMigration(SQLiteDatabase db, String filename) {
-        db.beginTransaction();
         try {
             InputStream inputStream = myContext.getAssets().open(filename);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -50,11 +50,8 @@ public class DbHelper extends SQLiteOpenHelper {
             }
             bufferedReader.close();
             db.rawExecSQL(sqlStatements);
-            db.setTransactionSuccessful();
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            db.endTransaction();
         }
     }
 
