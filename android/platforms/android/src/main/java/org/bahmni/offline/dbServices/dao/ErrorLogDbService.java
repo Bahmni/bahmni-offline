@@ -39,7 +39,7 @@ public class ErrorLogDbService {
         Cursor c = db.rawQuery("SELECT * from error_log", new String[]{});
         if (c.getCount() < 1) {
             c.close();
-            return null;
+            return errorLogList;
         }
         c.moveToFirst();
         for(Integer i=0; i < c.getCount(); i++){
