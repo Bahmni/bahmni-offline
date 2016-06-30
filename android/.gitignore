@@ -20,7 +20,7 @@ platforms/android/cordova/lib/*
 !platforms/android/libs/
 !platforms/android/build.gradle
 !platforms/android/AndroidManifest.xml
-
+www/
 platforms/android/res/*
 !platforms/android/res/layout
 

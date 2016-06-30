@@ -9,3 +9,5 @@ build/
 .tmp/
 bower_components/
 tmp/
+app/
+bahmni_config/

@@ -11,16 +11,16 @@ import org.bahmni.offline.dbServices.dao.ConfigDbService;
 import org.bahmni.offline.dbServices.dao.DbHelper;
 import org.bahmni.offline.dbServices.dao.LocationDbService;
 import org.bahmni.offline.dbServices.dao.ReferenceDataDbService;
+import org.bahmni.offline.services.AppUpdateService;
 import org.bahmni.offline.services.DbService;
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
 
-public class MainActivity extends CordovaActivity
-{
+public class MainActivity extends CordovaActivity {
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -41,6 +41,7 @@ public class MainActivity extends CordovaActivity
         xWalkWebView.addJavascriptInterface(new LocationDbService(mDBHelper), "AndroidLocationDbService");
         xWalkWebView.addJavascriptInterface(new ReferenceDataDbService(mDBHelper), "AndroidReferenceDataDbService");
         xWalkWebView.addJavascriptInterface(new ConceptDbService(mDBHelper), "AndroidConceptDbService");
+        xWalkWebView.addJavascriptInterface(new AppUpdateService(this), "AppUpdateService");
 
         xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);
         // turn on debugging
