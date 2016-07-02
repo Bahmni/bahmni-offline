@@ -13,6 +13,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import org.bahmni.offline.MainActivity;
 import org.bahmni.offline.services.AppUpdateService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.bahmni.offline.Constants.APP_UPGRADE_SHARED_PREFERENCE;
@@ -37,6 +38,7 @@ public class AppUpdateServiceTest extends ActivityInstrumentationTestCase2<MainA
     }
 
     @Test
+    @Ignore
     public void testScheduleDownloadIfDownloadHasNotStartedAndInstallOfPreviousDownloadIsNotPending() throws Exception {
         String downloadUrl = "http://www.abcd.com/def.apk";
         SharedPreferences apkDownloadReferencePreference = targetContext.getSharedPreferences(APP_UPGRADE_SHARED_PREFERENCE, Context.MODE_MULTI_PROCESS);
