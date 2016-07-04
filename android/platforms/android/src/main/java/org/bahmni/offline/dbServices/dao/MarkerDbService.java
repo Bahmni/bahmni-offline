@@ -10,7 +10,9 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class MarkerDbService {
 
@@ -45,12 +47,16 @@ public class MarkerDbService {
 
     public String insertMarker(String markerName, String eventUuid, String catchmentNumber) throws JSONException  {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        Date date = new Date();
+        String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(ISO_FORMAT);
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateString = dateFormatter.format(new Date());
+
         ContentValues values = new ContentValues();
         values.put("markerName", markerName);
         values.put("lastReadEventUuid", eventUuid);
         values.put("catchmentNumber", catchmentNumber);
-        values.put("lastReadTime", ((Date) date).toString());
+        values.put("lastReadTime", dateString);
 
         db.insertWithOnConflict("event_log_marker", null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
@@ -58,7 +64,7 @@ public class MarkerDbService {
         jsonObject.put("markerName", markerName);
         jsonObject.put("lastReadEventUuid", eventUuid);
         jsonObject.put("catchmentNumber", catchmentNumber);
-        jsonObject.put("lastReadTime", ((Date) date).toString());
+        jsonObject.put("lastReadTime", dateString);
         return jsonObject.toString();
     }
 }
