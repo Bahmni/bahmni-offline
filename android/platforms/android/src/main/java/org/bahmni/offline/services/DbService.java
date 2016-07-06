@@ -218,12 +218,22 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public void insertLog(String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
-        errorLogDbService.insertLog(failedRequest, responseStatus, stackTrace, requestPayload, provider);
+    public void insertLog(String uuid,String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
+        errorLogDbService.insertLog(uuid, failedRequest, responseStatus, stackTrace, requestPayload, provider);
     }
 
     @JavascriptInterface
     public String getAllLogs() throws JSONException {
         return errorLogDbService.getAllLogs().toString();
+    }
+
+    @JavascriptInterface
+    public void deleteByUuid(String uuid){
+        errorLogDbService.deleteByUuid(uuid);
+    }
+
+    @JavascriptInterface
+    public String getErrorLogByUuid(String uuid) throws JSONException{
+        return String.valueOf(errorLogDbService.getErrorLogByUuid(uuid));
     }
 }
