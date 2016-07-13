@@ -35,9 +35,9 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
 
         errorLogDbService.insertLog("someUuid","http://failedRequest", 500, "Service tempporaily unavailable", null, null);
 
-        JSONArray errorLogList = errorLogDbService.getAllLogs();
+        JSONObject errorLog = errorLogDbService.getErrorLogByUuid("someUuid");
 
-        assertEquals("someUuid","http://failedRequest", errorLogList.getJSONObject(0).getString("failedRequest"));
+        assertEquals("http://failedRequest", errorLog.get("failedRequest"));
         errorLogDbService.deleteByUuid("someUuid");
 
     }
