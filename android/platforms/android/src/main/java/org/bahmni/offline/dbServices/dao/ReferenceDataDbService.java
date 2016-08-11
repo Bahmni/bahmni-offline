@@ -53,7 +53,7 @@ public class ReferenceDataDbService {
                 referenceDataKey.equals("encounterSessionDuration") || referenceDataKey.equals("NonCodedDrugConcept")) {
             config.put("data", c.getString(c.getColumnIndex("data")));
         }
-        else if(referenceDataKey.equals("IdentifierSources") || referenceDataKey.equals("AddressHierarchyLevels")) {
+        else if(referenceDataKey.equals("IdentifierSources") || referenceDataKey.equals("AddressHierarchyLevels") || referenceDataKey.equals("IdentifierTypes")) {
             config.put("data", new JSONArray(c.getString(c.getColumnIndex("data"))));
         }
         else{

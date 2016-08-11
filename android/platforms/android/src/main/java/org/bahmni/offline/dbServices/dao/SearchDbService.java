@@ -83,11 +83,11 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             addressFieldName = params.getString("addressFieldName").replace("_", "");
         }
 
-        String sqlString = "SELECT identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +
+        String sqlString = "SELECT pi.identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +
         ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
                 "  from patient p " +
-                " join patient_address padd " +
-                " on p.uuid = padd.patientUuid" +
+                "  join patient_identifier pi on p.uuid = pi.patientUuid" +
+                " join patient_address padd   on p.uuid = padd.patientUuid" +
                 " left outer join patient_attributes pa on p.uuid = pa.patientUuid" +
                 " and pa.attributeTypeId in (" +
                 "select " + "attributeTypeId from patient_attribute_types" +
@@ -117,13 +117,13 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
         }
         if (params.has("identifier") && !params.getString("identifier").equals("")) {
-            sqlString += appender + " ( p.identifier LIKE '" + params.getString("identifierPrefix") + "%" + params.getString("identifier") + "%')";
+            sqlString += appender + " ( pi.identifier LIKE '" + params.getString("identifierPrefix") + "%" + params.getString("identifier") + "%')";
             appender = " AND ";
         }
         if (null != nameParts) {
             sqlString += appender + getNameSearchCondition(nameParts);
         }
-        sqlString += " GROUP BY p.uuid ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
+        sqlString += " GROUP BY p.uuid, pi.identifier ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
         return sqlString;
     }
 
@@ -131,7 +131,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         String BY_NAME_PARTS = " (coalesce(givenName" +
                 ", '') || coalesce(middleName" +
                 ", '') || coalesce(familyName" +
-                ", '') || coalesce(identifier, '')) like ";
+                ", '') || coalesce(pi.identifier, '')) like ";
         if (nameParts.length == 0)
             return "";
         else {

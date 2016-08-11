@@ -15,7 +15,7 @@ import javax.crypto.SecretKey;
 
 public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version. Lets say you wrote migration_8.sql then DATABASE_VERSION should be 9
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     private Context myContext;
 
     private String encryptionKey;

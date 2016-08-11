@@ -1,7 +1,7 @@
 package org.bahmni.offline;
 
 public class Constants {
-    public static String CREATE_PATIENT_TABLE = "CREATE TABLE IF NOT EXISTS patient (identifier TEXT, uuid TEXT PRIMARY KEY, givenName TEXT, middleName TEXT, familyName TEXT, gender TEXT, birthdate TEXT, dateCreated TEXT, patientJson TEXT, relationships TEXT)";
+    public static String CREATE_PATIENT_TABLE = "CREATE TABLE IF NOT EXISTS patient (uuid TEXT PRIMARY KEY, givenName TEXT, middleName TEXT, familyName TEXT, gender TEXT, birthdate TEXT, dateCreated TEXT, patientJson TEXT, relationships TEXT)";
     public static String CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE = "CREATE TABLE IF NOT EXISTS patient_attribute_types (attributeTypeId INTEGER, attributeName TEXT, uuid TEXT PRIMARY KEY, format TEXT);";
     public static String CREATE_PATIENT_ATTRIBUTE_TABLE = "CREATE TABLE IF NOT EXISTS patient_attributes (attributeTypeId INTEGER, attributeValue TEXT, patientUuid TEXT, uuid TEXT PRIMARY KEY);";
     public static String CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE = "CREATE TABLE IF NOT EXISTS address_hierarchy_entry (id INTEGER, name TEXT, levelId INTEGER, parentId INTEGER, userGeneratedId TEXT, uuid TEXT PRIMARY KEY);";
@@ -15,6 +15,7 @@ public class Constants {
     public static String CREATE_ERRORLOG_TABLE = "CREATE TABLE IF NOT EXISTS error_log (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid TEXT, failedRequest TEXT, logDateTime DATETIME, responseStatus INTEGER, stackTrace TEXT, requestPayload TEXT, provider TEXT);";
     public static String CREATE_VISIT_TABLE = "CREATE TABLE IF NOT EXISTS visit (uuid TEXT PRIMARY KEY, patientUuid TEXT, startDatetime DATETIME, visitJson TEXT);";
     public static String CREATE_OBSERVATION_TABLE = "CREATE TABLE IF NOT EXISTS observation(uuid TEXT PRIMARY KEY , encounterUuid TEXT, visitUuid TEXT, patientUuid TEXT, conceptName TEXT, observationJson TEXT);";
+    public static String CREATE_PATIENT_IDENTIFIER_TABLE = "CREATE TABLE IF NOT EXISTS patient_identifier(identifier TEXT , patientUuid TEXT, typeUuid TEXT, identifierJson TEXT, PRIMARY KEY(patientUuid, typeUuid));";
     public static String APP_UPGRADE_SHARED_PREFERENCE= "AppUpgradeInfo";
     public static String DOWNLOAD_REFERNCE= "downloadReference";
     public static String INSTALL_PENDING= "installPending";

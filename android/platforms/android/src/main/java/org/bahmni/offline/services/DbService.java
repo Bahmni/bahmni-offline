@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 public class DbService {
     private DbHelper mDBHelper;
     private PatientDbService patientDbService;
+    private PatientIdentifierDbService patientIdentifierDbService;
     private PatientAddressDbService patientAddressDbService;
     private PatientAttributeDbService patientAttributeDbService;
     private MarkerDbService markerDbService;
@@ -33,6 +34,7 @@ public class DbService {
     public DbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
         patientDbService = new PatientDbService(mDBHelper);
+        patientIdentifierDbService = new PatientIdentifierDbService(mDBHelper);
         patientAddressDbService = new PatientAddressDbService(mDBHelper);
         patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         markerDbService = new MarkerDbService(mDBHelper);
@@ -188,12 +190,12 @@ public class DbService {
 
     private void insertPatientData(JSONObject patientData) throws JSONException {
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
+        JSONArray patientIdentifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
         JSONArray attributes = person.getJSONArray("attributes");
 
 //        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
         String patientUuid = patientDbService.insertPatient(patientData);
-
-
+        patientIdentifierDbService.insertPatientIdentifiers(patientUuid, patientIdentifiers);
         patientAttributeDbService.insertAttributes(patientUuid, attributes);
 
         if (!person.isNull("addresses")) {

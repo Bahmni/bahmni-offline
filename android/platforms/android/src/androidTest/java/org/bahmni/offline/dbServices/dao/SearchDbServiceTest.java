@@ -26,13 +26,15 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
 
     private DbHelper mDBHelper;
     private JSONObject patientData;
-    PatientDbService patientDbService;
+    private PatientDbService patientDbService;
+    private PatientIdentifierDbService patientIdentifierDbService;
 
     public void setUp() throws Exception {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
         mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
+        mDBHelper.createTable(Constants.CREATE_PATIENT_IDENTIFIER_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
@@ -40,6 +42,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
 
 
         patientDbService = new PatientDbService(mDBHelper);
+        patientIdentifierDbService = new PatientIdentifierDbService(mDBHelper);
         PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         PatientAddressDbService patientAddressDbService = new PatientAddressDbService(mDBHelper);
 
@@ -47,6 +50,8 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
         patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
+        JSONArray identifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
+        patientIdentifierDbService.insertPatientIdentifiers(uuid, identifiers);
 
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray attributes = person.getJSONArray("attributes");
