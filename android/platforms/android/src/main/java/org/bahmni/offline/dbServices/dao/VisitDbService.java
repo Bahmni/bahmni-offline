@@ -66,10 +66,10 @@ public class VisitDbService {
         return visits;
     }
 
-    public JSONArray getVisitDetailsByPatientUuid(String patientUuid, Integer numberOfVisits) throws JSONException {
+    public JSONArray getVisitDetailsByPatientUuid(String patientUuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
 
-        Cursor c = db.rawQuery("SELECT * from visit WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC LIMIT " + numberOfVisits, new String[]{});
+        Cursor c = db.rawQuery("SELECT * from visit WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC", new String[]{});
 
         if (c.getCount() < 1) {
             c.close();

@@ -73,4 +73,32 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         assertEquals("de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad", visits.getJSONObject(0).getString("uuid"));
         assertEquals(startDateTime, new DateTime(visits.getJSONObject(1).getString("startDatetime")));
     }
+
+    @Test
+    public void testShouldGetVisitDetailsByPatientByUuid() throws  Exception {
+
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
+        DateTime startDateTime = new DateTime("2016-04-26T17:36:18.000+0530");
+
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
+
+        VisitDbService visitDbService = new VisitDbService(mDBHelper);
+        String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
+
+        JSONObject visit = new JSONObject(visitJson);
+        visitDbService.insertVisitData(visit);
+
+        visit.put("uuid", "fe5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
+        visit.getJSONObject("patient").put("uuid", "another uuid");
+        visitDbService.insertVisitData(visit);
+
+        JSONArray visits = visitDbService.getVisitDetailsByPatientUuid(patientUuid);
+
+        assertEquals(1, visits.length());
+        assertEquals("de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad", new JSONObject(visits.getString(0)).getString("uuid"));
+    }
 }

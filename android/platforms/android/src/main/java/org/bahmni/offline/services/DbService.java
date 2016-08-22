@@ -241,7 +241,7 @@ public class DbService {
 
     @JavascriptInterface
     public String getVisitDetailsByPatientUuid(String uuid) throws JSONException {
-        return String.valueOf(visitDbService.getVisitDetailsByPatientUuid(uuid, 5));
+        return String.valueOf(visitDbService.getVisitDetailsByPatientUuid(uuid));
     }
 
     @JavascriptInterface

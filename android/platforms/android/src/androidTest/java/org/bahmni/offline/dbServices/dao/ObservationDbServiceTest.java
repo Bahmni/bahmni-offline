@@ -2,13 +2,15 @@ package org.bahmni.offline.dbServices.dao;
 
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.bahmni.offline.Constants;
 import org.bahmni.offline.MainActivity;
 import org.bahmni.offline.Utils.TestUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -154,6 +156,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
     }
 
+    @Test
     public void testShouldNotFetchObservationsWhenNoObservationsRecordedAgainstGivenConceptNames() throws Exception {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
@@ -187,6 +190,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         assertEquals(0, observations.length());
     }
 
+    @Test
     public void testShouldNotFetchObservationsWhenConceptNamesIsEmpty() throws Exception {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
@@ -217,5 +221,28 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         JSONArray observations = observationDbService.getObservationsFor(params);
 
         assertEquals(0, observations.length());
+    }
+
+    @Test
+    public void testShouldGetObservationsWithGivenVisitUuid() throws JSONException {
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase.loadLibs(context);
+
+        String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
+        String visitUuid = "visitUuid";
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
+
+        String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
+        JSONObject encounter = new JSONObject(encounterJson);
+        JSONArray observationJson = encounter.getJSONArray("observations");
+
+        ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
+
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+
+        JSONArray observations = observationDbService.getObservationsForVisit(visitUuid);
+
+        assertEquals(1, observations.length());
     }
 }
