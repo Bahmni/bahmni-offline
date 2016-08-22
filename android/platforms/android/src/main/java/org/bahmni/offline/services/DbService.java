@@ -44,7 +44,7 @@ public class DbService {
         errorLogDbService = new ErrorLogDbService(mDBHelper);
         observationDbService = new ObservationDbService(mDBHelper);
     }
-    
+
     @JavascriptInterface
     public String getLog(){
        try {
@@ -237,5 +237,15 @@ public class DbService {
     @JavascriptInterface
     public String getErrorLogByUuid(String uuid) throws JSONException{
         return String.valueOf(errorLogDbService.getErrorLogByUuid(uuid));
+    }
+
+    @JavascriptInterface
+    public String getVisitDetailsByPatientUuid(String uuid) throws JSONException {
+        return String.valueOf(visitDbService.getVisitDetailsByPatientUuid(uuid, 5));
+    }
+
+    @JavascriptInterface
+    public String getObservationsForVisit(String visitUuid) throws JSONException {
+        return String.valueOf(observationDbService.getObservationsForVisit(visitUuid));
     }
 }

@@ -73,4 +73,24 @@ public class ObservationDbService {
         return observations;
     }
 
+    public JSONArray getObservationsForVisit(String visitUuid) throws JSONException {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT observationJson FROM observation WHERE visitUuid = '" + visitUuid + "'", new String[]{});
+        JSONArray observations = new JSONArray();
+
+        if (c.getCount() < 1) {
+            c.close();
+            return observations;
+        }
+
+        c.moveToFirst();
+        for (int index = 0; index < c.getCount(); index++) {
+            JSONObject observationJson = new JSONObject();
+            observationJson.put("observation", new JSONObject(c.getString(c.getColumnIndex("observationJson"))));
+            observations.put(index, observationJson);
+            c.moveToNext();
+        }
+
+        return observations;
+    }
 }

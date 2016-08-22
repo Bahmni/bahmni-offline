@@ -65,4 +65,26 @@ public class VisitDbService {
         c.close();
         return visits;
     }
+
+    public JSONArray getVisitDetailsByPatientUuid(String patientUuid, Integer numberOfVisits) throws JSONException {
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+
+        Cursor c = db.rawQuery("SELECT * from visit WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC LIMIT " + numberOfVisits, new String[]{});
+
+        if (c.getCount() < 1) {
+            c.close();
+            return null;
+        }
+
+        c.moveToFirst();
+        JSONArray visits = new JSONArray();
+
+        for (int index = 0; index < c.getCount(); index++) {
+            visits.put(index, c.getString(c.getColumnIndex("visitJson")));
+            c.moveToNext();
+        }
+
+        c.close();
+        return visits;
+    }
 }
