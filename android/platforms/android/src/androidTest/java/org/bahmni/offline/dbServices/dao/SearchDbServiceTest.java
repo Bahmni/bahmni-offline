@@ -359,4 +359,25 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         assertEquals(result.getString("givenName"), "test");
     }
 
+    @Test
+    public void testShouldNotFetchIfThePatientIsVoided() throws Throwable {
+        patientData.getJSONObject("patient").put("voided", true);
+        patientDbService.insertPatient(patientData);
+
+        String searchString = "test";
+
+        final JSONObject params = new JSONObject();
+        params.put("q", searchString);
+        params.put("s", "byIdOrNameOrVillage");
+        params.put("startIndex", 0);
+        params.put("addressFieldName", "address2");
+
+        final JSONArray[] returnValue = new JSONArray[1];
+
+        executeSearch(params, returnValue);
+
+        JSONArray result = returnValue[0];
+        assertEquals(0, result.length());
+    }
+
 }

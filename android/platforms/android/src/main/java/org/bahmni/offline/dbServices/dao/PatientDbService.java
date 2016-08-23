@@ -19,7 +19,7 @@ public class PatientDbService {
     public JSONObject getPatientByUuid(String uuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from patient" +
-                " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
+                " WHERE uuid = '" + uuid + "' AND voided = 0 limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();
             return null;
@@ -40,13 +40,15 @@ public class PatientDbService {
         ContentValues values = new ContentValues();
         JSONObject patient = patientData.getJSONObject("patient");
         JSONObject person = patient.getJSONObject("person");
-        JSONObject personName = person.getJSONArray("names").getJSONObject(0);
+        JSONObject personName = (person.isNull("names") || person.getJSONArray("names").length() == 0) ? person.getJSONObject("preferredName") : person.getJSONArray("names").getJSONObject(0);
         values.put("uuid", patient.getString("uuid"));
         values.put("givenName", personName.getString("givenName"));
         if (!personName.isNull("middleName"))
             values.put("middleName", personName.getString("middleName"));
         values.put("familyName", personName.getString("familyName"));
         values.put("gender", person.getString("gender"));
+        boolean isVoided = !patient.isNull("voided") && patient.getBoolean("voided");
+        values.put("voided",  isVoided);
         values.put("birthdate", person.getString("birthdate"));
         values.put("dateCreated", person.getJSONObject("auditInfo").getString("dateCreated"));
         values.put("patientJson", String.valueOf(patient));

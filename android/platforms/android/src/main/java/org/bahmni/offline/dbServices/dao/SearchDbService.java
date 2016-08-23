@@ -122,7 +122,9 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         }
         if (null != nameParts) {
             sqlString += appender + getNameSearchCondition(nameParts);
+            appender = " AND ";
         }
+        sqlString += appender + "p.voided = 0";
         sqlString += " GROUP BY p.uuid, pi.identifier ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
         return sqlString;
     }

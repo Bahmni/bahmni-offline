@@ -129,8 +129,13 @@ public class DbService {
 
         insertPatientData(new JSONObject(request));
 
-        String uuid = new JSONObject(request).getJSONObject("patient").getString("uuid");
-        return String.valueOf(new JSONObject().put("data", new JSONObject(getPatientByUuid(uuid))));
+        JSONObject patientJson = new JSONObject(request).getJSONObject("patient");
+        String uuid = patientJson.getString("uuid");
+        boolean isVoided = !patientJson.isNull("voided") && patientJson.getBoolean("voided");
+        if (!isVoided) {
+            patientJson = new JSONObject(getPatientByUuid(uuid));
+        }
+        return String.valueOf(new JSONObject().put("data", patientJson));
     }
 
     @JavascriptInterface
@@ -198,8 +203,12 @@ public class DbService {
         patientIdentifierDbService.insertPatientIdentifiers(patientUuid, patientIdentifiers);
         patientAttributeDbService.insertAttributes(patientUuid, attributes);
 
-        if (!person.isNull("addresses")) {
-            JSONObject address = person.getJSONArray("addresses").getJSONObject(0);
+        JSONObject address;
+        if (!person.isNull("addresses") && person.getJSONArray("addresses").length() > 0) {
+            address = person.getJSONArray("addresses").getJSONObject(0);
+            patientAddressDbService.insertAddress(address, patientUuid);
+        } else if (!person.isNull("preferredAddress")){
+            address = person.getJSONObject("preferredAddress");
             patientAddressDbService.insertAddress(address, patientUuid);
         }
     }
