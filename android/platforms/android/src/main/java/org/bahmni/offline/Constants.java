@@ -15,7 +15,7 @@ public class Constants {
     public static String CREATE_ERRORLOG_TABLE = "CREATE TABLE IF NOT EXISTS error_log (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid TEXT, failedRequest TEXT, logDateTime DATETIME, responseStatus INTEGER, stackTrace TEXT, requestPayload TEXT, provider TEXT);";
     public static String CREATE_VISIT_TABLE = "CREATE TABLE IF NOT EXISTS visit (uuid TEXT PRIMARY KEY, patientUuid TEXT, startDatetime DATETIME, visitJson TEXT);";
     public static String CREATE_OBSERVATION_TABLE = "CREATE TABLE IF NOT EXISTS observation(uuid TEXT PRIMARY KEY , encounterUuid TEXT, visitUuid TEXT, patientUuid TEXT, conceptName TEXT, observationJson TEXT);";
-    public static String CREATE_PATIENT_IDENTIFIER_TABLE = "CREATE TABLE IF NOT EXISTS patient_identifier(identifier TEXT , patientUuid TEXT, typeUuid TEXT, identifierJson TEXT, PRIMARY KEY(patientUuid, typeUuid));";
+    public static String CREATE_PATIENT_IDENTIFIER_TABLE = "CREATE TABLE IF NOT EXISTS patient_identifier(identifier TEXT , patientUuid TEXT, typeUuid TEXT, primaryIdentifier BOOLEAN, identifierJson TEXT, PRIMARY KEY(patientUuid, typeUuid));";
     public static String APP_UPGRADE_SHARED_PREFERENCE= "AppUpgradeInfo";
     public static String DOWNLOAD_REFERNCE= "downloadReference";
     public static String INSTALL_PENDING= "installPending";

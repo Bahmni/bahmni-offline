@@ -23,13 +23,19 @@ public class PatientIdentifierDbService {
             ContentValues values = new ContentValues();
             String identifierTypeUuid = getIdentifierType(patientIdentifiers.getJSONObject(i));
             String identifier = getIdentifier(patientIdentifiers.getJSONObject(i));
+            Boolean isPrimaryIdentifier = isPrimaryIdentifier(patientIdentifiers.getJSONObject(i));
 
             values.put("patientUuid", patientUuid);
             values.put("identifier", identifier);
             values.put("typeUuid", identifierTypeUuid);
+            values.put("primaryIdentifier", isPrimaryIdentifier);
             values.put("identifierJson", String.valueOf(patientIdentifiers.getJSONObject(i)));
             db.insertWithOnConflict("patient_identifier", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
+    }
+
+    private Boolean isPrimaryIdentifier(JSONObject identifierJson) throws JSONException {
+        return identifierJson.get("identifierType") instanceof JSONObject && identifierJson.getJSONObject("identifierType").getBoolean("primary");
     }
 
     private String getIdentifier(JSONObject identifier) {

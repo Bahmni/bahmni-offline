@@ -125,7 +125,8 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             appender = " AND ";
         }
         sqlString += appender + "p.voided = 0";
-        sqlString += " GROUP BY p.uuid, pi.identifier ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
+        sqlString += appender + "pi.primaryIdentifier = 1";
+        sqlString += " GROUP BY p.uuid ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
         return sqlString;
     }
 
