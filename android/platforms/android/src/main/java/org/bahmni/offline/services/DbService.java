@@ -139,8 +139,8 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String insertMarker(String markerName, String eventUuid, String catchmentNumber)throws JSONException  {
-        return markerDbService.insertMarker(markerName, eventUuid, catchmentNumber);
+    public String insertMarker(String markerName, String eventUuid, String filters)throws JSONException  {
+        return markerDbService.insertMarker(markerName, eventUuid, filters);
     }
 
     @JavascriptInterface

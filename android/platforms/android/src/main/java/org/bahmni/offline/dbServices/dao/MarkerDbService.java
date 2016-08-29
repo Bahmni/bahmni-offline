@@ -3,10 +3,13 @@ package org.bahmni.offline.dbServices.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.google.common.base.Strings;
+
 import org.bahmni.offline.Constants;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.chromium.net.NetStringUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +48,7 @@ public class MarkerDbService {
         return jsonObject;
     }
 
-    public String insertMarker(String markerName, String eventUuid, String catchmentNumber) throws JSONException  {
+    public String insertMarker(String markerName, String eventUuid, String filters) throws JSONException  {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ISO_FORMAT);
@@ -55,7 +58,7 @@ public class MarkerDbService {
         ContentValues values = new ContentValues();
         values.put("markerName", markerName);
         values.put("lastReadEventUuid", eventUuid);
-        values.put("catchmentNumber", catchmentNumber);
+        values.put("filters", filters);
         values.put("lastReadTime", dateString);
 
         db.insertWithOnConflict("event_log_marker", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -63,7 +66,7 @@ public class MarkerDbService {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("markerName", markerName);
         jsonObject.put("lastReadEventUuid", eventUuid);
-        jsonObject.put("catchmentNumber", catchmentNumber);
+        jsonObject.put("filters", filters);
         jsonObject.put("lastReadTime", dateString);
         return jsonObject.toString();
     }
