@@ -37,9 +37,14 @@ public class PatientIdentifierDbServiceTest extends ActivityInstrumentationTestC
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         JSONArray identifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
 
+        identifiers.getJSONObject(0).put("primaryIdentifier", "GAN200076");
+        JSONObject extraIdentifiers = new JSONObject();
+        extraIdentifiers.put("Secondary", "SEC202020");
+        identifiers.getJSONObject(0).put("extraIdentifiers", extraIdentifiers);
         patientIdentifierDbService.insertPatientIdentifiers(patientUuid, identifiers);
 
         String patientIdentifiersByPatientUuidFromDb = patientIdentifierDbService.getPatientIdentifiersByPatientUuid(patientUuid);
-        assertEquals(new JSONArray(patientIdentifiersByPatientUuidFromDb).getJSONObject(0).getString("identifier"), identifiers.getJSONObject(0).getString("identifier"));
+        assertEquals(new JSONArray(patientIdentifiersByPatientUuidFromDb).getJSONObject(0).getString("identifier"), "GAN200076");
+        assertEquals(new JSONArray(patientIdentifiersByPatientUuidFromDb).getJSONObject(0).getString("extraIdentifiers"), extraIdentifiers.toString());
     }
 }

@@ -51,6 +51,10 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         patientData = new JSONObject(patientJson);
         patientDbService.insertPatient(patientData);
         JSONArray identifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
+        identifiers.getJSONObject(0).put("primaryIdentifier", "GAN200076");
+        JSONObject extraIdentifiers = new JSONObject();
+        extraIdentifiers.put("Secondary", "SEC202020");
+        identifiers.getJSONObject(0).put("extraIdentifiers", extraIdentifiers);
         patientIdentifierDbService.insertPatientIdentifiers(uuid, identifiers);
 
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
