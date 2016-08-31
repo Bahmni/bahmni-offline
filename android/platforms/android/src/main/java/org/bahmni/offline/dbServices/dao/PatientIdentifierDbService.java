@@ -28,10 +28,16 @@ public class PatientIdentifierDbService {
             values.put("patientUuid", patientUuid);
             values.put("identifier", identifier);
             values.put("typeUuid", identifierTypeUuid);
-            values.put("primaryIdentifier", isPrimaryIdentifier);
+            values.put("isPrimaryIdentifier", isPrimaryIdentifier);
+            values.put("primaryIdentifier", getExtraIdentifiers(patientIdentifiers.getJSONObject(i), "primaryIdentifier"));
+            values.put("extraIdentifiers", getExtraIdentifiers(patientIdentifiers.getJSONObject(i), "extraIdentifiers"));
             values.put("identifierJson", String.valueOf(patientIdentifiers.getJSONObject(i)));
             db.insertWithOnConflict("patient_identifier", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
+    }
+
+    private String getExtraIdentifiers(JSONObject identifier, String key) throws JSONException {
+        return identifier.isNull(key) ? null : identifier.getString(key);
     }
 
     private Boolean isPrimaryIdentifier(JSONObject identifierJson) throws JSONException {

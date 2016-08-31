@@ -48,6 +48,10 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
                     JSONObject address = new JSONObject();
                     address.put(params.getString("addressFieldName"), c.getString(i));
                     obj.put("addressFieldValue", address);
+                } else if(params.has("extraIdentifiers") && columnNames[i].equals("extraIdentifiers")){
+                    JSONObject extraIdentifiers = new JSONObject();
+                    extraIdentifiers.put("extraIdentifiers", c.getString(i));
+                    obj.put("addressFieldValue", extraIdentifiers);
                 } else{
                     obj.put(columnNames[i], c.getString(i));
                 }
@@ -83,7 +87,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             addressFieldName = params.getString("addressFieldName").replace("_", "");
         }
 
-        String sqlString = "SELECT pi.identifier, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +
+        String sqlString = "SELECT pi.primaryIdentifier as identifier, pi.extraIdentifiers, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +
         ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
                 "  from patient p " +
                 "  join patient_identifier pi on p.uuid = pi.patientUuid" +
@@ -117,7 +121,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
         }
         if (params.has("identifier") && !params.getString("identifier").equals("")) {
-            sqlString += appender + " ( pi.identifier LIKE '" + params.getString("identifierPrefix") + "%" + params.getString("identifier") + "%')";
+            sqlString += appender + " ( pi.identifier LIKE '%" + params.getString("identifier") + "%')";
             appender = " AND ";
         }
         if (null != nameParts) {
@@ -125,7 +129,6 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
             appender = " AND ";
         }
         sqlString += appender + "p.voided = 0";
-        sqlString += appender + "pi.primaryIdentifier = 1";
         sqlString += " GROUP BY p.uuid ORDER BY dateCreated DESC LIMIT 50 OFFSET " + params.getString("startIndex");
         return sqlString;
     }
