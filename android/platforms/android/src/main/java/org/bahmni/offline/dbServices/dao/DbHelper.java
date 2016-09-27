@@ -1,21 +1,19 @@
 package org.bahmni.offline.dbServices.dao;
 
-import android.app.Activity;
 import android.content.Context;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
-import org.bahmni.offline.Constants;
+
 import org.bahmni.offline.services.EncryptionService;
 
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.SecretKey;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class DbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version. Lets say you wrote migration_8.sql then DATABASE_VERSION should be 9
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     private Context myContext;
 
     private String encryptionKey;

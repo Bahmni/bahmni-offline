@@ -1,9 +1,20 @@
 package org.bahmni.offline.services;
 
-import android.content.ContentValues;
 import net.sqlcipher.database.SQLiteDatabase;
-import org.bahmni.offline.Constants;
-import org.bahmni.offline.dbServices.dao.*;
+
+import org.bahmni.offline.dbServices.dao.AddressHierarchyDbService;
+import org.bahmni.offline.dbServices.dao.DbHelper;
+import org.bahmni.offline.dbServices.dao.EncounterDbService;
+import org.bahmni.offline.dbServices.dao.ErrorLogDbService;
+import org.bahmni.offline.dbServices.dao.LabOrderDbService;
+import org.bahmni.offline.dbServices.dao.MarkerDbService;
+import org.bahmni.offline.dbServices.dao.ObservationDbService;
+import org.bahmni.offline.dbServices.dao.PatientAddressDbService;
+import org.bahmni.offline.dbServices.dao.PatientAttributeDbService;
+import org.bahmni.offline.dbServices.dao.PatientDbService;
+import org.bahmni.offline.dbServices.dao.PatientIdentifierDbService;
+import org.bahmni.offline.dbServices.dao.SearchDbService;
+import org.bahmni.offline.dbServices.dao.VisitDbService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +24,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 public class DbService {
@@ -28,8 +38,7 @@ public class DbService {
     private VisitDbService visitDbService;
     private ErrorLogDbService errorLogDbService;
     private ObservationDbService observationDbService;
-
-
+    private LabOrderDbService labOrderDbService;
 
     public DbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
@@ -43,6 +52,7 @@ public class DbService {
         visitDbService = new VisitDbService(mDBHelper);
         errorLogDbService = new ErrorLogDbService(mDBHelper);
         observationDbService = new ObservationDbService(mDBHelper);
+        labOrderDbService = new LabOrderDbService(mDBHelper);
     }
 
     @JavascriptInterface
@@ -53,7 +63,7 @@ public class DbService {
                 new InputStreamReader(process.getInputStream()));
 
            StringBuilder log = new StringBuilder();
-           String line = "";
+           String line;
            while ((line = bufferedReader.readLine()) != null) {
                log.append(line);
            }
@@ -256,5 +266,15 @@ public class DbService {
     @JavascriptInterface
     public String getObservationsForVisit(String visitUuid) throws JSONException {
         return String.valueOf(observationDbService.getObservationsForVisit(visitUuid));
+    }
+
+    @JavascriptInterface
+    public String insertLabOrderResults(String patientUuid, String labOrderResults) throws JSONException {
+        return labOrderDbService.insertLabOrderResults(patientUuid, labOrderResults);
+    }
+
+    @JavascriptInterface
+    public String getLabOrderResultsByPatientUuid(String patientUuid) throws JSONException {
+        return String.valueOf(labOrderDbService.getLabOrderResultsByPatientUuid(patientUuid));
     }
 }
