@@ -3,6 +3,7 @@ package org.bahmni.offline.dbServices.dao;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import com.google.common.base.CaseFormat;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.bahmni.offline.Constants;
 import org.joda.time.DateTime;
@@ -39,19 +40,23 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         c.moveToFirst();
         String[] columnNames = c.getColumnNames();
         JSONArray json = new JSONArray();
+        String addressFieldName = null;
+        if (params.has("addressFieldName") && null != params.getString("addressFieldName")) {
+            addressFieldName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,params.getString("addressFieldName"));
+        }
         while ((!c.isAfterLast())) {
             JSONObject obj = new JSONObject();
             for (int i = 0; i < columnNames.length; i++) {
                 if (columnNames[i].equals("birthdate")) {
                     obj.put("age", Years.yearsBetween(DateTime.parse(c.getString(i)), new DateTime()).getYears());
-                } else if(params.has("addressFieldName") && columnNames[i].equals(params.getString("addressFieldName"))){
+                } else if(params.has("addressFieldName") && columnNames[i].equals(addressFieldName)){
                     JSONObject address = new JSONObject();
                     address.put(params.getString("addressFieldName"), c.getString(i));
                     obj.put("addressFieldValue", address);
                 } else if(params.has("extraIdentifiers") && columnNames[i].equals("extraIdentifiers")){
                     JSONObject extraIdentifiers = new JSONObject();
                     extraIdentifiers.put("extraIdentifiers", c.getString(i));
-                    obj.put("addressFieldValue", extraIdentifiers);
+                    obj.put("extraIdentifiers", extraIdentifiers);
                 } else{
                     obj.put(columnNames[i], c.getString(i));
                 }
@@ -84,7 +89,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
 
         String addressFieldName = null;
         if (params.has("addressFieldName") && null != params.getString("addressFieldName")) {
-            addressFieldName = params.getString("addressFieldName").replace("_", "");
+            addressFieldName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL,params.getString("addressFieldName"));
         }
 
         String sqlString = "SELECT pi.primaryIdentifier as identifier, pi.extraIdentifiers, givenName, middleName, familyName, dateCreated, birthDate, gender, p.uuid, "  + addressFieldName +

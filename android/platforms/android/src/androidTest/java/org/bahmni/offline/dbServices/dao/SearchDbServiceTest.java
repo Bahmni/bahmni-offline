@@ -131,12 +131,12 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("q", "");
         params.put("s", "byIdOrNameOrVillage");
         params.put("startIndex", 0);
-        params.put("addressFieldName", "stateProvince");
+        params.put("addressFieldName", "state_province");
         params.put("addressFieldValue", searchString);
 
         final JSONArray[] returnValue = new JSONArray[1];
         JSONObject addressFieldValue = new JSONObject();
-        addressFieldValue.put("stateProvince",searchString );
+        addressFieldValue.put("state_province",searchString );
 
         executeSearch(params, returnValue);
 
