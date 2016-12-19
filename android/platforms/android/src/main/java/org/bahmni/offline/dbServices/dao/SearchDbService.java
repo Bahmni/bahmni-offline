@@ -96,7 +96,7 @@ public class SearchDbService extends AsyncTask<String, Integer, JSONArray> {
         ", '{' || group_concat(DISTINCT (coalesce('\"' || pat.attributeName ||'\":\"' || pa1.attributeValue || '\"' , null))) || '}' as customAttribute" +
                 "  from patient p " +
                 "  join patient_identifier pi on p.uuid = pi.patientUuid" +
-                " join patient_address padd   on p.uuid = padd.patientUuid" +
+                " left outer join patient_address padd   on p.uuid = padd.patientUuid" +
                 " left outer join patient_attributes pa on p.uuid = pa.patientUuid" +
                 " and pa.attributeTypeId in (" +
                 "select " + "attributeTypeId from patient_attribute_types" +
