@@ -20,4 +20,6 @@ public class Constants {
     public static String DOWNLOAD_REFERNCE= "downloadReference";
     public static String INSTALL_PENDING= "installPending";
     public static String LAST_DOWNLOADED_APK_NAME= "lastDownloadedApkName";
+    public static int LOCATION_DB_VERSION =  5;
+    public static int METADATA_DB_VERSION =  1;
 }

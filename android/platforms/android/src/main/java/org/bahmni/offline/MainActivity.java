@@ -16,6 +16,7 @@ import org.bahmni.offline.services.DbService;
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.XWalkView;
+import static org.bahmni.offline.Constants.METADATA_DB_VERSION;
 
 public class MainActivity extends CordovaActivity {
 
@@ -29,18 +30,18 @@ public class MainActivity extends CordovaActivity {
         mCookieManager.setAcceptCookie(true);
         mCookieManager.setAcceptFileSchemeCookies(true);
 
-        String databaseName = "/Bahmni.db";
+        String databaseName = "/metaData.db";
         String dbPath = getExternalFilesDir(null) + databaseName;
-        DbHelper mDBHelper = new DbHelper(this, dbPath);
+        DbHelper metaDataDbHelper = new DbHelper(this, dbPath, METADATA_DB_VERSION);
 
         JodaTimeAndroid.init(this);
         SQLiteDatabase.loadLibs(this);
 
-        xWalkWebView.addJavascriptInterface(new DbService(mDBHelper), "AndroidOfflineService");
-        xWalkWebView.addJavascriptInterface(new ConfigDbService(mDBHelper), "AndroidConfigDbService");
-        xWalkWebView.addJavascriptInterface(new LocationDbService(mDBHelper), "AndroidLocationDbService");
-        xWalkWebView.addJavascriptInterface(new ReferenceDataDbService(mDBHelper), "AndroidReferenceDataDbService");
-        xWalkWebView.addJavascriptInterface(new ConceptDbService(mDBHelper), "AndroidConceptDbService");
+        xWalkWebView.addJavascriptInterface(new DbService(this, metaDataDbHelper), "AndroidOfflineService");
+        xWalkWebView.addJavascriptInterface(new ConfigDbService(metaDataDbHelper), "AndroidConfigDbService");
+        xWalkWebView.addJavascriptInterface(new LocationDbService(metaDataDbHelper), "AndroidLocationDbService");
+        xWalkWebView.addJavascriptInterface(new ReferenceDataDbService(metaDataDbHelper), "AndroidReferenceDataDbService");
+        xWalkWebView.addJavascriptInterface(new ConceptDbService(metaDataDbHelper), "AndroidConceptDbService");
         xWalkWebView.addJavascriptInterface(new AppUpdateService(this), "AppUpdateService");
 
         xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);

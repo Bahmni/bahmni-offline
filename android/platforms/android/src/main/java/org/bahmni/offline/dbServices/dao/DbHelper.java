@@ -5,34 +5,38 @@ import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
-import org.bahmni.offline.services.EncryptionService;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class DbHelper extends SQLiteOpenHelper {
-    // If you change the database schema, you must increment the database version. Lets say you wrote migration_8.sql then DATABASE_VERSION should be 9
-    public static final int DATABASE_VERSION = 4;
+    //If you change the database schema, you must increment the database version.
+    //Lets say you wrote migration_8.sql for Location specific Db then LOCATION_DB_VERSION should be 9 in Constants.java
+    //If some migration need to be done in "metaData" db then METADATA_DB_VERSION in Constants should be upgraded/
+    public int CURRENT_DB_VERSION;
+    public String dbPath;
     private Context myContext;
 
     private String encryptionKey;
 
-    public DbHelper(Context context, String dbPath) {
-        super(context, dbPath, null, DATABASE_VERSION);
+    public DbHelper(Context context, String dbPath, int dbVersion) {
+        super(context, dbPath, null, dbVersion);
+        this.dbPath = dbPath;
+        this.CURRENT_DB_VERSION = dbVersion;
         this.myContext = context;
-        this.encryptionKey = new EncryptionService(context).generateKey();
+        this.encryptionKey = "1";
     }
 
     public void onCreate(SQLiteDatabase db) {
-        onUpgrade(db, 0, DATABASE_VERSION);
+        onUpgrade(db, 0, this.CURRENT_DB_VERSION);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         int currentVersion = oldVersion;
+        String migrationFileName = this.dbPath.contains("metaData") ? "metadata_migration_" : "migration_";
         String fileName;
         while(currentVersion < newVersion) {
-                fileName = "migration_"+String.valueOf(currentVersion)+".sql";
+                fileName = migrationFileName+String.valueOf(currentVersion)+".sql";
                 runMigration(db, fileName);
                 currentVersion++;
         }

@@ -12,17 +12,13 @@ import org.xwalk.core.JavascriptInterface;
 
 public class ReferenceDataDbService {
     private DbHelper mDBHelper;
-    private PatientAttributeDbService patientAttributeDbService;
     private LocationDbService locationDbService;
 
     public ReferenceDataDbService(DbHelper mDBHelper) {
         this.mDBHelper = mDBHelper;
-        patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         locationDbService = new LocationDbService(mDBHelper);
     }
 
-
-    @JavascriptInterface
     public void insertReferenceData(String referenceDataKey, String data, String eTag) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -30,15 +26,11 @@ public class ReferenceDataDbService {
         values.put("data", data);
         values.put("etag", eTag);
         db.insertWithOnConflict("reference_data", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-        if(referenceDataKey.equals("PersonAttributeType")){
-            patientAttributeDbService.insertAttributeTypes(String.valueOf(new JSONObject(data).getJSONArray("results")));
-        }
         if(referenceDataKey.equals("LoginLocations")){
             locationDbService.insertLocations(new JSONObject(data).getJSONArray("results"));
         }
     }
 
-    @JavascriptInterface
     public String getReferenceData(String referenceDataKey) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from reference_data" +

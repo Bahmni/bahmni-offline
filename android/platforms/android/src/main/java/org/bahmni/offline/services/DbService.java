@@ -1,5 +1,6 @@
 package org.bahmni.offline.services;
 
+import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.bahmni.offline.dbServices.dao.AddressHierarchyDbService;
@@ -13,6 +14,7 @@ import org.bahmni.offline.dbServices.dao.PatientAddressDbService;
 import org.bahmni.offline.dbServices.dao.PatientAttributeDbService;
 import org.bahmni.offline.dbServices.dao.PatientDbService;
 import org.bahmni.offline.dbServices.dao.PatientIdentifierDbService;
+import org.bahmni.offline.dbServices.dao.ReferenceDataDbService;
 import org.bahmni.offline.dbServices.dao.SearchDbService;
 import org.bahmni.offline.dbServices.dao.VisitDbService;
 import org.json.JSONArray;
@@ -25,9 +27,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import static org.bahmni.offline.Constants.LOCATION_DB_VERSION;
 
 public class DbService {
-    private DbHelper mDBHelper;
+    private DbHelper locationDBHelper;
     private PatientDbService patientDbService;
     private PatientIdentifierDbService patientIdentifierDbService;
     private PatientAddressDbService patientAddressDbService;
@@ -39,20 +42,12 @@ public class DbService {
     private ErrorLogDbService errorLogDbService;
     private ObservationDbService observationDbService;
     private LabOrderDbService labOrderDbService;
+    private Context context;
+    private ReferenceDataDbService referenceDataDbService;
 
-    public DbService(DbHelper mDBHelper) {
-        this.mDBHelper = mDBHelper;
-        patientDbService = new PatientDbService(mDBHelper);
-        patientIdentifierDbService = new PatientIdentifierDbService(mDBHelper);
-        patientAddressDbService = new PatientAddressDbService(mDBHelper);
-        patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
-        markerDbService = new MarkerDbService(mDBHelper);
-        addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
-        encounterDbService = new EncounterDbService(mDBHelper);
-        visitDbService = new VisitDbService(mDBHelper);
-        errorLogDbService = new ErrorLogDbService(mDBHelper);
-        observationDbService = new ObservationDbService(mDBHelper);
-        labOrderDbService = new LabOrderDbService(mDBHelper);
+    public DbService(Context context, DbHelper metaDataDBHelper) {
+        this.context = context;
+        this.referenceDataDbService = new ReferenceDataDbService(metaDataDBHelper);
     }
 
     @JavascriptInterface
@@ -109,7 +104,7 @@ public class DbService {
 
     @JavascriptInterface
     public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
-        JSONArray json = new SearchDbService(mDBHelper).execute(params).get();
+        JSONArray json = new SearchDbService(locationDBHelper).execute(params).get();
         return String.valueOf(new JSONObject().put("data", new JSONObject().put("pageOfResults", json)));
     }
 
@@ -121,7 +116,7 @@ public class DbService {
 
     @JavascriptInterface
     public void deletePatientData(String uuid) {
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        SQLiteDatabase db = locationDBHelper.getReadableDatabase();
 
         db.beginTransaction();
 
@@ -175,8 +170,28 @@ public class DbService {
 
 
     @JavascriptInterface
-    public void initSchema() throws IOException, JSONException {
+    public void init() throws IOException, JSONException {
+        patientDbService = new PatientDbService(locationDBHelper);
+        patientIdentifierDbService = new PatientIdentifierDbService(locationDBHelper);
+        patientAddressDbService = new PatientAddressDbService(locationDBHelper);
+        patientAttributeDbService = new PatientAttributeDbService(locationDBHelper);
+        markerDbService = new MarkerDbService(locationDBHelper);
+        addressHierarchyDbService = new AddressHierarchyDbService(locationDBHelper);
+        encounterDbService = new EncounterDbService(locationDBHelper);
+        visitDbService = new VisitDbService(locationDBHelper);
+        errorLogDbService = new ErrorLogDbService(locationDBHelper);
+        observationDbService = new ObservationDbService(locationDBHelper);
+        labOrderDbService = new LabOrderDbService(locationDBHelper);
+    }
 
+
+    @JavascriptInterface
+    public void initSchema(String DbName) throws IOException, JSONException {
+        if(!DbName.equals("metaData")) {
+            String databaseName = "/" + DbName + ".db";
+            String dbPath = context.getExternalFilesDir(null) + databaseName;
+            locationDBHelper = new DbHelper(context, dbPath, LOCATION_DB_VERSION);
+        }
     }
 
     @JavascriptInterface
@@ -276,5 +291,21 @@ public class DbService {
     @JavascriptInterface
     public String getLabOrderResultsByPatientUuid(String patientUuid) throws JSONException {
         return String.valueOf(labOrderDbService.getLabOrderResultsByPatientUuid(patientUuid));
+    }
+
+    @JavascriptInterface
+    public void insertReferenceData(String referenceDataKey, String data, String eTag) throws JSONException {
+        if(referenceDataKey.equals("PersonAttributeType")){
+            referenceDataDbService.insertReferenceData(referenceDataKey, data ,eTag);
+            patientAttributeDbService.insertAttributeTypes(String.valueOf(new JSONObject(data).getJSONArray("results")));
+        }
+        else {
+            referenceDataDbService.insertReferenceData(referenceDataKey, data ,eTag);
+        }
+    }
+
+    @JavascriptInterface
+    public String getReferenceData(String referenceDataKey) throws JSONException {
+        return  referenceDataDbService.getReferenceData(referenceDataKey);
     }
 }
