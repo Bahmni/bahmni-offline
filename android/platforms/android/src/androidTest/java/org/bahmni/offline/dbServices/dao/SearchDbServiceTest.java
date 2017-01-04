@@ -32,7 +32,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
     public void setUp() throws Exception {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
-        mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_IDENTIFIER_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);

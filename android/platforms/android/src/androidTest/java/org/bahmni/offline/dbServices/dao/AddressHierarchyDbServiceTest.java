@@ -30,7 +30,7 @@ public class AddressHierarchyDbServiceTest extends ActivityInstrumentationTestCa
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         AddressHierarchyDbService addressHierarchyDbService = new AddressHierarchyDbService(mDBHelper);
         mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_ENTRY_TABLE);
         mDBHelper.createTable(Constants.CREATE_ADDRESS_HIERARCHY_LEVEL_TABLE);

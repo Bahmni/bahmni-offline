@@ -32,7 +32,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -63,7 +63,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = "47a706a2-c0e6-4e40-ae31-4a3535be2ace";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/BahmniObs.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/BahmniObs.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -96,7 +96,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -127,7 +127,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -163,7 +163,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -197,7 +197,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = null;
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
@@ -230,7 +230,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String visitUuid = "visitUuid";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_OBSERVATION_TABLE);
 
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());

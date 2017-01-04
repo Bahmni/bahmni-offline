@@ -26,7 +26,7 @@ public class LocationDbServiceTest extends ActivityInstrumentationTestCase2<Main
         SQLiteDatabase.loadLibs(context);
 
         String uuid = "e905bf88-c461-46e7-a2f1-87db4f611f8b";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_LOGIN_LOCATIONS_TABLE);
 
         LocationDbService locationDbService = new LocationDbService(mDBHelper);

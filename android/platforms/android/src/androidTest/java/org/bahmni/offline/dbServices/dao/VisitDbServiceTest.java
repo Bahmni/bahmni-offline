@@ -29,7 +29,7 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
 
         String uuid = "de5d8f4b-cb75-4eff-8637-fd0efc0fb9ad";
         String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
 
         VisitDbService visitDbService = new VisitDbService(mDBHelper);
@@ -55,7 +55,7 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
         DateTime startDateTime = new DateTime("2016-04-26T17:36:18.000+0530");
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
 
         VisitDbService visitDbService = new VisitDbService(mDBHelper);
@@ -83,7 +83,7 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         String patientUuid = "d07ddb7e-fd8d-4e06-bc44-3bb17507d955";
         DateTime startDateTime = new DateTime("2016-04-26T17:36:18.000+0530");
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_VISIT_TABLE);
 
         VisitDbService visitDbService = new VisitDbService(mDBHelper);

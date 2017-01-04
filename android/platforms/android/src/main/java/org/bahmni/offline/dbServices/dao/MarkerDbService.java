@@ -21,11 +21,7 @@ public class MarkerDbService {
 
     private DbHelper mDBHelper;
 
-    public MarkerDbService(DbHelper mDBHelper) {
-        this.mDBHelper = mDBHelper;
-    }
-
-    public JSONObject getMarker(String markerName) throws JSONException {
+    public JSONObject getMarker(DbHelper mDBHelper, String markerName) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from event_log_marker where markerName = '" + markerName + "' LIMIT 1 ", new String[]{});
         JSONObject jsonObject = new JSONObject();
@@ -48,7 +44,7 @@ public class MarkerDbService {
         return jsonObject;
     }
 
-    public String insertMarker(String markerName, String eventUuid, String filters) throws JSONException  {
+    public String insertMarker(DbHelper mDBHelper, String markerName, String eventUuid, String filters) throws JSONException  {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(ISO_FORMAT);

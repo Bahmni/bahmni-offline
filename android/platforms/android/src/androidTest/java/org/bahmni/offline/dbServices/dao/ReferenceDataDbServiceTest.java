@@ -28,7 +28,7 @@ public class ReferenceDataDbServiceTest extends ActivityInstrumentationTestCase2
         String referenceDataKey = "LoginLocations";
         String etag = "someEtag";
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_REFERENCE_DATA_TABLE);
 
         ReferenceDataDbService referenceDataDbService = new ReferenceDataDbService(mDBHelper);
@@ -53,7 +53,7 @@ public class ReferenceDataDbServiceTest extends ActivityInstrumentationTestCase2
         String referenceDataKey = "RelationshipTypeMap";
         String etag = "someEtag";
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_REFERENCE_DATA_TABLE);
 
         ReferenceDataDbService referenceDataDbService = new ReferenceDataDbService(mDBHelper);

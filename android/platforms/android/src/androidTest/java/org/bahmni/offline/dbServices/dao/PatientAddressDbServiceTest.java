@@ -27,7 +27,7 @@ public class PatientAddressDbServiceTest extends ActivityInstrumentationTestCase
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
 

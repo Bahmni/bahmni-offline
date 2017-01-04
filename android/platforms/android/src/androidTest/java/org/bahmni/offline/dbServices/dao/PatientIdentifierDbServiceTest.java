@@ -29,7 +29,7 @@ public class PatientIdentifierDbServiceTest extends ActivityInstrumentationTestC
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_IDENTIFIER_TABLE);
         PatientIdentifierDbService patientIdentifierDbService = new PatientIdentifierDbService(mDBHelper);
 

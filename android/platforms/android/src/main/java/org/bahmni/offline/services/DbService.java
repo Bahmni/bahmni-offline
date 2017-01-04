@@ -26,11 +26,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import static org.bahmni.offline.Constants.LOCATION_DB_VERSION;
 
 public class DbService {
     private DbHelper locationDBHelper;
+    private DbHelper metaDataDbHelper;
     private PatientDbService patientDbService;
     private PatientIdentifierDbService patientIdentifierDbService;
     private PatientAddressDbService patientAddressDbService;
@@ -47,6 +50,7 @@ public class DbService {
 
     public DbService(Context context, DbHelper metaDataDBHelper) {
         this.context = context;
+        this.metaDataDbHelper = metaDataDBHelper;
         this.referenceDataDbService = new ReferenceDataDbService(metaDataDBHelper);
     }
 
@@ -145,12 +149,14 @@ public class DbService {
 
     @JavascriptInterface
     public String insertMarker(String markerName, String eventUuid, String filters)throws JSONException  {
-        return markerDbService.insertMarker(markerName, eventUuid, filters);
+        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : locationDBHelper;
+        return markerDbService.insertMarker(dbHelper, markerName, eventUuid, filters);
     }
 
     @JavascriptInterface
     public String getMarker(String markerName) throws JSONException {
-        JSONObject marker = markerDbService.getMarker(markerName);
+        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : locationDBHelper;
+        JSONObject marker = markerDbService.getMarker(dbHelper, markerName);
         return marker == null ? null : String.valueOf(marker);
     }
 
@@ -175,7 +181,7 @@ public class DbService {
         patientIdentifierDbService = new PatientIdentifierDbService(locationDBHelper);
         patientAddressDbService = new PatientAddressDbService(locationDBHelper);
         patientAttributeDbService = new PatientAttributeDbService(locationDBHelper);
-        markerDbService = new MarkerDbService(locationDBHelper);
+        markerDbService = new MarkerDbService();
         addressHierarchyDbService = new AddressHierarchyDbService(locationDBHelper);
         encounterDbService = new EncounterDbService(locationDBHelper);
         visitDbService = new VisitDbService(locationDBHelper);

@@ -28,7 +28,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db",  5);
         mDBHelper.createTable(Constants.CREATE_ERRORLOG_TABLE);
 
         ErrorLogDbService errorLogDbService = new ErrorLogDbService(mDBHelper);
@@ -47,7 +47,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ERRORLOG_TABLE);
 
         ErrorLogDbService errorLogDbService = new ErrorLogDbService(mDBHelper);
@@ -68,7 +68,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
     public void testInsertLogWhenUniqueConstraintOnFailedRequestAndPayloadViolated() throws Exception {
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ERRORLOG_TABLE);
 
         ErrorLogDbService errorLogDbService = new ErrorLogDbService(mDBHelper);
@@ -86,7 +86,7 @@ public class ErrorLogDbServiceTest  extends ActivityInstrumentationTestCase2<Mai
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ERRORLOG_TABLE);
 
         ErrorLogDbService errorLogDbService = new ErrorLogDbService(mDBHelper);

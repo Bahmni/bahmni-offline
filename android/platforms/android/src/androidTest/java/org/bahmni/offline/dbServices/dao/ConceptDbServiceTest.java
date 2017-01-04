@@ -25,7 +25,7 @@ public class ConceptDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_CONCEPT_TABLE);
 
         ConceptDbService conceptDbService = new ConceptDbService(mDBHelper);
@@ -60,7 +60,7 @@ public class ConceptDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_CONCEPT_TABLE);
 
         ConceptDbService conceptDbService = new ConceptDbService(mDBHelper);
@@ -78,7 +78,7 @@ public class ConceptDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_CONCEPT_TABLE);
 
         ConceptDbService conceptDbService = new ConceptDbService(mDBHelper);

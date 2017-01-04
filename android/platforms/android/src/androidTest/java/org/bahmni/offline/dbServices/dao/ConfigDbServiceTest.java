@@ -25,7 +25,7 @@ public class ConfigDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_CONFIG_TABLE);
 
         ConfigDbService configDbService = new ConfigDbService(mDBHelper);

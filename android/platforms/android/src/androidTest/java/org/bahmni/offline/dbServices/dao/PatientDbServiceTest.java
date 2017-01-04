@@ -27,7 +27,7 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
         PatientDbService patientDbService = new PatientDbService(mDBHelper);
@@ -46,7 +46,7 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
         PatientDbService patientDbService = new PatientDbService(mDBHelper);
@@ -80,7 +80,7 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         Context context = getInstrumentation().getTargetContext();
         SQLiteDatabase.loadLibs(context);
 
-        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db");
+        DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
         PatientDbService patientDbService = new PatientDbService(mDBHelper);
