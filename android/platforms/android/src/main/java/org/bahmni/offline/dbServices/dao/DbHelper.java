@@ -4,6 +4,7 @@ import android.content.Context;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
+import org.bahmni.offline.services.EncryptionService;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
         this.dbPath = dbPath;
         this.CURRENT_DB_VERSION = dbVersion;
         this.myContext = context;
-        this.encryptionKey = "1";
+        this.encryptionKey = new EncryptionService(context).generateKey();
     }
 
     public void onCreate(SQLiteDatabase db) {
