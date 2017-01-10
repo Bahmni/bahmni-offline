@@ -36,12 +36,12 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
 
-        encounterDbService.insertEncounterData(new JSONObject(encounterJson));
+        encounterDbService.insertEncounterData(new JSONObject(encounterJson), mDBHelper);
 
-        JSONArray encounters = encounterDbService.getEncountersByPatientUuid(patientUuid);
+        JSONArray encounters = encounterDbService.getEncountersByPatientUuid(patientUuid, mDBHelper);
 
         assertEquals(uuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("encounterUuid"));
         assertEquals(patientUuid, encounters.getJSONObject(0).getJSONObject("encounter").getString("patientUuid"));
@@ -60,20 +60,20 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
 
         JSONObject encounter = new JSONObject(encounterJson);
         encounter.put("encounterDateTime", Util.addMinutesToDate(-10, new Date()).toString());
 
-        encounterDbService.insertEncounterData(encounter);
+        encounterDbService.insertEncounterData(encounter, mDBHelper);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
         params.put("providerUuid", providerUuid);
         params.put("encounterType", "FIELD");
 
-        JSONObject activeEncounter = encounterDbService.findActiveEncounter(params, 60);
+        JSONObject activeEncounter = encounterDbService.findActiveEncounter(params, 60, mDBHelper);
 
         assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", activeEncounter.getJSONObject("encounter").getString("encounterUuid"));
         assertEquals(patientUuid, activeEncounter.getJSONObject("encounter").getString("patientUuid"));
@@ -88,16 +88,16 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
 
         JSONObject encounter = new JSONObject(encounterJson);
         encounter.put("encounterDateTime", Util.addMinutesToDate(-10, new Date()).toString());
 
-        encounterDbService.insertEncounterData(encounter);
+        encounterDbService.insertEncounterData(encounter, mDBHelper);
 
         String encounterUuid = "1c5c237a-dc6e-4f4f-bcff-c761c1ae5972";
-        JSONObject encounterObject = encounterDbService.findEncounterByEncounterUuid(encounterUuid);
+        JSONObject encounterObject = encounterDbService.findEncounterByEncounterUuid(encounterUuid, mDBHelper);
 
         assertNotNull(encounterObject);
         assertEquals("1c5c237a-dc6e-4f4f-bcff-c761c1ae5972", encounterObject.getJSONObject("encounter").getString("encounterUuid"));
@@ -111,13 +111,13 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
 
         JSONObject encounter = new JSONObject(encounterJson);
         encounter.put("encounterDateTime", Util.addMinutesToDate(-10, new Date()).toString());
 
-        encounterDbService.insertEncounterData(encounter);
+        encounterDbService.insertEncounterData(encounter, mDBHelper);
 
         String patientUuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         JSONArray visitUuids = new JSONArray();
@@ -126,7 +126,7 @@ public class EncounterDbServiceTest extends ActivityInstrumentationTestCase2<Mai
         params.put("patientUuid", patientUuid);
         params.put("visitUuids", visitUuids);
 
-        JSONArray encounterList = encounterDbService.getEncountersByVisits(params);
+        JSONArray encounterList = encounterDbService.getEncountersByVisits(params, mDBHelper);
 
         assertNotNull(encounterList);
         assertEquals(1, encounterList.length());

@@ -10,13 +10,7 @@ import org.json.JSONObject;
 
 public class PatientDbService {
 
-    private DbHelper mDBHelper;
-
-    public PatientDbService(DbHelper mDBHelper) {
-        this.mDBHelper = mDBHelper;
-    }
-
-    public JSONObject getPatientByUuid(String uuid) throws JSONException {
+    public JSONObject getPatientByUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * from patient" +
                 " WHERE uuid = '" + uuid + "' AND voided = 0 limit 1 ", new String[]{});
@@ -35,7 +29,7 @@ public class PatientDbService {
         return result;
     }
 
-    public String insertPatient(JSONObject patientData) throws JSONException {
+    public String insertPatient(JSONObject patientData, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         JSONObject patient = patientData.getJSONObject("patient");

@@ -26,27 +26,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import static org.bahmni.offline.Constants.LOCATION_DB_VERSION;
 
 public class DbService {
-    private DbHelper locationDBHelper;
+    private DbHelper appDBHelper;
     private DbHelper metaDataDbHelper;
-    private PatientDbService patientDbService;
     private PatientIdentifierDbService patientIdentifierDbService;
     private PatientAddressDbService patientAddressDbService;
     private PatientAttributeDbService patientAttributeDbService;
     private MarkerDbService markerDbService;
     private AddressHierarchyDbService addressHierarchyDbService;
-    private EncounterDbService encounterDbService;
     private VisitDbService visitDbService;
-    private ErrorLogDbService errorLogDbService;
     private ObservationDbService observationDbService;
     private LabOrderDbService labOrderDbService;
     private Context context;
     private ReferenceDataDbService referenceDataDbService;
+    private EncounterDbService encounterDbService = new EncounterDbService();
+    private ErrorLogDbService errorLogDbService = new ErrorLogDbService();
+    private PatientDbService patientDbService = new PatientDbService();
+    private HashMap<String, DbHelper> dbHelpers = new HashMap<String, DbHelper>();
 
     public DbService(Context context, DbHelper metaDataDBHelper) {
         this.context = context;
@@ -75,13 +75,16 @@ public class DbService {
 
 
     @JavascriptInterface
-    public String getPatientByUuid(String uuid) throws JSONException {
-        return String.valueOf(patientDbService.getPatientByUuid(uuid));
+    public String getPatientByUuid(String uuid, String dbName) throws JSONException {
+        if (dbName != null) {
+            return String.valueOf(patientDbService.getPatientByUuid(uuid, dbHelpers.get(dbName)));
+        }
+        return String.valueOf(patientDbService.getPatientByUuid(uuid, appDBHelper));
     }
 
     @JavascriptInterface
     public String getEncountersByPatientUuid(String uuid) throws JSONException {
-        return String.valueOf(encounterDbService.getEncountersByPatientUuid(uuid));
+        return String.valueOf(encounterDbService.getEncountersByPatientUuid(uuid, appDBHelper));
     }
 
     @JavascriptInterface
@@ -108,7 +111,7 @@ public class DbService {
 
     @JavascriptInterface
     public String search(String params) throws JSONException, IOException, ExecutionException, InterruptedException {
-        JSONArray json = new SearchDbService(locationDBHelper).execute(params).get();
+        JSONArray json = new SearchDbService(appDBHelper).execute(params).get();
         return String.valueOf(new JSONObject().put("data", new JSONObject().put("pageOfResults", json)));
     }
 
@@ -120,7 +123,7 @@ public class DbService {
 
     @JavascriptInterface
     public void deletePatientData(String uuid) {
-        SQLiteDatabase db = locationDBHelper.getReadableDatabase();
+        SQLiteDatabase db = appDBHelper.getReadableDatabase();
 
         db.beginTransaction();
 
@@ -142,20 +145,20 @@ public class DbService {
         String uuid = patientJson.getString("uuid");
         boolean isVoided = !patientJson.isNull("voided") && patientJson.getBoolean("voided");
         if (!isVoided) {
-            patientJson = new JSONObject(getPatientByUuid(uuid));
+            patientJson = new JSONObject(getPatientByUuid(uuid, null));
         }
         return String.valueOf(new JSONObject().put("data", patientJson));
     }
 
     @JavascriptInterface
     public String insertMarker(String markerName, String eventUuid, String filters)throws JSONException  {
-        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : locationDBHelper;
+        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : appDBHelper;
         return markerDbService.insertMarker(dbHelper, markerName, eventUuid, filters);
     }
 
     @JavascriptInterface
     public String getMarker(String markerName) throws JSONException {
-        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : locationDBHelper;
+        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : appDBHelper;
         JSONObject marker = markerDbService.getMarker(dbHelper, markerName);
         return marker == null ? null : String.valueOf(marker);
     }
@@ -176,33 +179,32 @@ public class DbService {
 
 
     @JavascriptInterface
-    public void init() throws IOException, JSONException {
-        patientDbService = new PatientDbService(locationDBHelper);
-        patientIdentifierDbService = new PatientIdentifierDbService(locationDBHelper);
-        patientAddressDbService = new PatientAddressDbService(locationDBHelper);
-        patientAttributeDbService = new PatientAttributeDbService(locationDBHelper);
+    public void init(String dbName) throws IOException, JSONException {
+        appDBHelper = dbHelpers.get(dbName);
+        patientIdentifierDbService = new PatientIdentifierDbService(appDBHelper);
+        patientAddressDbService = new PatientAddressDbService(appDBHelper);
+        patientAttributeDbService = new PatientAttributeDbService(appDBHelper);
         markerDbService = new MarkerDbService();
-        addressHierarchyDbService = new AddressHierarchyDbService(locationDBHelper);
-        encounterDbService = new EncounterDbService(locationDBHelper);
-        visitDbService = new VisitDbService(locationDBHelper);
-        errorLogDbService = new ErrorLogDbService(locationDBHelper);
-        observationDbService = new ObservationDbService(locationDBHelper);
-        labOrderDbService = new LabOrderDbService(locationDBHelper);
+        addressHierarchyDbService = new AddressHierarchyDbService(appDBHelper);
+        visitDbService = new VisitDbService(appDBHelper);
+        observationDbService = new ObservationDbService(appDBHelper);
+        labOrderDbService = new LabOrderDbService(appDBHelper);
     }
 
 
     @JavascriptInterface
-    public void initSchema(String DbName) throws IOException, JSONException {
-        if(!DbName.equals("metaData")) {
-            String databaseName = "/" + DbName + ".db";
+    public String initSchema(String dbName) throws IOException, JSONException {
+        if(!dbName.equals("metaData")) {
+            String databaseName = "/" + dbName + ".db";
             String dbPath = context.getExternalFilesDir(null) + databaseName;
-            locationDBHelper = new DbHelper(context, dbPath, LOCATION_DB_VERSION);
+            dbHelpers.put(dbName, new DbHelper(context, dbPath, LOCATION_DB_VERSION));
         }
+        return dbName;
     }
 
     @JavascriptInterface
     public String insertEncounterData(String request) throws JSONException {
-        JSONObject jsonObject = encounterDbService.insertEncounterData(new JSONObject(request));
+        JSONObject jsonObject = encounterDbService.insertEncounterData(new JSONObject(request), appDBHelper);
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
@@ -214,13 +216,13 @@ public class DbService {
 
     @JavascriptInterface
     public String findActiveEncounter(String params, String encounterSessionDurationInMinutes) throws JSONException {
-        JSONObject encounterData = encounterDbService.findActiveEncounter(new JSONObject(params), Integer.parseInt(encounterSessionDurationInMinutes));
+        JSONObject encounterData = encounterDbService.findActiveEncounter(new JSONObject(params), Integer.parseInt(encounterSessionDurationInMinutes), appDBHelper);
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 
     @JavascriptInterface
     public String getEncountersByVisits(String params) throws JSONException {
-        JSONArray encounterData = encounterDbService.getEncountersByVisits(new JSONObject(params));
+        JSONArray encounterData = encounterDbService.getEncountersByVisits(new JSONObject(params), appDBHelper);
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 
@@ -230,7 +232,7 @@ public class DbService {
         JSONArray attributes = person.getJSONArray("attributes");
 
 //        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
-        String patientUuid = patientDbService.insertPatient(patientData);
+        String patientUuid = patientDbService.insertPatient(patientData, appDBHelper);
         patientIdentifierDbService.insertPatientIdentifiers(patientUuid, patientIdentifiers);
         patientAttributeDbService.insertAttributes(patientUuid, attributes);
 
@@ -254,29 +256,32 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String findEncounterByEncounterUuid(String encounterUuid) throws JSONException {
-        JSONObject encounterData = encounterDbService.findEncounterByEncounterUuid(encounterUuid);
+    public String findEncounterByEncounterUuid(String encounterUuid, String dbName) throws JSONException {
+        JSONObject encounterData;
+        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : appDBHelper;
+        encounterData = encounterDbService.findEncounterByEncounterUuid(encounterUuid, dbHelper);
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 
     @JavascriptInterface
     public void insertLog(String uuid,String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
-        errorLogDbService.insertLog(uuid, failedRequest, responseStatus, stackTrace, requestPayload, provider);
+        errorLogDbService.insertLog(uuid, failedRequest, responseStatus, stackTrace, requestPayload, provider, appDBHelper);
     }
 
     @JavascriptInterface
     public String getAllLogs() throws JSONException {
-        return errorLogDbService.getAllLogs().toString();
+        return errorLogDbService.getAllLogs(appDBHelper).toString();
     }
 
     @JavascriptInterface
     public void deleteByUuid(String uuid){
-        errorLogDbService.deleteByUuid(uuid);
+        errorLogDbService.deleteByUuid(uuid, appDBHelper);
     }
 
     @JavascriptInterface
-    public String getErrorLogByUuid(String uuid) throws JSONException{
-        return String.valueOf(errorLogDbService.getErrorLogByUuid(uuid));
+    public String getErrorLogByUuid(String uuid, String dbName) throws JSONException{
+        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : appDBHelper;
+        return String.valueOf(errorLogDbService.getErrorLogByUuid(uuid, dbHelper));
     }
 
     @JavascriptInterface

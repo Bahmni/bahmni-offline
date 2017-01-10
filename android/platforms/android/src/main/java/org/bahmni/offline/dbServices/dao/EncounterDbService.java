@@ -3,7 +3,6 @@ package org.bahmni.offline.dbServices.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
-import org.bahmni.offline.Constants;
 import org.bahmni.offline.Util;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -14,13 +13,8 @@ import java.util.Date;
 
 
 public class EncounterDbService {
-    private DbHelper mDBHelper;
 
-    public EncounterDbService(DbHelper mDBHelper) {
-        this.mDBHelper = mDBHelper;
-    }
-
-    public JSONObject insertEncounterData(JSONObject encounterData) throws JSONException {
+    public JSONObject insertEncounterData(JSONObject encounterData, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("uuid", encounterData.getString("encounterUuid"));
@@ -34,7 +28,7 @@ public class EncounterDbService {
         return  encounterData;
     }
 
-    public JSONArray getEncountersByPatientUuid(String uuid) throws JSONException {
+    public JSONArray getEncountersByPatientUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray encounterList = new JSONArray();
         Cursor c = db.rawQuery("SELECT * from encounter" +
@@ -54,7 +48,7 @@ public class EncounterDbService {
         return encounterList;
     }
 
-    public JSONObject findActiveEncounter(JSONObject encounterDataParams, Integer encounterSessionDurationInMinutes) throws JSONException {
+    public JSONObject findActiveEncounter(JSONObject encounterDataParams, Integer encounterSessionDurationInMinutes, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         String patientUuid = encounterDataParams.getString("patientUuid");
         String providerUuid = encounterDataParams.getString("providerUuid");
@@ -76,7 +70,7 @@ public class EncounterDbService {
         return  encounter;
     }
 
-    public JSONObject findEncounterByEncounterUuid(String encounterUuid) throws JSONException{
+    public JSONObject findEncounterByEncounterUuid(String encounterUuid, DbHelper mDBHelper) throws JSONException{
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor c = db.rawQuery("SELECT encounterJson from encounter" +
                 " WHERE uuid = '" + encounterUuid + "'" , new String[]{});
@@ -91,7 +85,7 @@ public class EncounterDbService {
         return encounter;
     }
 
-    public JSONArray getEncountersByVisits(JSONObject params) throws JSONException{
+    public JSONArray getEncountersByVisits(JSONObject params, DbHelper mDBHelper) throws JSONException{
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray visitUuidsArray = params.getJSONArray("visitUuids");
         String visitUuids = visitUuidsArray.toString();

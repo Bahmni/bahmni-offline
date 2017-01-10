@@ -13,15 +13,9 @@ import java.util.Date;
 import java.util.UUID;
 
 public class ErrorLogDbService {
-    private DbHelper mDBHelper;
-
-    public ErrorLogDbService(DbHelper mDBHelper){
-        this.mDBHelper = mDBHelper;
-
-    }
 
     @JavascriptInterface
-    public String insertLog(String uuid, String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider) throws JSONException {
+    public String insertLog(String uuid, String failedRequest, int responseStatus, String stackTrace, String requestPayload, String provider, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("uuid",uuid);
@@ -35,7 +29,7 @@ public class ErrorLogDbService {
         return uuid;
     }
 
-    public JSONArray getAllLogs() throws JSONException {
+    public JSONArray getAllLogs(DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray errorLogList = new JSONArray();
         Cursor c = db.rawQuery("SELECT * from error_log", new String[]{});
@@ -61,7 +55,7 @@ public class ErrorLogDbService {
     }
 
     @JavascriptInterface
-    public JSONObject getErrorLogByUuid(String uuid) throws JSONException {
+    public JSONObject getErrorLogByUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONObject errorLog = new JSONObject();
         Cursor c = db.rawQuery("SELECT * from error_log where uuid =?", new String[]{uuid});
@@ -83,7 +77,7 @@ public class ErrorLogDbService {
     }
 
     @JavascriptInterface
-    public void deleteByUuid(String uuid) {
+    public void deleteByUuid(String uuid, DbHelper mDBHelper) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         db.beginTransaction();
         db.execSQL("DELETE FROM error_log WHERE uuid = ?", new String[]{uuid});

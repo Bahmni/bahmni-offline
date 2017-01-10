@@ -30,13 +30,13 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        PatientDbService patientDbService = new PatientDbService();
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
 
-        patientDbService.insertPatient(new JSONObject(patientJson));
+        patientDbService.insertPatient(new JSONObject(patientJson), mDBHelper);
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
-        JSONObject result = patientDbService.getPatientByUuid(uuid);
+        JSONObject result = patientDbService.getPatientByUuid(uuid, mDBHelper);
         assertEquals(uuid, result.getJSONObject("patient").getString("uuid"));
     }
 
@@ -49,7 +49,7 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        PatientDbService patientDbService = new PatientDbService();
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
 
         JSONObject patientData = new JSONObject(patientJson);
@@ -62,10 +62,10 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         preferredNameJson.put("familyName","preferredFamilyName");
         person.put("preferredName", preferredNameJson);
 
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
-        JSONObject result = patientDbService.getPatientByUuid(uuid);
+        JSONObject result = patientDbService.getPatientByUuid(uuid, mDBHelper);
 
         assertNotNull(result);
         JSONObject actualPreferredNames = result.getJSONObject("patient").getJSONObject("person").getJSONObject("preferredName");
@@ -83,16 +83,16 @@ public class PatientDbServiceTest extends ActivityInstrumentationTestCase2<MainA
         DbHelper mDBHelper = new DbHelper(context, context.getFilesDir() + "/Bahmni.db", 5);
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
 
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        PatientDbService patientDbService = new PatientDbService();
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
 
         JSONObject patientData = new JSONObject(patientJson);
         JSONObject patient = patientData.getJSONObject("patient");
         patient.put("voided", true);
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
-        JSONObject result = patientDbService.getPatientByUuid(uuid);
+        JSONObject result = patientDbService.getPatientByUuid(uuid, mDBHelper);
         assertNull(result);
     }
 
