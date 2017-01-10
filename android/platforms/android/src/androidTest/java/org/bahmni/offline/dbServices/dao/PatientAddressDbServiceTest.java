@@ -31,16 +31,16 @@ public class PatientAddressDbServiceTest extends ActivityInstrumentationTestCase
         mDBHelper.createTable(Constants.CREATE_PATIENT_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ADDRESS_TABLE);
 
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        PatientDbService patientDbService = new PatientDbService();
         PatientAddressDbService patientAddressDbService = new PatientAddressDbService(mDBHelper);
         JSONObject patientData = new JSONObject(TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext()));
         JSONObject address = patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("preferredAddress");
 
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
         patientAddressDbService.insertAddress(address, uuid);
 
-        JSONObject result = patientDbService.getPatientByUuid(uuid);
+        JSONObject result = patientDbService.getPatientByUuid(uuid, mDBHelper);
         JSONObject returnedAddress = result.getJSONObject("patient").getJSONObject("person").getJSONObject("preferredAddress");
 
         assertEquals("PACHARI", returnedAddress.getString("cityVillage"));

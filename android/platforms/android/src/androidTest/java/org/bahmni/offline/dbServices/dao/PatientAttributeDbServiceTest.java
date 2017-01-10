@@ -31,10 +31,10 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TYPE_TABLE);
         mDBHelper.createTable(Constants.CREATE_PATIENT_ATTRIBUTE_TABLE);
 
-        PatientDbService patientDbService = new PatientDbService(mDBHelper);
+        PatientDbService patientDbService = new PatientDbService();
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
         JSONObject patientData = new JSONObject(patientJson);
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         SQLiteDatabase db =  mDBHelper.getWritableDatabase();
 
@@ -46,7 +46,7 @@ public class PatientAttributeDbServiceTest extends ActivityInstrumentationTestCa
         PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         patientAttributeDbService.insertAttributes(uuid, attributes);
 
-        JSONObject result = patientDbService.getPatientByUuid(uuid);
+        JSONObject result = patientDbService.getPatientByUuid(uuid, mDBHelper);
 
         JSONObject returnedPatient = result.getJSONObject("patient");
         JSONArray returnedAttributes = returnedPatient.getJSONObject("person").getJSONArray("attributes");

@@ -41,7 +41,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         mDBHelper.createTable(Constants.CREATE_ENCOUNTER_TABLE);
 
 
-        patientDbService = new PatientDbService(mDBHelper);
+        patientDbService = new PatientDbService();
         patientIdentifierDbService = new PatientIdentifierDbService(mDBHelper);
         PatientAttributeDbService patientAttributeDbService = new PatientAttributeDbService(mDBHelper);
         PatientAddressDbService patientAddressDbService = new PatientAddressDbService(mDBHelper);
@@ -49,7 +49,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         String uuid = "e34992ca-894f-4344-b4b3-54a4aa1e5558";
         String patientJson = TestUtils.readFileFromAssets("patient.json", getInstrumentation().getContext());
         patientData = new JSONObject(patientJson);
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
         JSONArray identifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
         identifiers.getJSONObject(0).put("primaryIdentifier", "GAN200076");
         JSONObject extraIdentifiers = new JSONObject();
@@ -233,17 +233,17 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("duration", 14);
         final JSONArray[] returnValue = new JSONArray[1];
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
         JSONObject encounterJsonObj = new JSONObject(encounterJson);
 
         encounterJsonObj.remove("encounterDateTime");
         encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(20));
-        encounterDbService.insertEncounterData(encounterJsonObj);
+        encounterDbService.insertEncounterData(encounterJsonObj, mDBHelper);
 
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(20));
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         executeSearch(params, returnValue);
 
@@ -262,17 +262,17 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("duration", 14);
         final JSONArray[] returnValue = new JSONArray[1];
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
         JSONObject encounterJsonObj = new JSONObject(encounterJson);
 
         encounterJsonObj.remove("encounterDateTime");
         encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(2));
-        encounterDbService.insertEncounterData(encounterJsonObj);
+        encounterDbService.insertEncounterData(encounterJsonObj, mDBHelper);
 
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(20));
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         executeSearch(params, returnValue);
         JSONObject result = returnValue[0].getJSONObject(0);
@@ -294,7 +294,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
 
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         executeSearch(params, returnValue);
         JSONObject result = returnValue[0].getJSONObject(0);
@@ -314,18 +314,18 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("duration", 14);
         final JSONArray[] returnValue = new JSONArray[1];
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
         JSONObject encounterJsonObj = new JSONObject(encounterJson);
 
         encounterJsonObj.remove("encounterDateTime");
         encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(20));
-        encounterDbService.insertEncounterData(encounterJsonObj);
+        encounterDbService.insertEncounterData(encounterJsonObj, mDBHelper);
 
 
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         executeSearch(params, returnValue);
         JSONObject result = returnValue[0].getJSONObject(0);
@@ -345,17 +345,17 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
         params.put("duration", 14);
         final JSONArray[] returnValue = new JSONArray[1];
 
-        EncounterDbService encounterDbService = new EncounterDbService(mDBHelper);
+        EncounterDbService encounterDbService = new EncounterDbService();
         String encounterJson = TestUtils.readFileFromAssets("encounter.json", getInstrumentation().getContext());
         JSONObject encounterJsonObj = new JSONObject(encounterJson);
 
         encounterJsonObj.remove("encounterDateTime");
         encounterJsonObj.put("encounterDateTime", DateTime.now().minusDays(2));
-        encounterDbService.insertEncounterData(encounterJsonObj);
+        encounterDbService.insertEncounterData(encounterJsonObj, mDBHelper);
 
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").remove("dateCreated");
         patientData.getJSONObject("patient").getJSONObject("person").getJSONObject("auditInfo").put("dateCreated", DateTime.now().minusDays(2));
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         executeSearch(params, returnValue);
         JSONObject result = returnValue[0].getJSONObject(0);
@@ -366,7 +366,7 @@ public class SearchDbServiceTest extends ActivityInstrumentationTestCase2<MainAc
     @Test
     public void testShouldNotFetchIfThePatientIsVoided() throws Throwable {
         patientData.getJSONObject("patient").put("voided", true);
-        patientDbService.insertPatient(patientData);
+        patientDbService.insertPatient(patientData, mDBHelper);
 
         String searchString = "test";
 
