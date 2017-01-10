@@ -41,7 +41,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -71,12 +71,12 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         JSONArray observationJson = encounter.getJSONArray("observations");
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
-        observationJson = observationDbService.insertObservationData(patientUuid,visitUuid, observationJson);
+        observationJson = observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);
 
         observationJson.getJSONObject(0).put("groupMembers", new JSONArray());
         encounter.put("observations", observationJson);
 
-        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -105,7 +105,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -136,12 +136,12 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         observationJson.getJSONObject(0).put("encounterDateTime", new Date().getTime());
         observationJson.getJSONObject(0).put("encounterUuid", "1c5c237a-dc6e-4f4f-bcff-c761c1ae5975");
         observationJson.getJSONObject(0).put("uuid", "b5c88093-769d-4c21-9249-d8598e30627");
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -172,12 +172,12 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         observationJson.getJSONObject(0).put("encounterDateTime", new Date().getTime());
         observationJson.getJSONObject(0).put("encounterUuid", "1c5c237a-dc6e-4f4f-bcff-c761c1ae5975");
         observationJson.getJSONObject(0).put("uuid", "b5c88093-769d-4c21-9249-d8598e30627");
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -206,12 +206,12 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         observationJson.getJSONObject(0).put("encounterDateTime", new Date().getTime());
         observationJson.getJSONObject(0).put("encounterUuid", "1c5c237a-dc6e-4f4f-bcff-c761c1ae5975");
         observationJson.getJSONObject(0).put("uuid", "b5c88093-769d-4c21-9249-d8598e30627");
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
@@ -239,7 +239,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
 
         ObservationDbService observationDbService = new ObservationDbService(mDBHelper);
 
-        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson);
+        observationDbService.insertObservationData(patientUuid, visitUuid, observationJson, null);
 
         JSONArray observations = observationDbService.getObservationsForVisit(visitUuid);
 

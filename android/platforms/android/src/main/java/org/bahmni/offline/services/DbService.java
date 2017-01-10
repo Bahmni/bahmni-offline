@@ -116,8 +116,9 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String insertObservationData(String patientUuid, String visitUuid, String observationData) throws JSONException {
-        JSONArray jsonArray = observationDbService.insertObservationData(patientUuid, visitUuid, new JSONArray(observationData));
+    public String insertObservationData(String patientUuid, String visitUuid, String observationData, String dbName) throws JSONException {
+        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : null;
+        JSONArray jsonArray = observationDbService.insertObservationData(patientUuid, visitUuid, new JSONArray(observationData), dbHelper);
         return jsonArray == null ? null : String.valueOf(jsonArray);
     }
 
@@ -203,14 +204,16 @@ public class DbService {
     }
 
     @JavascriptInterface
-    public String insertEncounterData(String request) throws JSONException {
-        JSONObject jsonObject = encounterDbService.insertEncounterData(new JSONObject(request), appDBHelper);
+    public String insertEncounterData(String request, String dbName) throws JSONException {
+        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : appDBHelper;
+        JSONObject jsonObject = encounterDbService.insertEncounterData(new JSONObject(request), dbHelper);
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 
     @JavascriptInterface
-    public String insertVisitData(String request) throws JSONException {
-        JSONObject jsonObject = visitDbService.insertVisitData(new JSONObject(request));
+    public String insertVisitData(String request, String dbName) throws JSONException {
+        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : null;
+        JSONObject jsonObject = visitDbService.insertVisitData(new JSONObject(request), dbHelper);
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }
 

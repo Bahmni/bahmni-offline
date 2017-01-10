@@ -35,7 +35,7 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         VisitDbService visitDbService = new VisitDbService(mDBHelper);
         String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
 
-        visitDbService.insertVisitData(new JSONObject(visitJson));
+        visitDbService.insertVisitData(new JSONObject(visitJson), null);
 
         JSONObject visit = visitDbService.getVisitByUuid(uuid);
 
@@ -62,10 +62,10 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
 
         JSONObject visit = new JSONObject(visitJson);
-        visitDbService.insertVisitData(visit);
+        visitDbService.insertVisitData(visit, null);
 
         visit.put("uuid", "fe5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
-        visitDbService.insertVisitData(visit);
+        visitDbService.insertVisitData(visit, null);
 
         JSONArray visits = visitDbService.getVisitsByPatientUuid(patientUuid ,numberOfVisits);
 
@@ -90,11 +90,11 @@ public class VisitDbServiceTest extends ActivityInstrumentationTestCase2<MainAct
         String visitJson = TestUtils.readFileFromAssets("visit.json", getInstrumentation().getContext());
 
         JSONObject visit = new JSONObject(visitJson);
-        visitDbService.insertVisitData(visit);
+        visitDbService.insertVisitData(visit, null);
 
         visit.put("uuid", "fe5d8f4b-cb75-4eff-8637-fd0efc0fb9ad");
         visit.getJSONObject("patient").put("uuid", "another uuid");
-        visitDbService.insertVisitData(visit);
+        visitDbService.insertVisitData(visit, null);
 
         JSONArray visits = visitDbService.getVisitDetailsByPatientUuid(patientUuid);
 

@@ -16,8 +16,9 @@ public class ObservationDbService {
         this.mDBHelper = mDBHelper;
     }
 
-    public JSONArray insertObservationData(String patientUuid, String visitUuid, JSONArray observationData) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+    public JSONArray insertObservationData(String patientUuid, String visitUuid, JSONArray observationData, DbHelper dbHelper) throws JSONException {
+        dbHelper = dbHelper != null ? dbHelper : mDBHelper;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         for(int index=0; index<observationData.length(); index++) {
             JSONObject observation = observationData.getJSONObject(index);

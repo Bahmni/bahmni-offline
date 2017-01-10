@@ -17,8 +17,9 @@ public class VisitDbService {
         this.mDBHelper = mDBHelper;
     }
 
-    public JSONObject insertVisitData(JSONObject visitData) throws JSONException {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+    public JSONObject insertVisitData(JSONObject visitData, DbHelper dbHelper) throws JSONException {
+        dbHelper = dbHelper != null ? dbHelper : mDBHelper;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("uuid", visitData.getString("uuid"));
         values.put("patientUuid", visitData.getJSONObject("patient").getString("uuid"));
