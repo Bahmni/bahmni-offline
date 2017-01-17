@@ -1,7 +1,7 @@
 # bahmni-offline
 Repo to hold bahmni offline code. This will support Chromium app and Android app as of now.
 
-To run android app
+**To run android app**
 
 1. install Node.js. if you dont have it
 2. npm install -g cordova ionic, for any issues with ionic installation refer http://ionicframework.com/getting-started/
@@ -23,3 +23,8 @@ To run android app
 11. ionic build android
 12. In Intellij File -> New -> Project existing sources (bahmni-offline/android/platforms/android)
 13. to deploy the app shift + f10
+
+**To run andoid test**
+
+1. cd android/platforms/android
+2. ./gradlew clean connectedAndroidTest
