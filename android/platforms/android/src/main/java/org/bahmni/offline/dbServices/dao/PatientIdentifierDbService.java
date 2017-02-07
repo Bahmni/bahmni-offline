@@ -6,6 +6,7 @@ import android.database.Cursor;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import net.sqlcipher.database.SQLiteException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +18,7 @@ public class PatientIdentifierDbService {
         this.mDBHelper = mDBHelper;
     }
 
-    public void insertPatientIdentifiers(String patientUuid, JSONArray patientIdentifiers) throws JSONException {
+    public void insertPatientIdentifiers(String patientUuid, JSONArray patientIdentifiers) throws JSONException, SQLiteException {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         for (int i = 0; i < patientIdentifiers.length(); i++) {
             ContentValues values = new ContentValues();
@@ -29,9 +30,19 @@ public class PatientIdentifierDbService {
             values.put("identifier", identifier);
             values.put("typeUuid", identifierTypeUuid);
             values.put("isPrimaryIdentifier", isPrimaryIdentifier);
-            values.put("primaryIdentifier", getExtraIdentifiers(patientIdentifiers.getJSONObject(i), "primaryIdentifier"));
+            String primaryIdentifier = getExtraIdentifiers(patientIdentifiers.getJSONObject(i), "primaryIdentifier");
+            values.put("primaryIdentifier", primaryIdentifier);
             values.put("extraIdentifiers", getExtraIdentifiers(patientIdentifiers.getJSONObject(i), "extraIdentifiers"));
             values.put("identifierJson", String.valueOf(patientIdentifiers.getJSONObject(i)));
+            if (primaryIdentifier != null) {
+                Cursor c = db.rawQuery("SELECT * from patient_identifier where primaryIdentifier= '" + primaryIdentifier + "' and patientUuid != '" + patientUuid + "'", new String[]{});
+                if (c.getCount() > 0) {
+                    c.close();
+                    throw new SQLiteException(primaryIdentifier);
+                } else {
+                    c.close();
+                }
+            }
             db.insertWithOnConflict("patient_identifier", null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
