@@ -3,6 +3,7 @@ package org.bahmni.offline.services;
 import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import net.sqlcipher.database.SQLiteException;
 import org.bahmni.offline.dbServices.dao.AddressHierarchyDbService;
 import org.bahmni.offline.dbServices.dao.DbHelper;
 import org.bahmni.offline.dbServices.dao.EncounterDbService;
@@ -139,10 +140,16 @@ public class DbService {
 
     @JavascriptInterface
     public String createPatient(String request) throws JSONException, IOException, ExecutionException, InterruptedException {
-
-        insertPatientData(new JSONObject(request));
-
         JSONObject patientJson = new JSONObject(request).getJSONObject("patient");
+        try {
+            insertPatientData(new JSONObject(request));
+        } catch (SQLiteException e) {
+            JSONObject errorMessage = new JSONObject();
+            errorMessage.put("message", "Patient failed to validate with reason: Identifier "+ e.getMessage() +" is already in use by another patient");
+            errorMessage.put("isIdentifierDuplicate", true);
+            return String.valueOf(errorMessage);
+        }
+
         String uuid = patientJson.getString("uuid");
         boolean isVoided = !patientJson.isNull("voided") && patientJson.getBoolean("voided");
         if (!isVoided) {
@@ -229,14 +236,14 @@ public class DbService {
         return encounterData == null ? null : String.valueOf(encounterData);
     }
 
-    private void insertPatientData(JSONObject patientData) throws JSONException {
+    private void insertPatientData(JSONObject patientData) throws JSONException, SQLiteException {
         JSONObject person = patientData.getJSONObject("patient").getJSONObject("person");
         JSONArray patientIdentifiers = patientData.getJSONObject("patient").getJSONArray("identifiers");
         JSONArray attributes = person.getJSONArray("attributes");
+        String patientUuid = person.getString("uuid");
 
-//        ArrayList<JSONObject> attributeTypeMap = patientAttributeDbService.getAttributeTypes();
-        String patientUuid = patientDbService.insertPatient(patientData, appDBHelper);
         patientIdentifierDbService.insertPatientIdentifiers(patientUuid, patientIdentifiers);
+        patientDbService.insertPatient(patientData, appDBHelper);
         patientAttributeDbService.insertAttributes(patientUuid, attributes);
 
         JSONObject address;
