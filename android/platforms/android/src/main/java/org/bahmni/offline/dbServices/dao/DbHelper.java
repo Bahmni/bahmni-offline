@@ -51,21 +51,11 @@ public class DbHelper extends SQLiteOpenHelper {
             while (bufferedReader.ready()) {
                 sqlStatements += bufferedReader.readLine();
             }
-            sqlStatements = replaceParameters(sqlStatements);
             bufferedReader.close();
             db.rawExecSQL(sqlStatements);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    private String replaceParameters(String sqlStatements) {
-        if(sqlStatements.contains("@")) {
-            String metaDataDbPath = myContext.getExternalFilesDir(null) + "/metaData.db";
-            sqlStatements = sqlStatements.replace("@metaDataDbPath", "'"+ metaDataDbPath + "'");
-            sqlStatements = sqlStatements.replace("@encryptionKey", "'"+ this.encryptionKey +"'");
-        }
-        return sqlStatements;
     }
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
