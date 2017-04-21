@@ -1,3 +1,4 @@
+/*  Move common data to metadata database for supporting multiple database */
 END TRANSACTION;
 ATTACH @metaDataDbPath as metadata KEY @encryptionKey;
 BEGIN TRANSACTION;
@@ -17,3 +18,8 @@ DROP TABLE login_locations;
 DROP TABLE concept;
 DROP TABLE reference_data;
 DROP TABLE configs;
+
+/* Split transactionalData into patient data and encounter data */
+INSERT INTO event_log_marker(markerName, lastReadEventUuid , filters , lastReadTime ) select * from ( select "patient", lastReadEventUuid , filters , lastReadTime  FROM event_log_marker where markerName="transactionalData");
+INSERT INTO event_log_marker(markerName, lastReadEventUuid , filters , lastReadTime ) select * from ( select "encounter", lastReadEventUuid , filters , lastReadTime  FROM event_log_marker where markerName="transactionalData");
+delete from event_log_marker where markerName="transactionalData";
