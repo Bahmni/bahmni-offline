@@ -55,6 +55,10 @@ public class DbService {
         this.referenceDataDbService = new ReferenceDataDbService(metaDataDBHelper);
     }
 
+    private DbHelper getDbHelper(String dbName) {
+        return dbName != null ? dbHelpers.get(dbName) : null;
+    }
+
     @JavascriptInterface
     public String getLog(){
        try {
@@ -118,9 +122,14 @@ public class DbService {
 
     @JavascriptInterface
     public String insertObservationData(String patientUuid, String visitUuid, String observationData, String dbName) throws JSONException {
-        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : null;
+        DbHelper dbHelper = getDbHelper(dbName);
         JSONArray jsonArray = observationDbService.insertObservationData(patientUuid, visitUuid, new JSONArray(observationData), dbHelper);
         return jsonArray == null ? null : String.valueOf(jsonArray);
+    }
+
+    @JavascriptInterface
+    public void deleteByEncounterUuid(String encounterUuid, String dbName){
+        observationDbService.deleteByEncounterUuid(getDbHelper(dbName), encounterUuid);
     }
 
     @JavascriptInterface
@@ -219,7 +228,7 @@ public class DbService {
 
     @JavascriptInterface
     public String insertVisitData(String request, String dbName) throws JSONException {
-        DbHelper dbHelper = dbName != null ? dbHelpers.get(dbName) : null;
+        DbHelper dbHelper = getDbHelper(dbName);
         JSONObject jsonObject = visitDbService.insertVisitData(new JSONObject(request), dbHelper);
         return jsonObject == null ? null : String.valueOf(jsonObject);
     }

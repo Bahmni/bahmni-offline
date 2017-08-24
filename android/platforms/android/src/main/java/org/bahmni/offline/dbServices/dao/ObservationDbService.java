@@ -94,4 +94,11 @@ public class ObservationDbService {
 
         return observations;
     }
+
+    public void deleteByEncounterUuid(DbHelper dbHelper, String encounterUuid) {
+        dbHelper = dbHelper != null ? dbHelper : mDBHelper;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("observation", "encounterUuid=?", new String[]{encounterUuid});
+        db.close();
+    }
 }
