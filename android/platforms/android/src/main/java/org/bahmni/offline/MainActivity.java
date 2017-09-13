@@ -6,6 +6,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.cordova.CordovaActivity;
+import org.bahmni.offline.dbServices.dao.FormDbService;
 import org.bahmni.offline.dbServices.dao.ConceptDbService;
 import org.bahmni.offline.dbServices.dao.ConfigDbService;
 import org.bahmni.offline.dbServices.dao.DbHelper;
@@ -42,6 +43,7 @@ public class MainActivity extends CordovaActivity {
         xWalkWebView.addJavascriptInterface(new LocationDbService(metaDataDbHelper), "AndroidLocationDbService");
         xWalkWebView.addJavascriptInterface(new ReferenceDataDbService(metaDataDbHelper), "AndroidReferenceDataDbService");
         xWalkWebView.addJavascriptInterface(new ConceptDbService(metaDataDbHelper), "AndroidConceptDbService");
+        xWalkWebView.addJavascriptInterface(new FormDbService(metaDataDbHelper), "AndroidFormDbService");
         xWalkWebView.addJavascriptInterface(new AppUpdateService(this), "AppUpdateService");
 
         xWalkWebView.loadAppFromManifest("file:///android_asset/manifest.json", null);

@@ -169,13 +169,17 @@ public class DbService {
 
     @JavascriptInterface
     public String insertMarker(String markerName, String eventUuid, String filters)throws JSONException  {
-        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : appDBHelper;
+        DbHelper dbHelper = isMetaData(markerName) ?  metaDataDbHelper : appDBHelper;
         return markerDbService.insertMarker(dbHelper, markerName, eventUuid, filters);
+    }
+
+    private boolean isMetaData(String markerName) {
+        return markerName.equals("offline-concepts") || markerName.equals("forms");
     }
 
     @JavascriptInterface
     public String getMarker(String markerName) throws JSONException {
-        DbHelper dbHelper = markerName.equals("offline-concepts") ?  metaDataDbHelper : appDBHelper;
+        DbHelper dbHelper = isMetaData(markerName) ?  metaDataDbHelper : appDBHelper;
         JSONObject marker = markerDbService.getMarker(dbHelper, markerName);
         return marker == null ? null : String.valueOf(marker);
     }

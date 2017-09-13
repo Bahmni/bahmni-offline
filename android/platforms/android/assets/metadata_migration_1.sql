@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS form (uuid TEXT PRIMARY KEY, name TEXT, version TEXT, resources TEXT);
