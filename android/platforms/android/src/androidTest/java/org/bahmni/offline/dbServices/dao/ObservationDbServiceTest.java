@@ -105,6 +105,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         observationJson = observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);
 
         observationJson.getJSONObject(0).put("groupMembers", new JSONArray());
+        observationJson.getJSONObject(0).put("voided", true);
         encounter.put("observations", observationJson);
 
         observationDbService.insertObservationData(patientUuid,visitUuid, observationJson, null);

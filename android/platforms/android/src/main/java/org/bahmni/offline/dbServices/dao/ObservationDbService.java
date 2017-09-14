@@ -23,7 +23,7 @@ public class ObservationDbService {
         for(int index=0; index<observationData.length(); index++) {
             JSONObject observation = observationData.getJSONObject(index);
             String observationUuid = observation.getString("uuid");
-            if (observation.getJSONArray("groupMembers").length() > 0) {
+            if (!observation.getBoolean("voided")) {
                 values.put("uuid", observationUuid);
                 values.put("patientUuid", patientUuid);
                 values.put("visitUuid", visitUuid);
