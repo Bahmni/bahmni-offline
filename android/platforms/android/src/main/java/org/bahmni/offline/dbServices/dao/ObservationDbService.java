@@ -53,7 +53,7 @@ public class ObservationDbService {
         String visitUuids = visitUuidsArray.toString();
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray observations = new JSONArray();
-        String inClauseConceptNameList = conceptNamesArray.length() > 0 ? conceptNames.substring(2, conceptNames.length() - 2) : conceptNames;
+        String inClauseConceptNameList = (conceptNamesArray.length() > 0 ? conceptNames.substring(2, conceptNames.length() - 2) : conceptNames).replaceAll("\\\\","");
         String inClauseVisitUuidsList = visitUuidsArray.length() > 0 ? visitUuids.substring(2, visitUuids.length() - 2) : visitUuids;
         Cursor c = db.rawQuery("SELECT observationJson from observation" +
                 " WHERE patientUuid = '" + patientUuid + "'" +

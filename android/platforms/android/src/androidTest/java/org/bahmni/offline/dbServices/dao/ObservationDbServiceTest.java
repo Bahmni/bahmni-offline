@@ -46,7 +46,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
         params.put("visitUuids", new JSONArray().put(0, visitUuid));
-        params.put("conceptNames", new JSONArray().put(0, "Child Health"));
+        params.put("conceptNames", new JSONArray().put(0, "Child /Health"));
         JSONArray observations = observationDbService.getObservationsFor(params);
 
         JSONObject observation = observations.getJSONObject(0);
@@ -113,7 +113,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
         params.put("visitUuids", new JSONArray().put(0, visitUuid));
-        params.put("conceptNames", new JSONArray().put(0, "Child Health"));
+        params.put("conceptNames", new JSONArray().put(0, "Child /Health"));
         JSONArray observations = observationDbService.getObservationsFor(params);
 
         assertEquals(0, observations.length());
@@ -142,7 +142,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         JSONObject params = new JSONObject();
         params.put("patientUuid", patientUuid);
         params.put("visitUuids", new JSONArray());
-        params.put("conceptNames", new JSONArray().put(0, "Child Health"));
+        params.put("conceptNames", new JSONArray().put(0, "Child /Health"));
         JSONArray observations = observationDbService.getObservationsFor(params);
 
         JSONObject observation = observations.getJSONObject(0);
@@ -179,7 +179,7 @@ public class ObservationDbServiceTest extends ActivityInstrumentationTestCase2<M
         params.put("patientUuid", patientUuid);
         params.put("visitUuids", new JSONArray());
         JSONArray conceptNames = new JSONArray();
-        conceptNames.put(0, "Child Health");
+        conceptNames.put(0, "Child /Health");
         conceptNames.put(1, "Child");
         params.put("conceptNames", conceptNames);
         JSONArray observations = observationDbService.getObservationsFor(params);

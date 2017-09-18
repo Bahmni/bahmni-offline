@@ -291,7 +291,7 @@
       "voidReason": null,
       "concept": {
         "uuid": "c3dc86c1-f58f-4ea7-b83d-ec428b943c30",
-        "name": "Child Health",
+        "name": "Child /Health",
         "dataType": "N/A",
         "shortName": "Child Health",
         "conceptClass": "ConvSet",
