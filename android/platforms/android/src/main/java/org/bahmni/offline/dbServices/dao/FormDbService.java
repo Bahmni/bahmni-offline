@@ -63,7 +63,7 @@ public class FormDbService {
         for(Integer i=0; i < c.getCount(); i++){
             JSONObject form = new JSONObject();
             form.put("name", c.getString(c.getColumnIndex("name")));
-            form.put("version", c.getString(c.getColumnIndex("version")));
+            form.put("version", Integer.parseInt(c.getString(c.getColumnIndex("version"))));
             form.put("uuid", c.getString(c.getColumnIndex("uuid")));
             formList.put(i, form);
             c.moveToNext();
