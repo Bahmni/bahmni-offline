@@ -160,7 +160,12 @@ android {
         }
     }
 
-    defaultConfig {
+    testOptions {
+      unitTests.returnDefaultValues = true
+    }
+
+
+  defaultConfig {
         versionCode cdvVersionCode ?: new BigInteger("" + privateHelpers.extractIntFromManifest("versionCode"))
         applicationId privateHelpers.extractStringFromManifest("package")
 
