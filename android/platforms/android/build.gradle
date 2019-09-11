@@ -17,13 +17,12 @@
        under the License.
 */
 
-// GENERATED FILE! DO NOT EDIT!
-
 apply plugin: 'com.android.application'
 
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     // Switch the Android Gradle plugin version requirement depending on the
@@ -31,7 +30,7 @@ buildscript {
     // http://tools.android.com/tech-docs/new-build-system/version-compatibility
     // and https://issues.apache.org/jira/browse/CB-8143
         dependencies {
-            classpath 'com.android.tools.build:gradle:2.1.0'
+            classpath 'com.android.tools.build:gradle:2.3.3'
         }
 }
 
@@ -160,15 +159,23 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
     testOptions {
-        unitTests.returnDefaultValues = true
+      unitTests.returnDefaultValues = true
     }
 
-    defaultConfig {
-        versionCode cdvVersionCode ?: Integer.parseInt("" + privateHelpers.extractIntFromManifest("versionCode") + "0")
+
+  defaultConfig {
+        versionCode cdvVersionCode ?: new BigInteger("" + privateHelpers.extractIntFromManifest("versionCode"))
+        applicationId privateHelpers.extractStringFromManifest("package")
+
         if (cdvMinSdkVersion != null) {
             minSdkVersion cdvMinSdkVersion
         }
+    }
+
+    lintOptions {
+      abortOnError false;
     }
 
     compileSdkVersion cdvCompileSdkVersion
@@ -177,13 +184,13 @@ android {
     if (Boolean.valueOf(cdvBuildMultipleApks)) {
         productFlavors {
             armv7 {
-                versionCode cdvVersionCode ?: defaultConfig.versionCode + 2
+                versionCode defaultConfig.versionCode*10 + 2
                 ndk {
                     abiFilters "armeabi-v7a", ""
                 }
             }
             x86 {
-                versionCode cdvVersionCode ?: defaultConfig.versionCode + 4
+                versionCode defaultConfig.versionCode*10 + 4
                 ndk {
                     abiFilters "x86", ""
                 }
@@ -194,7 +201,12 @@ android {
                 }
             }
         }
-    } else if (!cdvVersionCode) {
+    }
+    /*
+
+    ELSE NOTHING! DON'T MESS WITH THE VERSION CODE IF YOU DON'T HAVE TO!
+
+    else if (!cdvVersionCode) {
       def minSdkVersion = cdvMinSdkVersion ?: privateHelpers.extractIntFromManifest("minSdkVersion")
       // Vary versionCode by the two most common API levels:
       // 14 is ICS, which is the lowest API level for many apps.
@@ -205,16 +217,12 @@ android {
         defaultConfig.versionCode += 8
       }
     }
+    */
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_6
         targetCompatibility JavaVersion.VERSION_1_6
     }
-
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-    }
-
 
     if (cdvReleaseSigningPropertiesFile) {
         signingConfigs {
@@ -238,10 +246,6 @@ android {
     }
 }
 
-configurations.all {
-  resolutionStrategy.force 'com.android.support:support-annotations:23.1.1'
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'org.xwalk:xwalk_core_library:17.46.448.10'
@@ -258,13 +262,10 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     // SUB-PROJECT DEPENDENCIES START
-    debugCompile project(path: ":CordovaLib", configuration: "debug")
-    releaseCompile project(path: ":CordovaLib", configuration: "release")
+    debugCompile(project(path: "CordovaLib", configuration: "debug"))
+    releaseCompile(project(path: "CordovaLib", configuration: "release"))
     // SUB-PROJECT DEPENDENCIES END
-
-
 }
-
 
 def promptForReleaseKeyPassword() {
     if (!cdvReleaseSigningPropertiesFile) {
@@ -280,7 +281,7 @@ def promptForReleaseKeyPassword() {
 
 gradle.taskGraph.whenReady { taskGraph ->
     taskGraph.getAllTasks().each() { task ->
-        if (task.name == 'validateReleaseSigning') {
+        if (task.name == 'validateReleaseSigning' || task.name == 'validateSigningRelease') {
             promptForReleaseKeyPassword()
         }
     }
