@@ -31,7 +31,7 @@ public class VisitDbService {
 
     public JSONObject getVisitByUuid(String uuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from visit" +
+        Cursor c = db.rawQuery("SELECT visitJson, uuid, patientUuid from visit" +
                 " WHERE uuid = '" + uuid + "'" , new String[]{});
         if (c.getCount() < 1) {
             c.close();
@@ -70,7 +70,7 @@ public class VisitDbService {
     public JSONArray getVisitDetailsByPatientUuid(String patientUuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
 
-        Cursor c = db.rawQuery("SELECT * from visit WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC", new String[]{});
+        Cursor c = db.rawQuery("SELECT visitJson from visit WHERE patientUuid = '" + patientUuid + "' ORDER BY startDatetime DESC", new String[]{});
 
         if (c.getCount() < 1) {
             c.close();

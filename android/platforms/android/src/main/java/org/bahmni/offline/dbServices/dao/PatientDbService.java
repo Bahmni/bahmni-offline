@@ -12,7 +12,7 @@ public class PatientDbService {
 
     public JSONObject getPatientByUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from patient" +
+        Cursor c = db.rawQuery("SELECT patientJson, relationships from patient" +
                 " WHERE uuid = '" + uuid + "' AND voided = 0 limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();
