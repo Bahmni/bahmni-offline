@@ -17,12 +17,11 @@ Repo to hold bahmni offline code. This will support Chromium app and Android app
     latest Android Support Library
 6. Checkout out repo
 7. cd bahmni-offline/android
-8. ionic platform remove android
-9. ionic platform add android
-10. git checkout .
-11. ionic build android
-12. In Intellij File -> New -> Project existing sources (bahmni-offline/android/platforms/android)
-13. to deploy the app shift + f10
+8. ionic cordova run android --prod
+9. git checkout .
+10. ionic build android
+11. In Intellij File -> New -> Project existing sources (bahmni-offline/android/platforms/android)
+12. to deploy the app shift + f10
 
 **To run andoid test**
 
