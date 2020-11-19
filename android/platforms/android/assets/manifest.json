@@ -1,7 +1,0 @@
-{
-  "name": "android",
-  "start_url": "www/index.html",
-  "xwalk_hosts": [
-    "https://*/"
-  ]
-}
