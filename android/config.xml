@@ -13,8 +13,8 @@
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
-    <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="24" />
+    <preference name="android-minSdkVersion" value="15" />
+    <preference name="android-targetSdkVersion" value="15" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
@@ -60,5 +60,6 @@
         <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87" />
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
+    <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="~3.8.0" />
 </widget>
