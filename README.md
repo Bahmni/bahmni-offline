@@ -16,8 +16,13 @@ Repo to hold bahmni offline code. This will support Chromium app and Android app
 8. cordova platform add android
 9. cordova build android
 /******************************/ 
-10. In Android Studio File -> New -> Import Project  (bahmni-offline/android/platforms/android)
+10. In Android Studio File -> New -> Import Project (bahmni-offline/android/platforms/android)
 11. Run the Project (Shift + F10) Or cordova run --emulator
+12. If the assets are not loaded, (This error appears on Emulator -> `Application Error, net::ERR_FILE_NOT_FOUND file:///android_asset/www/index.html was not found`) then hardcode the launchURL in 
+    `ConfigXmlParser.java ->
+         public String getLaunchUrl() {
+        return "file:///android_asset/www/index.html";
+    }`
 
 **To run andoid test**
 
