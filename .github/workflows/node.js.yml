@@ -12,14 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
     - uses: android-actions/setup-android@v2
-    - run: ./gradlew build
+      run: ./gradlew build
