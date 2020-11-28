@@ -34,5 +34,12 @@ jobs:
       working-directory: android
     - run: cordova run --emulator
       working-directory: android
+    - name: Uplaod Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: android/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+      if: always()
+
 
 
