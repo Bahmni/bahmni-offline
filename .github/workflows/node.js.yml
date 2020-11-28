@@ -31,6 +31,8 @@ jobs:
     - run: cordova platform add android
       working-directory: android
     - run: cordova build android
+      working-directory: android
     - run: cordova run --emulator
+      working-directory: android
 
 
