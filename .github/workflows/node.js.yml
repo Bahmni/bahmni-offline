@@ -32,8 +32,6 @@ jobs:
       working-directory: android
     - run: cordova build android
       working-directory: android
-    - run: cordova run --emulator
-      working-directory: android
     - name: Uplaod Artifact
       uses: actions/upload-artifact@v2
       with:
