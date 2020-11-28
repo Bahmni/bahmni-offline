@@ -11,9 +11,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
@@ -25,6 +23,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm test
+    - uses: android-actions/setup-android@v2
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
-      run: ./gradlew build
+    - run: ./gradlew build
