@@ -6,8 +6,8 @@ name: Node.js AND Java CI
 on:
   push:
     branches: [ master,addCI ]
-  pull_request:
-    branches: [ master,addCI  ]
+  # pull_request:
+  #   branches: [ master,addCI  ]
 
 jobs:
   build:
