@@ -22,4 +22,10 @@ jobs:
     - run: npm install -g cordova ionic
     - run: npm install -g try-thread-sleep
     - run: echo $ANDROID_HOME
+    - run: cd android
+    - run: cordova platform rm android
+    - run: cordova platform add android
+    - run: cordova build android
+    - run: cordova run --emulator
+
 
