@@ -18,16 +18,11 @@ jobs:
       uses: actions/setup-node@v1
     - name: Setup android
       uses: android-actions/setup-android@v2
-    # - run: ./gradlew build
     - run: npm install -g cordova ionic
     - run: npm install -g try-thread-sleep
     - run: echo $ANDROID_HOME
-    - run: echo `pwd`
-    - run: cd android
-    - run: echo `pwd`
     - run: cordova platform rm android
       working-directory: android
-    - run: echo `pwd`
     - run: cordova platform add android
       working-directory: android
     - run: cordova build android
@@ -35,7 +30,7 @@ jobs:
     - name: Uplaod Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: my-artifact
+        name: debug-apk
         path: android/platforms/android/app/build/outputs/apk/debug/app-debug.apk
       if: always()
 
