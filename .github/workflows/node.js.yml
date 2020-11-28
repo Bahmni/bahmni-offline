@@ -26,7 +26,10 @@ jobs:
     - run: cd android
     - run: echo `pwd`
     - run: cordova platform rm android
+      working-directory: android
+    - run: echo `pwd`
     - run: cordova platform add android
+      working-directory: android
     - run: cordova build android
     - run: cordova run --emulator
 
