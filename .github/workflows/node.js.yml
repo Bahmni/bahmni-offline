@@ -19,3 +19,7 @@ jobs:
     - name: Setup android
       uses: android-actions/setup-android@v2
     - run: ./gradlew build
+    - run: npm install -g cordova ionic
+    - run: npm install -g try-thread-sleep
+    - run: echo $ANDROID_HOME
+    
