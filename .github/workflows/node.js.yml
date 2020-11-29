@@ -25,7 +25,8 @@ jobs:
       working-directory: android
     - run: cordova platform add android
       working-directory: android
-    - run: git checkout android/platforms/android/CordovaLib/src/org/apache/cordova/ConfigXmlParser.java
+    - name: Reset the Config
+      run: git checkout android/platforms/android/CordovaLib/src/org/apache/cordova/ConfigXmlParser.java
     - run: cordova build android
       working-directory: android
     - name: Uplaod Artifact
