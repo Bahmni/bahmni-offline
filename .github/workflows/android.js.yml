@@ -28,7 +28,8 @@ jobs:
     - run: echo $ANDROID_HOME && echo $PATH
     - run: echo $GITHUB_WORKSPACE && pwd
     - run: cd .. && git clone https://github.com/Bahmni/default-config.git
-    - run: pwd && sudo scripts/getArtefact.sh
+    - run: chmod +x scripts/getArtefact.sh
+    - run: pwd && scripts/getArtefact.sh
     # - run: 
     # - name: curl
     #   uses: wei/curl@v1
