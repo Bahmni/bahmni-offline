@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ addCI-android ]
+    branches: [ addCI-android,master ]
   pull_request:
     branches: [ ]
 
