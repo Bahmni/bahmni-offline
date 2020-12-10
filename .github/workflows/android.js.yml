@@ -32,28 +32,17 @@ jobs:
     - run: pwd && scripts/getArtefact.sh
       env:
         GIT_AUTH_HEADER: ${{ secrets.GIT_AUTH_HEADER }}
-    # run: |
-    # - run: 
-    # - name: curl
-    #   uses: wei/curl@v1
-    #   with:
-    #     args: -o apps.zip  --location --header "Authorization: token 878cdb2814740a370ac12b4fad411e96415cdcb1" --request GET "https://api.github.com/repos/Bahmni/bahmni-connect/actions/artifacts/29404996/zip"
-
-#     - run: curl -o apps.zip  --location --request GET 'https://api.github.com/repos/Bahmni/bahmni-connect/actions/artifacts/29404996/zip' \
-# --header 'Authorization: token 878cdb2814740a370ac12b4fad411e96415cdcb1'
-      # working-directory: /home/runner/work/bahmni-offline/
-    # - run: cd $ANDROID_HOME/build-tools && ls  
     - name: add cordova android platform
       run: cordova platform remove android && cordova platform add android && git checkout . 
       working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
-    # - run: cd android/www && rm -rf app/ && mkdir app
-    #   working-directory: /home/runner/work/bahmni-connect/bahmni-offline
-    # - name: copy android dist
-    #   run: cp -R bahmni-connect/ui/androidDist/* bahmni-offline/android/www/app/ && mkdir -p bahmni-offline/android/www/bahmni_config
-    #   working-directory: /home/runner/work/bahmni-connect
-    # - name: Generate default_config.zip
-    #   run: pwd && scripts/package.sh && cd .. && cp default-config/target/default_config.zip bahmni-offline/android/www/bahmni_config/default_config.zip
-    #   working-directory: /home/runner/work/bahmni-connect/default-config
+    - run: cd android/www && rm -rf app/ && mkdir app
+      working-directory: /home/runner/work/bahmni-offline/bahmni-offline
+    - name: copy android dist
+      run: cp -R androidDist/* bahmni-offline/android/www/app/ && mkdir -p bahmni-offline/android/www/bahmni_config
+      working-directory: /home/runner/work/bahmni-offline
+    - name: Generate default_config.zip
+      run: pwd && scripts/package.sh && cd .. && cp default-config/target/default_config.zip bahmni-offline/android/www/bahmni_config/default_config.zip
+      working-directory: /home/runner/work/bahmni-offline/default-config
     # - name: Upload default config as Artifact
     #   uses: actions/upload-artifact@v2
     #   with:
@@ -61,19 +50,19 @@ jobs:
     #     path: |
     #       /home/runner/work/bahmni-connect/default-config/target/default_config.zip
     #   if: always()
-    # - name: copy config zip to android folder
-    #   run: cd bahmni-offline/android/www/bahmni_config/ && unzip -o default_config.zip && rm -rf apps aqs beanshell encounterModifier migrations obscalculator ordertemplates templates patientMatchingAlgorithm treatmentRegimenExtension openelis default_config.zip
-    #   working-directory: /home/runner/work/bahmni-connect
-    # - name: Build Android APK
-    #   # run: cd bahmni-android/android && cp /bahmni-apk-signing/release-signing.properties platforms/android/
+    - name: copy config zip to android folder
+      run: cd bahmni-offline/android/www/bahmni_config/ && unzip -o default_config.zip && rm -rf apps aqs beanshell encounterModifier migrations obscalculator ordertemplates templates patientMatchingAlgorithm treatmentRegimenExtension openelis default_config.zip
+      working-directory: /home/runner/work/bahmni-offline
+    - name: Build Android APK
+      # run: cd bahmni-android/android && cp /bahmni-apk-signing/release-signing.properties platforms/android/
     #   #Debug apk
-    #   run: pwd && cordova build android 
-    #   working-directory: /home/runner/work/bahmni-connect/bahmni-offline/android
-    # - name: Upload apk as Artifact
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: android_apk
-    #     path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
-    #     working-directory: /home/runner/work/bahmni-connect/bahmni-offline/android
-    #   if: always()
+      run: pwd && cordova build android 
+      working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
+    - name: Upload apk as Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: android_apk
+        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+        working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
+      if: always()
     
