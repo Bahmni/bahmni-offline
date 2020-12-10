@@ -27,30 +27,13 @@ jobs:
     - run: sudo gem install compass
     - run: echo $ANDROID_HOME && echo $PATH
     - run: echo $GITHUB_WORKSPACE && pwd
-    # - run: cd .. && git clone https://github.com/Bahmni/bahmni-offline.git
-    # - run: cd .. && git clone https://github.com/Bahmni/bahmni-offline-sync.git 
-    # - run: cd .. && git clone https://github.com/Bahmni/default-config.git
-    # - run: ls
-    #   working-directory: /home/runner/work/bahmni-connect/
+    - run: cd .. && git clone https://github.com/Bahmni/default-config.git
+    - run: ls
+      working-directory: /home/runner/work/bahmni-offline/
     # - run: cd $ANDROID_HOME/build-tools && ls  
-    - run: cd ui && scripts/package.sh
-    - name: Upload apps.zip as Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: bahmni-connect-apps
-        path: | 
-          ui/bahmni-connect-apps
-      if: always()
-    - name: Upload androidDist as Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: bahmni-android
-        path: | 
-          ui/androidDist
-      if: always()
-    # - name: add cordova android platform
-    #   run: cordova platform remove android && cordova platform add android && git checkout . 
-    #   working-directory: /home/runner/work/bahmni-connect/bahmni-offline/android
+    - name: add cordova android platform
+      run: cordova platform remove android && cordova platform add android && git checkout . 
+      working-directory: /home/runner/work/bahmni-connect/bahmni-offline/android
     # - run: cd android/www && rm -rf app/ && mkdir app
     #   working-directory: /home/runner/work/bahmni-connect/bahmni-offline
     # - name: copy android dist
