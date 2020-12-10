@@ -33,7 +33,8 @@ jobs:
       env:
         GIT_AUTH_HEADER: ${{ secrets.GIT_AUTH_HEADER }}
     - name: add cordova android platform
-      run: cordova platform remove android && cordova platform add android && git checkout . 
+      run: cordova platform rm android && cordova platform add android 
+      # && git checkout . 
       working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
     - run: cd android/www && rm -rf app/ && mkdir app
       working-directory: /home/runner/work/bahmni-offline/bahmni-offline
