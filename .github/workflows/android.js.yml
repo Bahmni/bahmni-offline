@@ -30,6 +30,9 @@ jobs:
     - run: cd .. && git clone https://github.com/Bahmni/default-config.git
     - run: chmod +x scripts/getArtefact.sh
     - run: pwd && scripts/getArtefact.sh
+      env:
+        GIT_AUTH_HEADER: ${{ secrets.GIT_AUTH_HEADER }}
+    # run: |
     # - run: 
     # - name: curl
     #   uses: wei/curl@v1
