@@ -44,13 +44,6 @@ jobs:
     - name: Generate default_config.zip
       run: pwd && scripts/package.sh && cd .. && cp default-config/target/default_config.zip bahmni-offline/android/www/bahmni_config/default_config.zip
       working-directory: /home/runner/work/bahmni-offline/default-config
-    # - name: Upload default config as Artifact
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: default-config-zip
-    #     path: |
-    #       /home/runner/work/bahmni-connect/default-config/target/default_config.zip
-    #   if: always()
     - name: copy config zip to android folder
       run: cd bahmni-offline/android/www/bahmni_config/ && unzip -o default_config.zip && rm -rf apps aqs beanshell encounterModifier migrations obscalculator ordertemplates templates patientMatchingAlgorithm treatmentRegimenExtension openelis default_config.zip
       working-directory: /home/runner/work/bahmni-offline
@@ -63,7 +56,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: android_apk
-        path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
-        working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
+        path: /android/platforms/android/app/build/outputs/apk/debug/app-debug.apk
       if: always()
     
