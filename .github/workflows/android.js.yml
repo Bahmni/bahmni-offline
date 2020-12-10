@@ -52,6 +52,7 @@ jobs:
     #   #Debug apk
       run: pwd && cordova build android 
       working-directory: /home/runner/work/bahmni-offline/bahmni-offline/android
+    - run: pwd
     - name: Upload apk as Artifact
       uses: actions/upload-artifact@v2
       with:
