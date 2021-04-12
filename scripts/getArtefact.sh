@@ -6,7 +6,7 @@ set -e
 echo "in script file"
 cd ..
 curl -o android.zip  --location --request GET 'https://api.github.com/repos/Bahmni/bahmni-connect/actions/artifacts/44155168/zip' \
---header "$GIT_AUTH_HEADER"
+-H "Authorization: token $SECRET_AUTH_TOKEN"
 ls
 unzip -o android.zip
 ls

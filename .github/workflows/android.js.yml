@@ -28,7 +28,7 @@ jobs:
     - run: chmod +x scripts/getArtefact.sh
     - run: pwd && scripts/getArtefact.sh
       env:
-        GIT_AUTH_HEADER: ${{ secrets.GIT_AUTH_HEADER }}
+        SECRET_AUTH_TOKEN: ${{ secrets.SECRET_AUTH_TOKEN }}
     - name: add cordova android platform
       run: cordova platform rm android && cordova platform add android 
       # && git checkout . 
