@@ -31,6 +31,7 @@ jobs:
     - run: echo $GITHUB_WORKSPACE && pwd
     - run: cd .. && git clone https://github.com/Bahmni/default-config.git
     - run: chmod +x scripts/getArtefact.sh
+    - run: rm -rf androidDist && mkdir androidDist
     - run: pwd && scripts/getArtefact.sh
       env:
         SECRET_AUTH_TOKEN: ${{ secrets.SECRET_AUTH_TOKEN }}
