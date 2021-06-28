@@ -122,7 +122,7 @@ public class AddressHierarchyDbService {
                                                                                      String searchString, int limit) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyEntry> addressHierarchyEntries = new ArrayList<AddressHierarchyEntry>();
-        Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
+        Cursor c = db.rawQuery("SELECT id, uuid, name, userGeneratedId, parentId FROM address_hierarchy_entry " +
                 " WHERE name like '%" + searchString + "%' AND levelId = " + level.getLevelId() + " LIMIT " + limit + " ", new String[]{});
         if(c.getCount() < 1){
             c.close();
@@ -146,7 +146,7 @@ public class AddressHierarchyDbService {
     public AddressHierarchyEntry getAddressHierarchyEntryById(Integer id) {
         if(id != null){
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
+            Cursor c = db.rawQuery("SELECT uuid, name, userGeneratedId, parentId FROM address_hierarchy_entry " +
                     " WHERE id = '" + id + "' limit 1 ", new String[]{});
             if(c.getCount() < 1){
                 c.close();
@@ -174,7 +174,7 @@ public class AddressHierarchyDbService {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyEntry> addressHierarchyEntries = new ArrayList<AddressHierarchyEntry>();
-        Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
+        Cursor c = db.rawQuery("SELECT uuid, name, userGeneratedId, parentId FROM address_hierarchy_entry " +
                 " WHERE name like '%" + searchString + "%' AND levelId = " + level.getLevelId() + " AND parentId = " + parent.getAddressHierarchyEntryId(), new String[]{});
         if(c.getCount() < 1){
             c.close();
@@ -199,7 +199,7 @@ public class AddressHierarchyDbService {
 
     private AddressHierarchyEntry getAddressHierarchyEntryByUserGenId(String userGeneratedIdForParent) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
+        Cursor c = db.rawQuery("SELECT id, uuid FROM address_hierarchy_entry " +
                 " WHERE userGeneratedId = '" + userGeneratedIdForParent + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();
@@ -216,7 +216,7 @@ public class AddressHierarchyDbService {
 
     public AddressHierarchyEntry getAddressHierarchyEntryByUuid(String uuid) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_entry " +
+        Cursor c = db.rawQuery("SELECT id, name, uuid FROM address_hierarchy_entry " +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();
@@ -235,7 +235,7 @@ public class AddressHierarchyDbService {
     public List<AddressHierarchyLevel> getAddressHierarchyLevels() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<AddressHierarchyLevel> addressHierarchyLevelList = new ArrayList<AddressHierarchyLevel>();
-        Cursor c = db.rawQuery("SELECT * FROM address_hierarchy_level", new String[]{});
+        Cursor c = db.rawQuery("SELECT addressHierarchyLevelId, name, addressField FROM address_hierarchy_level", new String[]{});
         if(c.getCount() < 1){
             c.close();
             return null;

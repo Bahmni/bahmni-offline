@@ -31,7 +31,7 @@ public class LocationDbService {
     @JavascriptInterface
     public String getLocationByUuid(String uuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from login_locations" +
+        Cursor c = db.rawQuery("SELECT value from login_locations" +
                 " WHERE uuid = '" + uuid + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();

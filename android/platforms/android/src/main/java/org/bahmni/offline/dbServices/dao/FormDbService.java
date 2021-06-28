@@ -34,7 +34,7 @@ public class FormDbService {
     @JavascriptInterface
     public String getFormByUuid(String uuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from form" +
+        Cursor c = db.rawQuery("SELECT name, version, uuid, resources from form" +
                 " WHERE uuid = '" + uuid + "'", new String[]{});
         if(c.getCount() < 1){
             c.close();
@@ -54,7 +54,7 @@ public class FormDbService {
     public String getAllForms() throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray formList = new JSONArray();
-        Cursor c = db.rawQuery("SELECT * from form", new String[]{});
+        Cursor c = db.rawQuery("SELECT name, version, uuid from form", new String[]{});
         if (c.getCount() < 1) {
             c.close();
             return String.valueOf(formList);

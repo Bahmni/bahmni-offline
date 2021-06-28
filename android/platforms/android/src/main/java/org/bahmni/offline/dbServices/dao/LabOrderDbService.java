@@ -30,7 +30,7 @@ public class LabOrderDbService {
     public JSONObject getLabOrderResultsByPatientUuid(String patientUuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
 
-        Cursor c = db.rawQuery("SELECT * from lab_order_result" +
+        Cursor c = db.rawQuery("SELECT labOrderResultsJson from lab_order_result" +
                 " WHERE patientUuid = '" + patientUuid + "'", new String[]{});
 
         if (c.getCount() < 1) {
