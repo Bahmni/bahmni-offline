@@ -50,6 +50,8 @@ jobs:
     - name: copy config zip to android folder
       run: cd bahmni-offline/android/www/bahmni_config/ && unzip -o default_config.zip && rm -rf apps aqs beanshell encounterModifier migrations obscalculator ordertemplates templates patientMatchingAlgorithm treatmentRegimenExtension openelis default_config.zip
       working-directory: /home/runner/work/bahmni-offline
+    - name: Uninstall  build-tool version 31.0.0
+      run: $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;31.0.0'
     - name: Build Android APK
       # run: cd bahmni-android/android && cp /bahmni-apk-signing/release-signing.properties platforms/android/
     #   #Debug apk
