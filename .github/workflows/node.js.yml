@@ -32,6 +32,8 @@ jobs:
       working-directory: android
     - name: Reset the Config
       run: git checkout android/platforms/android/CordovaLib/src/org/apache/cordova/ConfigXmlParser.java
+    - name: Uninstall  build-tool version 31.0.0
+      run: $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;31.0.0'
     - run: cordova build android
       working-directory: android
     - name: Uplaod Artifact
