@@ -150,8 +150,6 @@ task cdvPrintProps << {
 }
 
 android {
-    compileSdkVersion = 28
-    buildToolsVersion = "28.0.3"
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -180,8 +178,8 @@ android {
       abortOnError false;
     }
 
-    compileSdkVersion cdvCompileSdkVersion
-    buildToolsVersion cdvBuildToolsVersion
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     if (Boolean.valueOf(cdvBuildMultipleApks)) {
         productFlavors {
