@@ -15,7 +15,7 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-compileSdkVersion" value="28" />
-    <preference name="android-targetSdkVersion" value="24" />
+    <preference name="android-targetSdkVersion" value="28" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
