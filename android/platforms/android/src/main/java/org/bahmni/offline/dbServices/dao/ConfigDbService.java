@@ -31,7 +31,7 @@ public class ConfigDbService {
     @JavascriptInterface
     public String getConfig(String key) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from configs" +
+        Cursor c = db.rawQuery("SELECT value, etag, key  from configs" +
                 " WHERE key = '" + key + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();

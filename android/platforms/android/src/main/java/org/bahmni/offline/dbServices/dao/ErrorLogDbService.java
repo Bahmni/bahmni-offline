@@ -58,7 +58,7 @@ public class ErrorLogDbService {
     public JSONObject getErrorLogByUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONObject errorLog = new JSONObject();
-        Cursor c = db.rawQuery("SELECT * from error_log where uuid =?", new String[]{uuid});
+        Cursor c = db.rawQuery("SELECT uuid, failedRequest, logDateTime, responseStatus, stackTrace, requestPayload, provider from error_log where uuid =?", new String[]{uuid});
         if (c.getCount() < 1) {
             c.close();
             return errorLog;

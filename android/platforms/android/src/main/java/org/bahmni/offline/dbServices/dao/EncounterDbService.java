@@ -31,7 +31,7 @@ public class EncounterDbService {
     public JSONArray getEncountersByPatientUuid(String uuid, DbHelper mDBHelper) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         JSONArray encounterList = new JSONArray();
-        Cursor c = db.rawQuery("SELECT * from encounter" +
+        Cursor c = db.rawQuery("SELECT encounterJson from encounter" +
                 " WHERE patientUuid = '" + uuid + "'" , new String[]{});
         if (c.getCount() < 1) {
             c.close();

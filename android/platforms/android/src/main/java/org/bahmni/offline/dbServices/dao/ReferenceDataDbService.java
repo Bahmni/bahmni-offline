@@ -33,7 +33,7 @@ public class ReferenceDataDbService {
 
     public String getReferenceData(String referenceDataKey) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * from reference_data" +
+        Cursor c = db.rawQuery("SELECT data, etag, key from reference_data" +
                 " WHERE key = '" + referenceDataKey + "' limit 1 ", new String[]{});
         if(c.getCount() < 1){
             c.close();

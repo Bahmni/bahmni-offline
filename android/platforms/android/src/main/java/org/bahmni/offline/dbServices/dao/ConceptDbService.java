@@ -97,7 +97,7 @@ public class ConceptDbService {
 
     private JSONObject findConceptByUuid(String conceptUuid) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        String query = "SELECT * from concept WHERE uuid = ? limit 1";
+        String query = "SELECT data from concept WHERE uuid = ? limit 1";
         Cursor c = db.rawQuery(query, new String[]{conceptUuid});
         if (c.getCount() < 1) {
             c.close();
@@ -143,7 +143,7 @@ public class ConceptDbService {
 
     private JSONObject findConceptByName(String conceptName) throws JSONException {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        String query = "SELECT * from concept WHERE name = ? limit 1";
+        String query = "SELECT data from concept WHERE name = ? limit 1";
         Cursor c = db.rawQuery(query, new String[]{conceptName});
         if (c.getCount() < 1) {
             c.close();
