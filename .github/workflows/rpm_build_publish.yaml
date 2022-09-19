@@ -26,8 +26,9 @@ jobs:
       - run: npm install -g yarn
       - run: sudo gem install compass
       - run: cd ui && scripts/package.sh
-      - run: zip -r bahmni-connect-apps.zip ui/bahmni-connect-apps
-      - name: Upload 
+      - name: zip bahmni-connect-apps
+        run: zip -r bahmni-connect-apps.zip ui/bahmni-connect-apps
+      - name: Upload bahmni-connect-apps.zip
         uses: actions/upload-artifact@v2
         with:
           name: bahmni-connect-apps
@@ -40,35 +41,35 @@ jobs:
           path: | 
             ui/androidDist
 
-  # build-bahmni-offlinesync:
-  #   name: Build bahmni-offlinesync
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out bahmni-offline-sync
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: Bahmni/bahmni-offline-sync
-  #         ref: master
-  #         persist-credentials: false
-  #     - name: Setup Java 8
-  #       uses: actions/setup-java@v3
-  #       with:
-  #         distribution: 'zulu'
-  #         java-version: '8'      
-  #     - run: mvn clean install -U -PIT -DskipTests
-  #     - name: rename the omod
-  #       run: mv omod/target/bahmniOfflineSync*.omod omod/target/bahmniOfflineSync.omod
-  #     - name: Upload bahmniOfflineSync as Artifact
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: bahmni-offline-sync
-  #         path: | 
-  #           omod/target/bahmniOfflineSync.omod
+  build-bahmni-offlinesync:
+    name: Build bahmni-offlinesync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out bahmni-offline-sync
+        uses: actions/checkout@v2
+        with:
+          repository: Bahmni/bahmni-offline-sync
+          ref: master
+          persist-credentials: false
+      - name: Setup Java 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'      
+      - run: mvn clean install -U -PIT -DskipTests
+      - name: Rename the omod
+        run: mv omod/target/bahmniOfflineSync*.omod omod/target/bahmniOfflineSync.omod
+      - name: Upload bahmniOfflineSync as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bahmni-offline-sync
+          path: | 
+            omod/target/bahmniOfflineSync.omod
 
   rpm-build-publish:
     name: RPM Build and Publish
     runs-on: ubuntu-latest
-    needs: [ build-bahmni-connect] #build-bahmni-offlinesync
+    needs: [ build-bahmni-connect,build-bahmni-offlinesync ]
     steps:
       - uses: actions/checkout@v2
       - name: Set artifact version
@@ -80,13 +81,10 @@ jobs:
         with:
           name: bahmni-connect-apps
           path: package/rpm/resources/
-      - run: |
-          ls package/rpm/resources/
-      #     zip -r package/rpm/resources/bahmni-connect-apps.zip package/rpm/resources/bahmni-connect-apps
-      # - uses: actions/download-artifact@v3
-      #   with:
-      #     name: bahmni-offline-sync
-      #     path: package/rpm/resources/
+      - uses: actions/download-artifact@v3
+        with:
+          name: bahmni-offline-sync
+          path: package/rpm/resources/
       - name: Setup Java 8 for Gradle
         uses: actions/setup-java@v3
         with:
