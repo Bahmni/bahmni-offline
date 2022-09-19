@@ -1,0 +1,43 @@
+plugins {
+    id "nebula.ospackage" version "3.4.0"
+}
+
+group 'org.bahmni.offline'
+version project.bahmniRelease
+
+def build_number = System.getenv('GO_PIPELINE_COUNTER') ?: "1"
+def tag = System.getenv('BUILD_TAG') ?: ""
+
+task extractConnectApps(type: Copy){
+    from zipTree(file("${projectDir}/resources/bahmni-connect-apps.zip"))
+    into file("${projectDir}/resources/bahmni-connect-apps")
+}
+
+ospackage {
+    packageName = 'bahmni-offline'
+    release = tag == "" ? build_number : "${build_number}_${tag}"
+    arch = NOARCH
+    os = LINUX
+    user = 'bahmni'
+
+
+    from("${projectDir}/resources/") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into '/opt/openmrs/modules'
+        include('bahmniOfflineSync-*.omod');
+    }
+
+    from("${projectDir}/resources/bahmni-connect-apps") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into '/opt/bahmni-offline/'
+    }
+}
+
+buildRpm {
+    dependsOn 'extractConnectApps'
+
+    preInstall file("${projectDir}/scripts/preinstall.sh")
+    postInstall file("${projectDir}/scripts/postinstall.sh")
+}

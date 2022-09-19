@@ -11,33 +11,33 @@ on:
       - '**.md'
 
 jobs:
-  # build-bahmni-connect:
-  #   name: Build bahmni-connect
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out bahmni-connect
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: Bahmni/bahmni-connect
-  #         ref: master
-  #         persist-credentials: false
-  #     - name: Setup Node
-  #       uses: actions/setup-node@v1
-  #     - run: npm install -g yarn
-  #     - run: sudo gem install compass
-  #     - run: cd ui && scripts/package.sh
-  #     - name: Upload apps.zip as Artifact
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: bahmni-connect-apps
-  #         path: | 
-  #           ui/bahmni-connect-apps
-  #     - name: Upload androidDist as Artifact
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: bahmni-android
-  #         path: | 
-  #           ui/androidDist
+  build-bahmni-connect:
+    name: Build bahmni-connect
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out bahmni-connect
+        uses: actions/checkout@v2
+        with:
+          repository: Bahmni/bahmni-connect
+          ref: master
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - run: npm install -g yarn
+      - run: sudo gem install compass
+      - run: cd ui && scripts/package.sh
+      - name: Upload apps.zip as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bahmni-connect-apps
+          path: | 
+            ui/bahmni-connect-apps
+      - name: Upload androidDist as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bahmni-android
+          path: | 
+            ui/androidDist
 
   build-bahmni-offlinesync:
     name: Build bahmni-offlinesync
@@ -49,64 +49,55 @@ jobs:
           repository: Bahmni/bahmni-offline-sync
           ref: master
           persist-credentials: false
-      - name: Setup Java 8 for Gradle
+      - name: Setup Java 8
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '8'      
-      - run: mvn clean install -U -PIT && ls -al *
+      - run: mvn clean install -U -PIT -DskipTests
       - name: rename the omod
         run: mv omod/target/bahmniOfflineSync*.omod omod/target/bahmniOfflineSync.omod
-      - name: Upload bahmniOfflineSync.omod as Artifact
+      - name: Upload bahmniOfflineSync as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: bahmni-offline-sync
           path: | 
             omod/target/bahmniOfflineSync.omod
 
-  # rpm-build-publish:
-  #   name: RPM Build and Publish
-  #   runs-on: ubuntu-latest
-  #   needs: [ build ]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set artifact version
-  #       run: |
-  #         wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
-  #         ./setArtifactVersion.sh
-  #         rm setArtifactVersion.sh
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: openelis.war
-  #         path: package/resources/
-  #     - uses: actions/download-artifact@v3
-  #       with:
-  #         name: openelis.zip
-  #         path: package/resources/
-  #     - name: Download bahmni-embedded-tomcat.zip
-  #       run: sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
-  #     - name: Download openelis_backup.sql.gz file from emr-functional-tests/dbdump
-  #       run:  |
-  #             wget https://raw.githubusercontent.com/Bahmni/emr-functional-tests/master/dbdump/openelis_backup.sql.gz 
-  #             gunzip -c openelis_backup.sql.gz > package/resources/openelis_demo_dump.sql
-  #     - name: Generate bahmni_openelis_revision.json
-  #       run: ./package/rpm/test/bahmni_openelis_revision.sh > bahmni_openelis_revision.json
-  #     - name: Setup Java 8 for Gradle
-  #       uses: actions/setup-java@v3
-  #       with:
-  #         distribution: 'zulu'
-  #         java-version: '8'
-  #     - name: Gradle Build
-  #       run: |
-  #           cd package/rpm
-  #           export version=$(awk -F- '{print $1}' <<< ${{env.ARTIFACT_VERSION}})
-  #           export release=$(awk -F- '{print $2}' <<< ${{env.ARTIFACT_VERSION}})
-  #           ./gradlew -Pversion=$version -Prelease=$release clean buildRpm
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: bahmni-lab-rpm
-  #         path: package/rpm/build/distributions/*.rpm
-  #     - uses: actions/upload-artifact@v3
-  #       with:
-  #         name: openelis-revision
-  #         path: bahmni_openelis_revision.json
+  rpm-build-publish:
+    name: RPM Build and Publish
+    runs-on: ubuntu-latest
+    needs: [ build-bahmni-connect,build-bahmni-offlinesync]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set artifact version
+        run: |
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
+      - uses: actions/download-artifact@v3
+        with:
+          name: bahmni-connect-apps
+          path: package/rpm/resources/
+      - run: |
+          ls package/rpm/resources/ && echo "zipping now..."
+          zip -r package/rpm/resources/bahmni-connect-apps.zip package/rpm/resources/bahmni-connect-apps
+      - uses: actions/download-artifact@v3
+        with:
+          name: bahmni-offline-sync
+          path: package/rpm/resources/
+      - name: Setup Java 8 for Gradle
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+      - name: Gradle Build
+        run: |
+            cd package/rpm
+            export version=$(awk -F- '{print $1}' <<< ${{env.ARTIFACT_VERSION}})
+            export release=$(awk -F- '{print $2}' <<< ${{env.ARTIFACT_VERSION}})
+            ./gradlew -Pversion=$version -Prelease=$release clean buildRpm
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bahmni-offline-rpm
+          path: package/rpm/build/distributions/*.rpm
