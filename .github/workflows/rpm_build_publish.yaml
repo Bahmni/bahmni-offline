@@ -11,35 +11,58 @@ on:
       - '**.md'
 
 jobs:
-  build-bahmni-connect:
-    name: Build bahmni-connect
+  # build-bahmni-connect:
+  #   name: Build bahmni-connect
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check out bahmni-connect
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: Bahmni/bahmni-connect
+  #         ref: master
+  #         persist-credentials: false
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v1
+  #     - run: npm install -g yarn
+  #     - run: sudo gem install compass
+  #     - run: cd ui && scripts/package.sh
+  #     - name: Upload apps.zip as Artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: bahmni-connect-apps
+  #         path: | 
+  #           ui/bahmni-connect-apps
+  #     - name: Upload androidDist as Artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: bahmni-android
+  #         path: | 
+  #           ui/androidDist
+
+  build-bahmni-offlinesync:
+    name: Build bahmni-offlinesync
     runs-on: ubuntu-latest
     steps:
-      - name: Check out bahmni-connect
+      - name: Check out bahmni-offline-sync
         uses: actions/checkout@v2
         with:
-          repository: Bahmni/bahmni-connect
+          repository: Bahmni/bahmni-offline-sync
           ref: master
-          # path: bahmni-connect
           persist-credentials: false
-      - run: echo "showing checkout done or not" && ls
-      - name: Setup Node
-        uses: actions/setup-node@v1
-      - run: npm install -g yarn
-      - run: sudo gem install compass
-      - run: cd ui && scripts/package.sh
-      - name: Upload apps.zip as Artifact
+      - name: Setup Java 8 for Gradle
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'      
+      - run: mvn clean install -U -PIT && ls -al *
+      - name: rename the omod
+        run: mv omod/target/bahmniOfflineSync*.omod omod/target/bahmniOfflineSync.omod
+      - name: Upload bahmniOfflineSync.omod as Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: bahmni-connect-apps
+          name: bahmni-offline-sync
           path: | 
-            ui/bahmni-connect-apps
-      - name: Upload androidDist as Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: bahmni-android
-          path: | 
-            ui/androidDist
+            omod/target/bahmniOfflineSync.omod
 
   # rpm-build-publish:
   #   name: RPM Build and Publish
