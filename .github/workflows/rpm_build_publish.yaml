@@ -26,10 +26,10 @@ jobs:
           ./setArtifactVersion.sh
           rm setArtifactVersion.sh
       - name: Download bahmni-connect-apps
-        run: sh .github/download_artifact.sh bahmni-connect bahmni-connect-apps ${{secrets.BAHMNI_PAT}}
+        run: sh .github/download_artifact.sh bahmni-connect bahmni-connect-apps-zip ${{secrets.BAHMNI_PAT}}
 
       - name: Download bahmni-offline-sync omod
-        run: sh .github/download_artifact.sh bahmni-offline-sync bahmni-offline-sync ${{secrets.BAHMNI_PAT}}
+        run: sh .github/download_artifact.sh bahmni-offline-sync bahmni-offline-sync-omod ${{secrets.BAHMNI_PAT}}
       - name: Setup Java 8 for Gradle
         uses: actions/setup-java@v3
         with:
