@@ -7,6 +7,10 @@ on:
       - BAH-2334
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
+    
+  repository_dispatch:
+    types: ['bahmni-connect-trigger', 'bahmni-offline-sync-trigger']
+
     paths-ignore:
       - '**.md'
 
@@ -22,7 +26,7 @@ jobs:
           ./setArtifactVersion.sh
           rm setArtifactVersion.sh
       - name: Download bahmni-connect-apps.zip
-        run: sh .github/download_artifact.sh bahmni-connect bahmni-connect-apps.zip ${{secrets.BAHMNI_PAT}}
+        run: sh .github/download_artifact.sh bahmni-connect bahmni-connect-apps ${{secrets.BAHMNI_PAT}}
       - name: Download bahmni-offline-sync omod
         run: sh .github/download_artifact.sh bahmni-offline-sync bahmni-offline-sync ${{secrets.BAHMNI_PAT}}
       - name: Setup Java 8 for Gradle
