@@ -15,7 +15,8 @@ task extractConnectApps(type: Copy){
 
 ospackage {
     packageName = 'bahmni-offline'
-    release = tag == "" ? build_number : "${build_number}_${tag}"
+    version = project.version
+    release = project.hasProperty('release') ? project.release : ""
     arch = NOARCH
     os = LINUX
     user = 'bahmni'
