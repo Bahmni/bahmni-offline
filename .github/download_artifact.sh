@@ -12,4 +12,4 @@ fi
 curl -s https://api.github.com/repos/Bahmni/$1/actions/artifacts | \
     jq '[.artifacts[] | select (.name == '\"$2\"')]' | jq -r '.[0] | .archive_download_url' | \
     xargs curl -L -o $2.zip -H "Authorization: token $3"
-unzip -d package/resources/ $2.zip && rm $2.zip
+mv $2* package/rpm/resources
