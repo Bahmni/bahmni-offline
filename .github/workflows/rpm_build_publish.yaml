@@ -21,14 +21,10 @@ jobs:
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
           ./setArtifactVersion.sh
           rm setArtifactVersion.sh
-      - uses: actions/download-artifact@v3
-        with:
-          name: bahmni-connect-apps
-          path: package/rpm/resources/
-      - uses: actions/download-artifact@v3
-        with:
-          name: bahmni-offline-sync
-          path: package/rpm/resources/
+      - name: Download bahmni-connect-apps.zip
+        run: sh .github/download_artifact.sh bahmni-connect bahmni-connect-apps.zip ${{secrets.BAHMNI_PAT}}
+      - name: Download bahmni-offline-sync omod
+        run: sh .github/download_artifact.sh bahmni-offline-sync bahmni-offline-sync ${{secrets.BAHMNI_PAT}}
       - name: Setup Java 8 for Gradle
         uses: actions/setup-java@v3
         with:
