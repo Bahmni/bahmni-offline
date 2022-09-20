@@ -37,6 +37,7 @@ jobs:
           java-version: '8'
       - name: Gradle Build
         run: |
+            ls package/rpm/resources/
             cd package/rpm
             export version=$(awk -F- '{print $1}' <<< ${{env.ARTIFACT_VERSION}})
             export release=$(awk -F- '{print $2}' <<< ${{env.ARTIFACT_VERSION}})
