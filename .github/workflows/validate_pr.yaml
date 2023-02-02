@@ -1,0 +1,30 @@
+name: Validate_PR
+
+on:
+  pull_request:
+    branches: [ master,addCI]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+         node-version: '14.17.0'
+      - name: Setup Java 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '8'
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2.0.2
+      - run: npm install -g cordova ionic
+      - run: npm install -g try-thread-sleep
+      - run: echo $ANDROID_HOME
+      - run: cordova platform rm android
+        working-directory: android
+      - run: cordova platform add android
+        working-directory: android
+      - run: cd android && cordova build android
