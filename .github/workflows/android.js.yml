@@ -22,7 +22,7 @@ jobs:
         distribution: 'adopt'
         java-version: '8'
     - name: Setup android
-      uses: android-actions/setup-android@v2
+      uses: android-actions/setup-android@v2.0.2
     - run: npm install -g cordova ionic
     - run: npm install -g try-thread-sleep
     - run: npm install -g yarn
