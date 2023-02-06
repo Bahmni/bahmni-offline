@@ -5,7 +5,7 @@ set -e
 
 echo "in script file"
 cd ..
-curl -o android.zip  --location --request GET 'https://api.github.com/repos/Bahmni/bahmni-connect/actions/artifacts/181206102/zip' \
+curl -o android.zip  --location --request GET 'https://api.github.com/Rkum113/bahmni-connect/actions/runs/4022218784/zip' \
 -H "Authorization: token $SECRET_AUTH_TOKEN"
 ls
 unzip -o android.zip -d androidDist
