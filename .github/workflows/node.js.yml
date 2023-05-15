@@ -5,7 +5,7 @@ name: Generate APK
 
 on:
   push:
-    branches: [ master,addCI ]
+    branches: [ master,addCI,test-workflow ]
   # pull_request:
   #   branches: [ master,addCI  ]
 
